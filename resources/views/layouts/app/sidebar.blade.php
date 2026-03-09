@@ -15,7 +15,7 @@
                     <flux:sidebar.item icon="home" :href="route('dashboard')" :current="request()->routeIs('dashboard')" wire:navigate>
                         {{ __('Dashboard') }}
                     </flux:sidebar.item>
-                    <flux:sidebar.item icon="trophy" wire:navigate>
+                    <flux:sidebar.item icon="trophy" :href="route('rankings.index')" :current="request()->routeIs('rankings.index')" wire:navigate>
                         {{ __('Ranking') }}
                     </flux:sidebar.item>
                     

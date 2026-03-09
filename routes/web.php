@@ -14,4 +14,8 @@ Route::get('/', function () {
     ]);
 })->name('dashboard');
 
+Route::get('/rankings', function () {
+    return view('rankings');
+})->name('rankings.index');
+
 require __DIR__.'/settings.php';
