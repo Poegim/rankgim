@@ -34,6 +34,9 @@
                     @endforeach
                 </flux:table.rows>
             </flux:table>
+            <div class="mt-3 text-center">
+                <a href="{{ route('rankings.index') }}" class="text-sm text-zinc-500 dark:text-zinc-400 hover:underline">View full rankings →</a>
+            </div>
         </div>
 
         <div class="rounded-xl border border-zinc-200 dark:border-zinc-700 p-4">
@@ -64,6 +67,9 @@
                     @endforeach
                 </flux:table.rows>
             </flux:table>
+            <div class="mt-3 text-center">
+                <a href="{{ route('games.index') }}" class="text-sm text-zinc-500 dark:text-zinc-400 hover:underline">View all games →</a>
+            </div>
         </div>
 
     </div>

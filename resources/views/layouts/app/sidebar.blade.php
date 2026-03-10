@@ -20,6 +20,14 @@
                     <flux:sidebar.item icon="trophy" :href="route('rankings.index')" :current="request()->routeIs('rankings.index')" wire:navigate>
                         {{ __('Ranking') }}
                     </flux:sidebar.item>
+
+                    <flux:sidebar.item icon="calendar-days" :href="route('tournaments.index')" :current="request()->routeIs('tournaments.index')" wire:navigate>
+                        {{ __('Tournaments') }}
+                    </flux:sidebar.item>
+                    
+                    <flux:sidebar.item icon="queue-list" :href="route('games.index')" :current="request()->routeIs('games.index')" wire:navigate>
+                        {{ __('Games') }}
+                    </flux:sidebar.item>
                     
                     @if (auth())                      
                         <flux:sidebar.item icon="plus" wire:navigate>

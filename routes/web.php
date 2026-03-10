@@ -1,23 +1,32 @@
 <?php
 
-use App\Models\Player;
-use App\Models\Tournament;
 use Illuminate\Support\Facades\Route;
 
+// Dashboard route
 Route::get('/', function () {
     return view('dashboard');
 })->name('dashboard');
 
+// Rankings route
 Route::get('/rankings', function () {
     return view('rankings');
 })->name('rankings.index');
 
-use Illuminate\Support\Str;
-
+// Player profile route with slug for SEO-friendly URLs
 Route::get('/players/{id}-{slug}', function ($id) {
     return view('players.show', ['playerId' => $id]);
 })->name('players.show');
 
+// Tournament routes
+Route::get('/tournaments', fn() => view('tournaments.index'))->name('tournaments.index');
+Route::get('/tournaments/{id}', fn($id) => view('tournaments.show', ['tournamentId' => $id]))->name('tournaments.show');
+
+
+// Games route
+Route::get('/games', fn() => view('games.index'))->name('games.index');
+
+
+// About page with statistics
 Route::get('/about', function () {
     return view('about', [
         'totalGames' => \App\Models\Game::count(),
