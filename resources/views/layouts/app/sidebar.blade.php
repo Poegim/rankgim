@@ -32,6 +32,10 @@
 
             <flux:spacer />
 
+            <flux:sidebar.item icon="information-circle" :href="route('about')" :current="request()->routeIs('about')" wire:navigate>
+                {{ __('About') }}
+            </flux:sidebar.item>
+
             @guest
                 
             

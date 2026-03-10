@@ -232,12 +232,16 @@ class Dashboard extends Component
     #[Computed]
     public function topCountries()
     {
+        $activePlayerIds = DB::table('rating_histories')
+            ->where('played_at', '>=', $this->since)
+            ->distinct()
+            ->pluck('player_id');
+
         return DB::table('players')
             ->join('player_ratings', 'player_ratings.player_id', '=', 'players.id')
-            ->join('rating_histories', 'rating_histories.player_id', '=', 'players.id')
             ->where('player_ratings.games_played', '>=', 15)
-            ->where('rating_histories.played_at', '>=', $this->since)
             ->whereIn('players.country_code', $this->qualifiedCountries)
+            ->whereIn('players.id', $activePlayerIds)
             ->selectRaw('
                 players.country,
                 players.country_code,

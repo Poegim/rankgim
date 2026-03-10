@@ -71,7 +71,7 @@
     {{-- Race matchups --}}
     <div class="rounded-xl border border-zinc-200 dark:border-zinc-700 p-4">
         <p class="text-sm font-medium text-zinc-500 dark:text-zinc-400 mb-4">⚔️ Global race matchups</p>
-        <div class="grid grid-cols-3 md:grid-cols-6 gap-3">
+        <div class="grid grid-cols-3 gap-3">
             @php
                 $races = ['Terran', 'Zerg', 'Protoss'];
                 $raceColors = [
@@ -80,27 +80,37 @@
                     'Protoss' => 'text-yellow-500',
                 ];
                 $matchups = $this->raceMatchups->keyBy(fn($r) => $r->winner_race . '-' . $r->loser_race);
+                $pairs = [['Terran','Zerg'], ['Terran','Protoss'], ['Zerg','Protoss']];
             @endphp
-            @foreach($races as $r1)
-                @foreach($races as $r2)
-                    @if($r1 !== $r2)
-                    @php
-                        $wins   = $matchups->get($r1 . '-' . $r2)?->games ?? 0;
-                        $losses = $matchups->get($r2 . '-' . $r1)?->games ?? 0;
-                        $total  = $wins + $losses;
-                        $ratio  = $total > 0 ? round(($wins / $total) * 100) : 0;
-                    @endphp
-                    <div class="rounded-lg bg-zinc-50 dark:bg-zinc-800 p-3 text-center">
-                        <p class="text-xs font-medium mb-1">
-                            <span class="{{ $raceColors[$r1] }}">{{ substr($r1, 0, 1) }}</span>
-                            <span class="text-zinc-400 mx-1">vs</span>
-                            <span class="{{ $raceColors[$r2] }}">{{ substr($r2, 0, 1) }}</span>
-                        </p>
-                        <p class="font-bold text-lg {{ $ratio >= 50 ? 'text-green-500' : 'text-red-500' }}">{{ $ratio }}%</p>
-                        <p class="text-xs text-zinc-400">{{ $wins }}W / {{ $losses }}L</p>
+            @foreach($pairs as [$r1, $r2])
+                @php
+                    $r1wins = $matchups->get($r1 . '-' . $r2)?->games ?? 0;
+                    $r2wins = $matchups->get($r2 . '-' . $r1)?->games ?? 0;
+                    $total  = $r1wins + $r2wins;
+                    $r1ratio = $total > 0 ? round(($r1wins / $total) * 100) : 50;
+                    $r2ratio = 100 - $r1ratio;
+                @endphp
+                <div class="rounded-lg bg-zinc-50 dark:bg-zinc-800 p-3 text-center">
+                    <p class="text-xs font-medium mb-2">
+                        <span class="{{ $raceColors[$r1] }}">{{ substr($r1, 0, 1) }}</span>
+                        <span class="text-zinc-400 mx-1">vs</span>
+                        <span class="{{ $raceColors[$r2] }}">{{ substr($r2, 0, 1) }}</span>
+                    </p>
+                    <div class="flex justify-around items-center">
+                        <div>
+                            <p class="font-bold text-lg {{ $raceColors[$r1] }}">{{ $r1ratio }}%</p>
+                            <p class="text-xs text-zinc-400">{{ $r1wins }}W</p>
+                        </div>
+                        <div class="text-zinc-300 dark:text-zinc-600 text-xs">—</div>
+                        <div>
+                            <p class="font-bold text-lg {{ $raceColors[$r2] }}">{{ $r2ratio }}%</p>
+                            <p class="text-xs text-zinc-400">{{ $r2wins }}W</p>
+                        </div>
                     </div>
-                    @endif
-                @endforeach
+                    <div class="mt-2 h-1.5 rounded-full bg-zinc-200 dark:bg-zinc-700 overflow-hidden">
+                        <div class="h-full rounded-full bg-blue-500" style="width: {{ $r1ratio }}%"></div>
+                    </div>
+                </div>
             @endforeach
         </div>
     </div>
@@ -199,11 +209,12 @@
                         <span class="text-zinc-400 font-mono text-sm">{{ $index + 1 }}</span>
                     </flux:table.cell>
                     <flux:table.cell>
-                        <div class="flex items-center gap-2">
+                        <a href="{{ route('rankings.index', ['filterCountryCode' => $row->country_code]) }}"
+                           class="flex items-center gap-2 hover:underline">
                             <img src="{{ asset('images/country_flags/' . strtolower($row->country_code) . '.svg') }}"
                                  class="w-6 h-4 rounded-sm">
                             <span class="font-medium text-zinc-800 dark:text-white">{{ $row->country }}</span>
-                        </div>
+                        </a>
                     </flux:table.cell>
                     <flux:table.cell>
                         <span class="text-zinc-500 dark:text-zinc-400">{{ $row->player_count }}</span>
