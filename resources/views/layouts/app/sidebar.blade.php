@@ -28,12 +28,6 @@
                     <flux:sidebar.item icon="queue-list" :href="route('games.index')" :current="request()->routeIs('games.index')" wire:navigate>
                         {{ __('Games') }}
                     </flux:sidebar.item>
-                    
-                    @if (auth())                      
-                        <flux:sidebar.item icon="plus" wire:navigate>
-                            {{ __('Add Game') }}
-                        </flux:sidebar.item>
-                    @endif
 
                 </flux:sidebar.group>
             </flux:sidebar.nav>

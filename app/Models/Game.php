@@ -8,13 +8,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Game extends Model
 {
-    protected $fillable = [
-        'winner_id',
-        'loser_id',
-        'tournament_id',
-        'date_time',
-        'result',
-    ];
+    protected $fillable = ['tournament_id', 'winner_id', 'loser_id', 'date_time', 'result', 'user_id'];
 
     public function winner(): BelongsTo
     {
@@ -34,5 +28,10 @@ class Game extends Model
     public function ratingHistory(): HasMany
     {
         return $this->hasMany(RatingHistory::class);
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
     }
 }
