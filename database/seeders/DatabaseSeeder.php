@@ -2,7 +2,9 @@
 
 namespace Database\Seeders;
 
+use App\Livewire\Players\GameHistory;
 use App\Models\User;
+use Database\Seeders\GamesTableSeeder;
 use Illuminate\Database\Seeder;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
@@ -21,7 +23,7 @@ class DatabaseSeeder extends Seeder
         //     'email' => 'test@example.com',
         // ]);
 
-        User::factory()->create([
+        User::create([
             'name' => 'Admin',
             'email' => 'admin@example.com',
             'password' => bcrypt('password'),
