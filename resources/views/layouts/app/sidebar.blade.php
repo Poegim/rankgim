@@ -44,9 +44,16 @@
                 {{ __('About') }}
             </flux:sidebar.item>
 
+            @auth
+                @if(auth()->user()->isAdmin())
+                    <flux:sidebar.item icon="shield-check" :href="route('admin.users')" :current="request()->routeIs('admin.users')" wire:navigate>
+                        {{ __('Admin') }}
+                    </flux:sidebar.item>
+                @endif
+            @endauth
+
             @guest
-                
-            
+                         
             <flux:sidebar.nav>
                 <flux:sidebar.item icon="arrow-left-start-on-rectangle" href="{{  route('login') }}" wire:navigate>
                     {{ __('Login') }}
@@ -57,6 +64,8 @@
                 </flux:sidebar.item>
             </flux:sidebar.nav>
             @endguest
+
+
 
             @auth
             <x-desktop-user-menu class="hidden lg:block" :name="auth()->user()->name" />

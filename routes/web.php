@@ -36,4 +36,9 @@ Route::get('/about', function () {
     ]);
 })->name('about');
 
+// Admin routes with middleware protection
+Route::middleware(['auth', App\Http\Middleware\EnsureUserIsAdmin::class])->prefix('admin')->name('admin.')->group(function () {
+    Route::get('/users', fn() => view('admin.users'))->name('users');
+});
+
 require __DIR__.'/settings.php';
