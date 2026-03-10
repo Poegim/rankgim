@@ -3,16 +3,17 @@
 namespace Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
+use Faker\Generator as Faker;
 
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\User>
  */
 class UserFactory extends Factory
 {
-    use WithFaker;
+    use Faker;
+
     /**
      * The current password being used by the factory.
      */
@@ -25,10 +26,7 @@ class UserFactory extends Factory
      */
     public function definition(): array
     {
-
         $faker = $this->faker;
-
-        
 
         return [
             'name' => $faker->name(),

@@ -2,7 +2,6 @@
 
 namespace Database\Seeders;
 
-use App\Livewire\Players\GameHistory;
 use App\Models\User;
 use Database\Seeders\GamesTableSeeder;
 use Illuminate\Database\Seeder;
