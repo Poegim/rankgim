@@ -34,7 +34,7 @@
                 wire:click="$set('query', '')"
             >
                 <div class="flex items-center gap-2 min-w-0">
-                    <img src="{{ asset('storage/images/country_flags/' . strtolower($player->country_code) . '.svg') }}"
+                    <img src="{{ asset('images/country_flags/' . strtolower($player->country_code) . '.svg') }}"
                          class="w-5 h-3 rounded-sm shrink-0">
                     <span class="text-sm font-medium text-zinc-800 dark:text-white truncate">{{ $player->name }}</span>
                     <span class="text-xs shrink-0 {{ $player->race === 'Terran' ? 'text-blue-500' : ($player->race === 'Zerg' ? 'text-purple-500' : 'text-yellow-500') }}">

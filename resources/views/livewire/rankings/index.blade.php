@@ -7,7 +7,7 @@
         @if($filterCountryCode)
         <flux:badge wire:click="filterByCountry('{{ $filterCountryCode }}')" class="cursor-pointer gap-1">
             <img
-                src="{{ asset('storage/images/country_flags/' . strtolower($filterCountryCode) . '.svg') }}"
+                src="{{ asset('images/country_flags/' . strtolower($filterCountryCode) . '.svg') }}"
                 class="w-4 h-3 rounded-sm"
             >
             {{ $filterCountryCode }}
@@ -67,7 +67,7 @@
                 <flux:table.cell>
                     <div class="flex items-center gap-2">
                         <img
-                            src="{{ asset('storage/images/country_flags/' . strtolower($row->player->country_code) . '.svg') }}"
+                            src="{{ asset('images/country_flags/' . strtolower($row->player->country_code) . '.svg') }}"
                             alt="{{ $row->player->country }}"
                             class="w-6 h-4 rounded-sm cursor-pointer {{ $filterCountryCode === $row->player->country_code ? 'ring-2 ring-blue-500' : '' }}"
                             title="{{ $row->player->country }}"

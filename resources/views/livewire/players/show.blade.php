@@ -5,7 +5,7 @@
     <div class="flex items-center justify-between">
         <div class="flex items-center gap-4">
             <img
-                src="{{ asset('storage/images/country_flags/' . strtolower($this->player->country_code) . '.svg') }}"
+                src="{{ asset('images/country_flags/' . strtolower($this->player->country_code) . '.svg') }}"
                 alt="{{ $this->player->country }}"
                 class="w-10 h-7 rounded-sm"
                 title="{{ $this->player->country }}"
@@ -97,7 +97,7 @@
                 <flux:table.cell>
                     <div class="flex items-center gap-2">
                         <img
-                            src="{{ asset('storage/images/country_flags/' . strtolower($h2h['opponent']->country_code) . '.svg') }}"
+                            src="{{ asset('images/country_flags/' . strtolower($h2h['opponent']->country_code) . '.svg') }}"
                             alt="{{ $h2h['opponent']->country }}"
                             class="w-6 h-4 rounded-sm"
                             title="{{ $h2h['opponent']->country }}"
@@ -192,7 +192,7 @@
             {{-- Header --}}
             <div class="flex items-center gap-3">
                 <img
-                    src="{{ asset('storage/images/country_flags/' . strtolower($this->player->country_code) . '.svg') }}"
+                    src="{{ asset('images/country_flags/' . strtolower($this->player->country_code) . '.svg') }}"
                     class="w-8 h-6 rounded-sm"
                 >
                 <div>
