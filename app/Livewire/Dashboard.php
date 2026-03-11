@@ -37,7 +37,13 @@ class Dashboard extends Component
     #[Computed]
     public function top10()
     {
+        $activePlayerIds = RatingHistory::where('played_at', '>=', $this->since)
+            ->distinct()
+            ->pluck('player_id');
+
         return PlayerRating::with('player')
+            ->whereIn('player_id', $activePlayerIds)
+            ->where('games_played', '>=', 15)
             ->orderByDesc('rating')
             ->limit(10)
             ->get();

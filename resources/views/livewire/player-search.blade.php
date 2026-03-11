@@ -10,6 +10,7 @@
     <div x-ref="input">
         <flux:input
             wire:model.live.debounce.300ms="query"
+            autocomplete="off"
             placeholder="Search player..."
             icon="magnifying-glass"
             size="sm"

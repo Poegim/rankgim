@@ -10,12 +10,15 @@ Route::get('/', function () {
 // Rankings route
 Route::get('/rankings', function () {
     return view('rankings');
-})->name('rankings.index');
-
+    })->name('rankings.index');
+    
 // Player profile route with slug for SEO-friendly URLs
-Route::get('/players/{id}-{slug}', function ($id) {
+Route::get('/players/{id}-{slug}', function ($id, $slug) {
     return view('players.show', ['playerId' => $id]);
 })->name('players.show');
+
+// Players route
+Route::get('/players', fn() => view('players.index'))->name('players.index');
 
 // Tournament routes
 Route::get('/tournaments', fn() => view('tournaments.index'))->name('tournaments.index');
@@ -24,7 +27,6 @@ Route::get('/tournaments/{id}', fn($id) => view('tournaments.show', ['tournament
 
 // Games route
 Route::get('/games', fn() => view('games.index'))->name('games.index');
-
 
 // About page with statistics
 Route::get('/about', function () {
@@ -36,9 +38,9 @@ Route::get('/about', function () {
     ]);
 })->name('about');
 
-// Admin routes with middleware protection
+// Admin routes with middleware for authentication and admin access
 Route::middleware(['auth', App\Http\Middleware\EnsureUserIsAdmin::class])->prefix('admin')->name('admin.')->group(function () {
-    Route::get('/users', fn() => view('admin.users'))->name('users');
+    Route::get('/', fn() => view('admin.index'))->name('index');
 });
 
 require __DIR__.'/settings.php';

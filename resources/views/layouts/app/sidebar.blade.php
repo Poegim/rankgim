@@ -28,6 +28,10 @@
                     <flux:sidebar.item icon="queue-list" :href="route('games.index')" :current="request()->routeIs('games.index')" wire:navigate>
                         {{ __('Games') }}
                     </flux:sidebar.item>
+                    
+                    <flux:sidebar.item icon="users" :href="route('players.index')" :current="request()->routeIs('players.index')" wire:navigate>
+                        {{ __('Players') }}
+                    </flux:sidebar.item>
 
                 </flux:sidebar.group>
             </flux:sidebar.nav>
@@ -40,8 +44,8 @@
 
             @auth
                 @if(auth()->user()->isAdmin())
-                    <flux:sidebar.item icon="shield-check" :href="route('admin.users')" :current="request()->routeIs('admin.users')" wire:navigate>
-                        {{ __('Admin') }}
+                    <flux:sidebar.item icon="shield-check" :href="route('admin.index')" :current="request()->routeIs('admin.*')" wire:navigate>
+                        {{ __('Admin Panel') }}
                     </flux:sidebar.item>
                 @endif
             @endauth

@@ -41,4 +41,14 @@ class Player extends Model
     {
         return $this->hasMany(RatingSnapshot::class);
     }
+
+    public function gamesAsWinner(): HasMany
+    {
+        return $this->hasMany(Game::class, 'winner_id');
+    }
+
+    public function gamesAsLoser(): HasMany
+    {
+        return $this->hasMany(Game::class, 'loser_id');
+    }
 }
