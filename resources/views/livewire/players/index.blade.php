@@ -55,7 +55,7 @@
             <flux:text>{{ $players->total() }} players</flux:text>
         </div>
         @auth
-            @if($canManage)
+            @if(auth()->user()->canManageGames())
                 <flux:button variant="primary" wire:click="openAddModal">
                     Add Player
                 </flux:button>
@@ -80,7 +80,7 @@
             <flux:table.column>Country</flux:table.column>
             <flux:table.column>Race</flux:table.column>
             @auth
-                @if($canManage)
+                @if(auth()->user()->canManageGames())
                     <flux:table.column></flux:table.column>
                 @endif
             @endauth
@@ -108,7 +108,7 @@
         </flux:table.cell>
         <flux:table.cell></flux:table.cell>
         @auth
-            @if($canManage)
+            @if(auth()->user()->canManageGames())
             <flux:table.cell>
                 <div class="flex items-center gap-2">
                     <flux:button size="sm" variant="ghost"
@@ -151,7 +151,7 @@
             <span class="text-xs text-zinc-400">alias of {{ $player->name }}</span>
         </flux:table.cell>
         @auth
-            @if($canManage)
+            @if(auth()->user()->canManageGames())
             <flux:table.cell>
                 <div class="flex items-center gap-2">
                     <flux:button size="sm" variant="ghost"
@@ -197,12 +197,41 @@
             />
 
             <div class="grid grid-cols-2 gap-4">
-                <flux:select wire:model="country" label="Country">
-                    <option value="">Select country...</option>
-                    @foreach(config('countries') as $c)
-                        <option value="{{ $c['code'] }}">{{ $c['name'] }}</option>
-                    @endforeach
-                </flux:select>
+                <div x-data="{
+                    open: false,
+                    search: '',
+                    selected: 0,
+                    get filtered() {
+                        if (!this.search) return $wire.countriesList;
+                        return $wire.countriesList.filter(c => c.name.toLowerCase().includes(this.search.toLowerCase()));
+                    }
+                }" class="relative">
+                    <flux:label>Country</flux:label>
+                    <flux:input
+                        x-model="search"
+                        placeholder="Search country..."
+                        autocomplete="off"
+                        x-on:focus="open = true; selected = 0"
+                        x-on:click.away="open = false"
+                        x-on:input="open = true; selected = 0"
+                        x-on:keydown.arrow-down.prevent="selected = Math.min(selected + 1, filtered.length - 1)"
+                        x-on:keydown.arrow-up.prevent="selected = Math.max(selected - 1, 0)"
+                        x-on:keydown.enter.prevent="if (filtered[selected]) { $wire.set('country', filtered[selected].code); search = filtered[selected].name; open = false; }"
+                    />
+                    <div x-show="open && filtered.length > 0"
+                         class="absolute z-50 w-full mt-1 bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-lg shadow-lg max-h-60 overflow-y-auto">
+                        <template x-for="(c, index) in filtered" :key="c.code">
+                            <button type="button"
+                                    x-bind:class="selected === index ? 'bg-indigo-100 dark:bg-indigo-900' : ''"
+                                    x-on:mouseover="selected = index"
+                                    x-on:click="$wire.set('country', c.code); search = c.name; open = false; selected = 0"
+                                    class="w-full px-3 py-2 text-left text-sm hover:bg-zinc-100 dark:hover:bg-zinc-700 flex items-center gap-2">
+                                <img :src="`/images/country_flags/${c.code.toLowerCase()}.svg`" class="w-5 h-3.5 rounded-sm shrink-0">
+                                <span x-text="c.name" class="text-zinc-800 dark:text-white"></span>
+                            </button>
+                        </template>
+                    </div>
+                </div>
             </div>
 
             <flux:select wire:model="race" label="Race">
@@ -275,12 +304,46 @@
             />
 
             <div class="grid grid-cols-2 gap-4">
-                <flux:select wire:model="editCountry" label="Country">
-                    <option value="">Select country...</option>
-                    @foreach(config('countries') as $c)
-                        <option value="{{ $c['code'] }}">{{ $c['name'] }}</option>
-                    @endforeach
-                </flux:select>
+                <div x-data="{
+                    open: false,
+                    search: '',
+                    selected: 0,
+                    get filtered() {
+                        if (!this.search) return $wire.countriesList;
+                        return $wire.countriesList.filter(c => c.name.toLowerCase().includes(this.search.toLowerCase()));
+                    }
+                }"
+                x-on:set-edit-country.window="
+                    const match = $wire.countriesList.find(c => c.code === $event.detail.code);
+                    if (match) search = match.name;
+                "
+                class="relative">
+                    <flux:label>Country</flux:label>
+                    <flux:input
+                        x-model="search"
+                        placeholder="Search country..."
+                        autocomplete="off"
+                        x-on:focus="open = true; selected = 0"
+                        x-on:click.away="open = false"
+                        x-on:input="open = true; selected = 0"
+                        x-on:keydown.arrow-down.prevent="selected = Math.min(selected + 1, filtered.length - 1)"
+                        x-on:keydown.arrow-up.prevent="selected = Math.max(selected - 1, 0)"
+                        x-on:keydown.enter.prevent="if (filtered[selected]) { $wire.set('editCountry', filtered[selected].code); search = filtered[selected].name; open = false; }"
+                    />
+                    <div x-show="open && filtered.length > 0"
+                         class="absolute z-50 w-full mt-1 bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-lg shadow-lg max-h-60 overflow-y-auto">
+                        <template x-for="(c, index) in filtered" :key="c.code">
+                            <button type="button"
+                                    x-bind:class="selected === index ? 'bg-indigo-100 dark:bg-indigo-900' : ''"
+                                    x-on:mouseover="selected = index"
+                                    x-on:click="$wire.set('editCountry', c.code); search = c.name; open = false; selected = 0"
+                                    class="w-full px-3 py-2 text-left text-sm hover:bg-zinc-100 dark:hover:bg-zinc-700 flex items-center gap-2">
+                                <img :src="`/images/country_flags/${c.code.toLowerCase()}.svg`" class="w-5 h-3.5 rounded-sm shrink-0">
+                                <span x-text="c.name" class="text-zinc-800 dark:text-white"></span>
+                            </button>
+                        </template>
+                    </div>
+                </div>
             </div>
 
             <flux:select wire:model="editRace" label="Race">
@@ -291,20 +354,11 @@
                 <option value="Unknown">Unknown</option>
             </flux:select>
 
-
             {{-- Edit AKA Autocomplete --}}
             <div x-data="{ open: false, selected: 0 }" class="relative">
-                <div class="flex items-center justify-between mb-1">
-                    <flux:label>AKA (Also Known As)</flux:label>
-                    @if($editAkaId)
-                        <button type="button" wire:click="clearEditAka"
-                            class="text-xs text-red-400 hover:text-red-600">
-                            ✕ Remove AKA
-                        </button>
-                    @endif
-                </div>
                 <flux:input 
                     wire:model.live.debounce.300ms="editAkaSearch" 
+                    label="AKA (Also Known As)" 
                     placeholder="Search for main player..."
                     autocomplete="off"
                     x-on:focus="open = true"

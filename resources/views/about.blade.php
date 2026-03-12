@@ -63,6 +63,7 @@
             </p>
         </div>
 
+
         {{-- Credits --}}
         <div class="flex flex-col gap-3">
             <h2 class="text-sm font-semibold text-zinc-400 uppercase tracking-widest">Credits</h2>

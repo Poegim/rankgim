@@ -35,6 +35,13 @@ class Index extends Component
     public string $akaSearch = '';
     public string $editAkaSearch = '';
 
+    public array $countriesList = [];
+
+    public function mount(): void
+    {
+        $this->countriesList = collect(config('countries'))->values()->all();
+    }
+
     #[Computed]
     public function akaResults()
     {
