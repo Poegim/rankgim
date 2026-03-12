@@ -186,6 +186,9 @@ class Index extends Component
 
          $canManage = auth()->check() && auth()->user()->canManageGames();
 
-        return view('livewire.players.index', compact('players'));
+        return view('livewire.players.index', compact([
+            'players',
+            'canManage',
+        ]));
     }
 }
