@@ -170,14 +170,14 @@ class Index extends Component
             ->select('players.*')
             ->whereNull('players.player_id')
             ->when($search, function ($query) use ($search) {
-                $query->where(function ($q) use ($search) {
+                $aliasPlayerIds = Player::whereNotNull('player_id')
+                    ->where('name', 'like', '%' . $search . '%')
+                    ->pluck('player_id');
+
+                $query->where(function ($q) use ($search, $aliasPlayerIds) {
                     $q->where('players.name', 'like', '%' . $search . '%')
                       ->orWhere('players.country', 'like', '%' . $search . '%')
-                      ->orWhereExists(function ($sub) use ($search) {
-                          $sub->from('players as aliases')
-                              ->whereColumn('aliases.player_id', 'players.id')
-                              ->where('aliases.name', 'like', '%' . $search . '%');
-                      });
+                      ->orWhereIn('players.id', $aliasPlayerIds);
                 });
             })
             ->with(['aliases', 'aka'])
