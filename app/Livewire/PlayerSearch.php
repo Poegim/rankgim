@@ -15,7 +15,10 @@ class PlayerSearch extends Component
     {
         if (strlen($this->query) < 2) return collect();
 
-        return Player::where('players.name', 'like', '%' . $this->query . '%')
+        $playerIds = \App\Models\PlayerName::where('name', 'like', '%' . $this->query . '%')
+            ->pluck('player_id');
+
+        return Player::whereIn('players.id', $playerIds)
             ->whereNull('players.player_id')
             ->whereHas('rating')
             ->with('rating')

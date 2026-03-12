@@ -92,21 +92,16 @@ class Show extends Component
         return $this->searchPlayers($this->editLoserSearch);
     }
 
+
     private function searchPlayers(string $search)
     {
-        return Player::query()
-            ->select('players.*')
-            ->whereNull('players.player_id')
-            ->where(function ($q) use ($search) {
-                $q->where('players.name', 'like', '%' . $search . '%')
-                  ->orWhereExists(function ($sub) use ($search) {
-                      $sub->from('players as aliases')
-                          ->whereColumn('aliases.player_id', 'players.id')
-                          ->where('aliases.name', 'like', '%' . $search . '%');
-                  });
-            })
+        $playerIds = \App\Models\PlayerName::where('name', 'like', '%' . $search . '%')
+            ->pluck('player_id');
+
+        return Player::whereIn('id', $playerIds)
+            ->whereNull('player_id')
             ->with('aliases')
-            ->orderBy('players.name')
+            ->orderBy('name')
             ->limit(8)
             ->get();
     }

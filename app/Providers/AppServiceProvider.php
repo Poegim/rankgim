@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Models\Player;
+use App\Observers\PlayerObserver;
 use Carbon\CarbonImmutable;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
@@ -15,7 +17,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        // Register model observers
     }
 
     /**
@@ -23,6 +25,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        Player::observe(PlayerObserver::class);
         $this->configureDefaults();
     }
 

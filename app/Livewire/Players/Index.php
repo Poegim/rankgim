@@ -42,7 +42,10 @@ class Index extends Component
             return collect();
         }
 
-        return Player::where('name', 'like', '%' . $this->akaSearch . '%')
+        $playerIds = \App\Models\PlayerName::where('name', 'like', '%' . $this->akaSearch . '%')
+            ->pluck('player_id');
+
+        return Player::whereIn('id', $playerIds)
             ->whereNull('player_id')
             ->limit(8)
             ->get();
@@ -54,9 +57,12 @@ class Index extends Component
             return collect();
         }
 
-        return Player::where('name', 'like', '%' . $this->editAkaSearch . '%')
+        $playerIds = \App\Models\PlayerName::where('name', 'like', '%' . $this->editAkaSearch . '%')
+            ->pluck('player_id');
+
+        return Player::whereIn('id', $playerIds)
             ->whereNull('player_id')
-            ->where('id', '!=', $this->editPlayerId) // Don't show self
+            ->where('id', '!=', $this->editPlayerId)
             ->limit(8)
             ->get();
     }
@@ -169,17 +175,12 @@ class Index extends Component
         $players = Player::query()
             ->select('players.*')
             ->whereNull('players.player_id')
-            ->when($search, function ($query) use ($search) {
-                $aliasPlayerIds = Player::whereNotNull('player_id')
-                    ->where('name', 'like', '%' . $search . '%')
-                    ->pluck('player_id');
+                ->when($search, function ($query) use ($search) {
+                    $playerIds = \App\Models\PlayerName::where('name', 'like', '%' . $search . '%')
+                        ->pluck('player_id');
 
-                $query->where(function ($q) use ($search, $aliasPlayerIds) {
-                    $q->where('players.name', 'like', '%' . $search . '%')
-                      ->orWhere('players.country', 'like', '%' . $search . '%')
-                      ->orWhereIn('players.id', $aliasPlayerIds);
-                });
-            })
+                    $query->whereIn('players.id', $playerIds);
+                })
             ->with(['aliases', 'aka'])
             ->orderBy('players.name')
             ->paginate(20);
