@@ -24,6 +24,11 @@ Route::get('/players', fn() => view('players.index'))->name('players.index');
 Route::get('/tournaments', fn() => view('tournaments.index'))->name('tournaments.index');
 Route::get('/tournaments/{id}', fn($id) => view('tournaments.show', ['tournamentId' => $id]))->name('tournaments.show');
 
+// Game creation route with middleware for authentication and tournament management permissions
+Route::middleware(['auth', App\Http\Middleware\EnsureUserCanManageGames::class])->group(function () {
+    Route::get('/tournaments/{id}/games/import', fn($id) => view('games.import', ['tournamentId' => $id]))->name('games.import');
+});
+
 
 // Games route
 Route::get('/games', fn() => view('games.index'))->name('games.index');

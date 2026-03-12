@@ -35,34 +35,6 @@ class Index extends Component
     public string $akaSearch = '';
     public string $editAkaSearch = '';
 
-    // #[Computed]
-    // public function players()
-    //     {
-    //         $search = $this->search;
-
-    //         return Player::query()
-    //             ->select('players.*')
-    //             ->whereNull('players.player_id')
-    //             ->when($search, function ($query) use ($search) {
-    //                 $query->where(function ($q) use ($search) {
-    //                     $q->where('players.name', 'like', '%' . $search . '%')
-    //                       ->orWhere('players.country', 'like', '%' . $search . '%')
-    //                       ->orWhereExists(function ($sub) use ($search) {
-    //                           // znajdź głównego gracza którego alias pasuje do search
-    //                           $sub->from('players as aliases')
-    //                               ->whereColumn('aliases.player_id', 'players.id')
-    //                               ->where('aliases.name', 'like', '%' . $search . '%');
-    //                       });
-    //                 });
-    //             })
-    //             ->with(['aliases' => function ($q) use ($search) {
-    //                 if ($search) {
-    //                     $q->where('name', 'like', '%' . $search . '%');
-    //                 }
-    //             }])                ->orderBy('players.name')
-    //             ->paginate(20);
-    // }
-
     #[Computed]
     public function akaResults()
     {

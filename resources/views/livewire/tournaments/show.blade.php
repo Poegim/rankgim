@@ -52,13 +52,20 @@
             <flux:heading size="xl">{{ $this->tournament->name }}</flux:heading>
             <flux:text>{{ $this->games->total() }} games</flux:text>
         </div>
-        @auth
+        
+       @auth
             @if(auth()->user()->canManageGames())
-                <flux:button variant="primary" wire:click="openAddModal">
-                    Add Game
-                </flux:button>
+                <div class="flex items-center gap-2">
+                    <flux:button variant="ghost" href="{{ route('games.import', $this->tournament->id) }}" wire:navigate>
+                        Import Games
+                    </flux:button>
+                    <flux:button variant="primary" wire:click="openAddModal">
+                        Add Game
+                    </flux:button>
+                </div>
             @endif
         @endauth
+
     </div>
 
     {{-- Games Table --}}
@@ -192,9 +199,6 @@
                     x-on:keydown.arrow-up.prevent="if (open) selected = Math.max(selected - 1, 0)"
                     x-on:keydown.enter.prevent="if (open && {{ $this->winnerResults->count() }} > 0) { $refs['winner-' + selected].click(); }"
                 />
-                <div wire:loading wire:target="winnerSearch" class="text-xs text-zinc-500">
-                    Searching...
-                </div>
                 @error('winnerId') 
                     <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                 @enderror
@@ -208,13 +212,20 @@
                             wire:click="selectWinner({{ $player->id }}, '{{ $player->name }}')"
                             x-on:click="open = false; selected = 0"
                             x-bind:class="selected === {{ $index }} ? 'bg-indigo-100 dark:bg-indigo-900' : ''"
-                            class="w-full px-3 py-2 text-left hover:bg-zinc-100 dark:hover:bg-zinc-700 flex items-center gap-2">
-                        <img src="{{ asset('images/country_flags/' . strtolower($player->country_code) . '.svg') }}"
-                             class="w-5 h-3.5 rounded-sm shrink-0">
-                        <span class="text-sm text-zinc-800 dark:text-white">{{ $player->name }}</span>
-                        <span class="text-xs {{ $raceColors[$player->race] ?? 'text-zinc-400' }}">
-                            {{ $raceLabels[$player->race] ?? '?' }}
-                        </span>
+                            class="w-full px-3 py-2 text-left hover:bg-zinc-100 dark:hover:bg-zinc-700">
+                        <div class="flex items-center gap-2">
+                            <img src="{{ asset('images/country_flags/' . strtolower($player->country_code) . '.svg') }}"
+                                 class="w-5 h-3.5 rounded-sm shrink-0">
+                            <span class="text-sm text-zinc-800 dark:text-white">{{ $player->name }}</span>
+                            <span class="text-xs {{ $raceColors[$player->race] ?? 'text-zinc-400' }}">
+                                {{ $raceLabels[$player->race] ?? '?' }}
+                            </span>
+                        </div>
+                        @if($player->aliases->isNotEmpty())
+                        <div class="pl-7">
+                            <span class="text-xs text-zinc-400">aka: {{ $player->aliases->pluck('name')->join(', ') }}</span>
+                        </div>
+                        @endif
                     </button>
                     @endforeach
                 </div>
@@ -235,9 +246,6 @@
                     x-on:keydown.arrow-up.prevent="if (open) selected = Math.max(selected - 1, 0)"
                     x-on:keydown.enter.prevent="if (open && {{ $this->loserResults->count() }} > 0) { $refs['loser-' + selected].click(); }"
                 />
-                <div wire:loading wire:target="winnerSearch" class="text-xs text-zinc-500">
-                    Searching...
-                </div>
                 @error('loserId') 
                     <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                 @enderror
@@ -246,19 +254,26 @@
                 <div x-show="open" 
                      class="absolute z-50 w-full mt-1 bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-lg shadow-lg max-h-60 overflow-y-auto">
                     @foreach($this->loserResults as $index => $player)
-                    <button type="button"
-                            x-ref="loser-{{ $index }}"
-                            wire:click="selectLoser({{ $player->id }}, '{{ $player->name }}')"
-                            x-on:click="open = false; selected = 0"
-                            x-bind:class="selected === {{ $index }} ? 'bg-indigo-100 dark:bg-indigo-900' : ''"
-                            class="w-full px-3 py-2 text-left hover:bg-zinc-100 dark:hover:bg-zinc-700 flex items-center gap-2">
-                        <img src="{{ asset('images/country_flags/' . strtolower($player->country_code) . '.svg') }}"
-                             class="w-5 h-3.5 rounded-sm shrink-0">
-                        <span class="text-sm text-zinc-800 dark:text-white">{{ $player->name }}</span>
-                        <span class="text-xs {{ $raceColors[$player->race] ?? 'text-zinc-400' }}">
-                            {{ $raceLabels[$player->race] ?? '?' }}
-                        </span>
-                    </button>
+                        <button type="button"
+                                x-ref="loser-{{ $index }}"
+                                wire:click="selectLoser({{ $player->id }}, '{{ $player->name }}')"
+                                x-on:click="open = false; selected = 0"
+                                x-bind:class="selected === {{ $index }} ? 'bg-indigo-100 dark:bg-indigo-900' : ''"
+                                class="w-full px-3 py-2 text-left hover:bg-zinc-100 dark:hover:bg-zinc-700">
+                            <div class="flex items-center gap-2">
+                                <img src="{{ asset('images/country_flags/' . strtolower($player->country_code) . '.svg') }}"
+                                     class="w-5 h-3.5 rounded-sm shrink-0">
+                                <span class="text-sm text-zinc-800 dark:text-white">{{ $player->name }}</span>
+                                <span class="text-xs {{ $raceColors[$player->race] ?? 'text-zinc-400' }}">
+                                    {{ $raceLabels[$player->race] ?? '?' }}
+                                </span>
+                            </div>
+                            @if($player->aliases->isNotEmpty())
+                            <div class="pl-7">
+                                <span class="text-xs text-zinc-400">aka: {{ $player->aliases->pluck('name')->join(', ') }}</span>
+                            </div>
+                            @endif
+                        </button>
                     @endforeach
                 </div>
                 @endif

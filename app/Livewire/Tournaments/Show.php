@@ -69,48 +69,43 @@ class Show extends Component
 
     public function getWinnerResultsProperty()
     {
-        if (strlen($this->winnerSearch) < 2) {
-            return collect();
-        }
-
-        return Player::where('name', 'like', '%' . $this->winnerSearch . '%')
-            ->whereNull('player_id')
-            ->limit(8)
-            ->get();
+        if (strlen($this->winnerSearch) < 2) return collect();
+        return $this->searchPlayers($this->winnerSearch);
     }
-
+    
     public function getLoserResultsProperty()
     {
-        if (strlen($this->loserSearch) < 2) {
-            return collect();
-        }
-
-        return Player::where('name', 'like', '%' . $this->loserSearch . '%')
-            ->whereNull('player_id')
-            ->limit(8)
-            ->get();
+        if (strlen($this->loserSearch) < 2) return collect();
+        return $this->searchPlayers($this->loserSearch);
     }
 
     public function getEditWinnerResultsProperty()
     {
-        if (strlen($this->editWinnerSearch) < 2) {
-            return collect();
-        }
-
-        return Player::where('name', 'like', '%' . $this->editWinnerSearch . '%')
-            ->whereNull('player_id')
-            ->limit(8)
-            ->get();
+        if (strlen($this->editWinnerSearch) < 2) return collect();
+        return $this->searchPlayers($this->editWinnerSearch);
     }
 
     public function getEditLoserResultsProperty()
     {
-        if (strlen($this->editLoserSearch) < 2) {
-            return collect();
-        }
+        if (strlen($this->editLoserSearch) < 2) return collect();
+        return $this->searchPlayers($this->editLoserSearch);
+    }
 
-        return Player::where('name', 'like', '%' . $this->editLoserSearch . '%')
-            ->whereNull('player_id')
+    private function searchPlayers(string $search)
+    {
+        return Player::query()
+            ->select('players.*')
+            ->whereNull('players.player_id')
+            ->where(function ($q) use ($search) {
+                $q->where('players.name', 'like', '%' . $search . '%')
+                  ->orWhereExists(function ($sub) use ($search) {
+                      $sub->from('players as aliases')
+                          ->whereColumn('aliases.player_id', 'players.id')
+                          ->where('aliases.name', 'like', '%' . $search . '%');
+                  });
+            })
+            ->with('aliases')
+            ->orderBy('players.name')
             ->limit(8)
             ->get();
     }

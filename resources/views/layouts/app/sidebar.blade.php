@@ -9,9 +9,7 @@
                 <x-app-logo :sidebar="true" href="{{ route('dashboard') }}" wire:navigate />
                 <flux:sidebar.collapse class="lg:hidden" />
             </flux:sidebar.header>
-
             <flux:sidebar.nav>
-
                 <flux:sidebar.group class="grid">
                     <livewire:player-search />
                     <flux:sidebar.item icon="home" :href="route('dashboard')" :current="request()->routeIs('dashboard')" wire:navigate>
@@ -20,83 +18,59 @@
                     <flux:sidebar.item icon="trophy" :href="route('rankings.index')" :current="request()->routeIs('rankings.index')" wire:navigate>
                         {{ __('Ranking') }}
                     </flux:sidebar.item>
-
                     <flux:sidebar.item icon="calendar-days" :href="route('tournaments.index')" :current="request()->routeIs('tournaments.index')" wire:navigate>
                         {{ __('Tournaments') }}
                     </flux:sidebar.item>
-                    
                     <flux:sidebar.item icon="queue-list" :href="route('games.index')" :current="request()->routeIs('games.index')" wire:navigate>
                         {{ __('Games') }}
                     </flux:sidebar.item>
-                    
                     <flux:sidebar.item icon="users" :href="route('players.index')" :current="request()->routeIs('players.index')" wire:navigate>
                         {{ __('Players') }}
                     </flux:sidebar.item>
-
                 </flux:sidebar.group>
             </flux:sidebar.nav>
-
             <flux:spacer />
-
             <flux:sidebar.item icon="information-circle" :href="route('about')" :current="request()->routeIs('about')" wire:navigate>
                 {{ __('About') }}
             </flux:sidebar.item>
-
             @auth
                 @if(auth()->user()->isAdmin())
                     <flux:sidebar.item icon="shield-check" :href="route('admin.index')" :current="request()->routeIs('admin.*')" wire:navigate>
                         {{ __('Admin Panel') }}
                     </flux:sidebar.item>
                 @endif
+                <x-desktop-user-menu class="hidden lg:block" :name="auth()->user()->name" />
             @endauth
-
             @guest
-                         
-            <flux:sidebar.nav>
-                <flux:sidebar.item icon="arrow-left-start-on-rectangle" href="{{  route('login') }}" wire:navigate>
-                    {{ __('Login') }}
-                </flux:sidebar.item>
-                
-                <flux:sidebar.item icon="user-plus" href="{{ route('register') }}" wire:navigate>
-                    {{ __('Register') }}
-                </flux:sidebar.item>
-            </flux:sidebar.nav>
+                <flux:sidebar.nav>
+                    <flux:sidebar.item icon="arrow-left-start-on-rectangle" href="{{ route('login') }}" wire:navigate>
+                        {{ __('Login') }}
+                    </flux:sidebar.item>
+                    <flux:sidebar.item icon="user-plus" href="{{ route('register') }}" wire:navigate>
+                        {{ __('Register') }}
+                    </flux:sidebar.item>
+                </flux:sidebar.nav>
             @endguest
+        </flux:sidebar>
 
-
-
-            @auth
-            <x-desktop-user-menu class="hidden lg:block" :name="auth()->user()->name" />
-            @endauth
-
-
-            </flux:sidebar>
-
-        <!-- Mobile User Menu -->
-        @auth
+        {{-- Mobile Header — always visible on mobile --}}
         <flux:header class="lg:hidden">
             <flux:sidebar.toggle class="lg:hidden" icon="bars-2" inset="left" />
-
             <flux:spacer />
-
+            @auth
             <flux:dropdown position="top" align="end">
-                @auth                    
                 <flux:profile
-                :initials="auth()->user()->initials()"
-                icon-trailing="chevron-down"
+                    :initials="auth()->user()->initials()"
+                    icon-trailing="chevron-down"
                 />
-                @endauth
-
                 <flux:menu>
-                        
                     <flux:menu.radio.group>
                         <div class="p-0 text-sm font-normal">
                             <div class="flex items-center gap-2 px-1 py-1.5 text-start text-sm">
                                 <flux:avatar
-                                :name="auth()->user()->name"
-                                :initials="auth()->user()->initials()"
+                                    :name="auth()->user()->name"
+                                    :initials="auth()->user()->initials()"
                                 />
-                                
                                 <div class="grid flex-1 text-start text-sm leading-tight">
                                     <flux:heading class="truncate">{{ auth()->user()->name }}</flux:heading>
                                     <flux:text class="truncate">{{ auth()->user()->email }}</flux:text>
@@ -104,36 +78,30 @@
                             </div>
                         </div>
                     </flux:menu.radio.group>
-                    
                     <flux:menu.separator />
-                    
                     <flux:menu.radio.group>
                         <flux:menu.item :href="route('profile.edit')" icon="cog" wire:navigate>
                             {{ __('Settings') }}
                         </flux:menu.item>
                     </flux:menu.radio.group>
-                    
                     <flux:menu.separator />
-                    
                     <form method="POST" action="{{ route('logout') }}" class="w-full">
                         @csrf
                         <flux:menu.item
-                        as="button"
-                        type="submit"
-                        icon="arrow-right-start-on-rectangle"
-                        class="w-full cursor-pointer"
-                        data-test="logout-button"
+                            as="button"
+                            type="submit"
+                            icon="arrow-right-start-on-rectangle"
+                            class="w-full cursor-pointer"
                         >
-                        {{ __('Log out') }}
-                    </flux:menu.item>
-                </form>
-            </flux:menu>
-        </flux:dropdown>
-    </flux:header>
-    @endauth
+                            {{ __('Log out') }}
+                        </flux:menu.item>
+                    </form>
+                </flux:menu>
+            </flux:dropdown>
+            @endauth
+        </flux:header>
 
         {{ $slot }}
-
         @fluxScripts
     </body>
 </html>
