@@ -19,6 +19,7 @@ class GameHistory extends Component
         return RatingHistory::where('player_id', $this->playerId)
             ->with('game.winner', 'game.loser')
             ->orderBy('played_at', 'desc')
+            ->orderByDesc('game_id')
             ->paginate(10);
     }
 
