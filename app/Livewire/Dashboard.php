@@ -55,6 +55,7 @@ class Dashboard extends Component
         return RatingHistory::with('game.winner', 'game.loser')
             ->where('result', 'win')
             ->orderByDesc('played_at')
+            ->orderByDesc('id')
             ->limit(10)
             ->get();
     }
