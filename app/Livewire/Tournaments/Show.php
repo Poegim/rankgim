@@ -55,6 +55,7 @@ class Show extends Component
     {
         return Game::where('tournament_id', $this->tournamentId)
             ->with(['winner', 'loser'])
+            ->withCount('ratingHistory')
             ->orderByDesc('date_time')
             ->orderByDesc('id')
             ->paginate(20);
@@ -72,7 +73,7 @@ class Show extends Component
         if (strlen($this->winnerSearch) < 2) return collect();
         return $this->searchPlayers($this->winnerSearch);
     }
-    
+
     public function getLoserResultsProperty()
     {
         if (strlen($this->loserSearch) < 2) return collect();

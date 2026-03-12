@@ -25,12 +25,13 @@
 
     <div class="rounded-xl border border-zinc-200 dark:border-zinc-700 p-4">
         <flux:table :paginate="$this->games">
-            <flux:table.columns>
-                <flux:table.column>Date</flux:table.column>
-                <flux:table.column>Tournament</flux:table.column>
-                <flux:table.column>Winner</flux:table.column>
-                <flux:table.column>Loser</flux:table.column>
-            </flux:table.columns>
+        <flux:table.columns>
+            <flux:table.column>Date</flux:table.column>
+            <flux:table.column>Tournament</flux:table.column>
+            <flux:table.column>Winner</flux:table.column>
+            <flux:table.column>Loser</flux:table.column>
+            <flux:table.column>Status</flux:table.column>
+        </flux:table.columns>
             <flux:table.rows>
                 @foreach($this->games as $game)
                 <flux:table.row :key="$game->id" class="[&>td]:py-2">
@@ -72,6 +73,15 @@
                                 {{ $raceLabels[$game->loser->race] ?? '?' }}
                             </span>
                         </div>
+                    </flux:table.cell>
+                    <flux:table.cell>
+                        @if($game->rating_history_count === 0)
+                            <span class="text-xs text-yellow-500 font-medium">⏳ pending</span>
+                        @elseif($game->result == 3)
+                            <span class="text-xs text-zinc-400">Draw</span>
+                        @else
+                            <span class="text-xs text-green-600 dark:text-green-500">Win</span>
+                        @endif
                     </flux:table.cell>
                 </flux:table.row>
                 @endforeach

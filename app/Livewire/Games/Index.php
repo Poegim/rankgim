@@ -25,12 +25,13 @@ class Index extends Component
     public function games()
     {
         return Game::with(['winner', 'loser', 'tournament'])
+            ->withCount('ratingHistory')
             ->when($this->dateFrom, fn($q) => $q->whereDate('date_time', '>=', $this->dateFrom))
             ->when($this->dateTo,   fn($q) => $q->whereDate('date_time', '<=', $this->dateTo))
             ->when($this->filterTournament, fn($q) => $q->whereHas('tournament', fn($q) => $q->where('name', 'like', '%' . $this->filterTournament . '%')))
             ->orderByDesc('date_time')
             ->paginate(20);
-    }
+}
 
     public function updatedFilterTournament() { $this->resetPage(); }
     public function updatedDateFrom() { $this->resetPage(); }

@@ -117,13 +117,15 @@
                         </span>
                     </div>
                 </flux:table.cell>
-                <flux:table.cell>
-                    @if($game->result == 3)
-                        <span class="text-xs text-zinc-500">Draw</span>
-                    @else
-                        <span class="text-xs text-green-600 dark:text-green-500">Win</span>
-                    @endif
-                </flux:table.cell>
+                    <flux:table.cell>
+                        @if($game->rating_history_count === 0)
+                            <span class="text-xs text-yellow-500">⏳ pending</span>
+                        @elseif($game->result == 3)
+                            <span class="text-xs text-zinc-500">Draw</span>
+                        @else
+                            <span class="text-xs text-green-600 dark:text-green-500">Win</span>
+                        @endif
+                    </flux:table.cell>
                 @auth
                     @if(auth()->user()->canManageGames())
                     <flux:table.cell>

@@ -66,7 +66,7 @@ class Index extends Component
                 }
             })
             ->orderBy($this->sortBy, $this->sortDirection)
-            ->paginate(20);
+            ->paginate(100);
     }
 
     public function render()
