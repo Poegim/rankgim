@@ -55,7 +55,7 @@
             <flux:text>{{ $players->total() }} players</flux:text>
         </div>
         @auth
-            @if(auth()->user()->canManageGames())
+            @if($canManage)
                 <flux:button variant="primary" wire:click="openAddModal">
                     Add Player
                 </flux:button>
@@ -80,7 +80,7 @@
             <flux:table.column>Country</flux:table.column>
             <flux:table.column>Race</flux:table.column>
             @auth
-                @if(auth()->user()->canManageGames())
+                @if($canManage)
                     <flux:table.column></flux:table.column>
                 @endif
             @endauth
@@ -108,7 +108,7 @@
         </flux:table.cell>
         <flux:table.cell></flux:table.cell>
         @auth
-            @if(auth()->user()->canManageGames())
+            @if($canManage)
             <flux:table.cell>
                 <div class="flex items-center gap-2">
                     <flux:button size="sm" variant="ghost"
@@ -151,7 +151,7 @@
             <span class="text-xs text-zinc-400">alias of {{ $player->name }}</span>
         </flux:table.cell>
         @auth
-            @if(auth()->user()->canManageGames())
+            @if($canManage)
             <flux:table.cell>
                 <div class="flex items-center gap-2">
                     <flux:button size="sm" variant="ghost"

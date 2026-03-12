@@ -163,6 +163,7 @@ class Index extends Component
 
     public function render()
     {
+        
         $search = $this->search;
 
         $players = Player::query()
@@ -182,6 +183,8 @@ class Index extends Component
             ->with(['aliases', 'aka'])
             ->orderBy('players.name')
             ->paginate(20);
+
+         $canManage = auth()->check() && auth()->user()->canManageGames();
 
         return view('livewire.players.index', compact('players'));
     }
