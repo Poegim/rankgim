@@ -84,9 +84,9 @@ class Index extends Component
     {
         $this->reset(['name', 'country', 'countryCode', 'race', 'playerId', 'akaSearch']);
         $this->race = 'Unknown';
+        $this->country = 'XX';  // Unknown country
         $this->resetValidation();
         $this->showAddModal = true;
-        $this->dispatch('set-add-country', name: '');
     }
 
     public function closeAddModal()
