@@ -33,6 +33,7 @@ class Show extends Component
     {
         return RatingHistory::where('player_id', $this->playerId)
             ->orderBy('played_at')
+            ->orderBy('id')
             ->get(['played_at', 'rating_after', 'rating_change', 'result']);
     }
 
@@ -42,6 +43,7 @@ class Show extends Component
         return RatingHistory::where('player_id', $this->playerId)
             ->with('game.winner', 'game.loser')
             ->orderBy('played_at', 'desc')
+            ->orderBy('id', 'desc')
             ->paginate(10);
     }
 
