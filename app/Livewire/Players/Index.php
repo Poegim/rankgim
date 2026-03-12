@@ -86,6 +86,7 @@ class Index extends Component
         $this->race = 'Unknown';
         $this->resetValidation();
         $this->showAddModal = true;
+        $this->dispatch('set-add-country', name: '');
     }
 
     public function closeAddModal()
@@ -141,6 +142,7 @@ class Index extends Component
         $this->editAkaSearch = $player->aka?->name ?? '';
         $this->resetValidation();
         $this->showEditModal = true;
+        $this->dispatch('set-edit-country', code: $player->country_code);
     }
 
     public function update()
