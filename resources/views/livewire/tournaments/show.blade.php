@@ -71,6 +71,8 @@
     {{-- Games Table --}}
     <flux:table :paginate="$this->games">
         <flux:table.columns>
+            <flux:table.column>ID</flux:table.column>
+            <flux:table.column>Iteration</flux:table.column>
             <flux:table.column>Date</flux:table.column>
             <flux:table.column>Winner</flux:table.column>
             <flux:table.column>Loser</flux:table.column>
@@ -84,6 +86,12 @@
         <flux:table.rows>
             @foreach($this->games as $game)
             <flux:table.row :key="$game->id">
+                <flux:table.cell>
+                    <span class="text-sm font-mono text-zinc-500">#{{ $game->id }}</span>
+                </flux:table.cell>
+                <flux:table.cell>
+                    <span class="text-sm font-mono text-zinc-500">#{{ $loop->iteration }}</span>
+                </flux:table.cell>
                 <flux:table.cell>
                     <span class="text-xs text-zinc-400">
                         {{ \Carbon\Carbon::parse($game->date_time)->format('Y-m-d H:i') }}

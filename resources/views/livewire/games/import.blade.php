@@ -47,6 +47,7 @@
             <table class="w-full text-sm">
                 <thead class="bg-zinc-50 dark:bg-zinc-800">
                     <tr>
+                        <th class="text-left px-4 py-2 text-zinc-500 font-medium">#</th>
                         <th class="text-left px-4 py-2 text-zinc-500 font-medium">Winner</th>
                         <th class="text-left px-4 py-2 text-zinc-500 font-medium">Loser</th>
                         <th class="text-left px-4 py-2 text-zinc-500 font-medium">Date</th>
@@ -60,6 +61,9 @@
                         $row['status'] === 'ok' ? 'bg-white dark:bg-zinc-900' :
                         ($row['status'] === 'error' ? 'bg-red-50 dark:bg-red-900/10' : 'bg-yellow-50 dark:bg-yellow-900/10')
                     }}">
+                        <td class="px-4 py-2">
+                            <span class="text-sm font-mono text-zinc-500">#{{ $loop->iteration }}</span>
+                        </td>
                         <td class="px-4 py-2">
                             @if($row['status'] === 'error')
                                 <span class="text-red-500 text-xs">{{ $row['raw'] }}</span>
