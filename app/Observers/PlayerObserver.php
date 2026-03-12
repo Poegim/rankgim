@@ -9,6 +9,15 @@ class PlayerObserver
 {
     public function saved(Player $player): void
     {
+        // Jeśli player_id się zmieniło, zsynchronizuj też starego głównego
+        if ($player->wasChanged('player_id')) {
+            $oldMainId = $player->getOriginal('player_id');
+            if ($oldMainId) {
+                $oldMain = Player::find($oldMainId);
+                if ($oldMain) $this->sync($oldMain);
+            }
+        }
+
         $this->sync($player);
     }
 

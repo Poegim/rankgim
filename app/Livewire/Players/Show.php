@@ -49,15 +49,16 @@ class Show extends Component
     public function stats()
     {
         $history = $this->history;
+        $rating = $this->rating;
         
         return [
-            'win_ratio'    => $this->rating->games_played > 0 
-                                ? round(($this->rating->wins / $this->rating->games_played) * 100) 
-                                : 0,
-            'peak_rating'  => $history->max('rating_after'),
+            'win_ratio'          => $rating && $rating->games_played > 0
+                                        ? round(($rating->wins / $rating->games_played) * 100)
+                                        : 0,
+            'peak_rating'        => $history->max('rating_after') ?? 0,
             'longest_win_streak' => $this->calculateWinStreak(),
-            'current_streak' => $this->calculateCurrentStreak(),
-            'best_rank' => RatingSnapshot::where('player_id', $this->playerId)->min('rank'),
+            'current_streak'     => $this->calculateCurrentStreak(),
+            'best_rank'          => RatingSnapshot::where('player_id', $this->playerId)->min('rank') ?? '—',
         ];
     }
 

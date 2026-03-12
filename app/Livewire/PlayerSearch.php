@@ -18,13 +18,9 @@ class PlayerSearch extends Component
         $playerIds = \App\Models\PlayerName::where('name', 'like', '%' . $this->query . '%')
             ->pluck('player_id');
 
-        return Player::whereIn('players.id', $playerIds)
-            ->whereNull('players.player_id')
-            ->whereHas('rating')
-            ->with('rating')
-            ->join('player_ratings', 'player_ratings.player_id', '=', 'players.id')
-            ->orderByDesc('player_ratings.rating')
-            ->select('players.*')
+        return Player::whereIn('id', $playerIds)
+            ->whereNull('player_id')
+            ->orderBy('name')
             ->limit(8)
             ->get();
     }

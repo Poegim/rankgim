@@ -14,6 +14,7 @@
             placeholder="Search player..."
             icon="magnifying-glass"
             size="sm"
+            class="!border-zinc-700"
             x-on:focus="open = true; updatePosition()"
             x-on:click.outside="open = false"
         />
@@ -23,7 +24,7 @@
         x-ref="dropdown"
         x-show="open"
         style="width: 300px; position: fixed; display: none;"
-        class="z-50 rounded-lg border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 shadow-lg overflow-hidden"
+        class="z-50 rounded-lg bg-white dark:bg-zinc-900 shadow-lg overflow-hidden"
     >
         @if(strlen($query) >= 2)
             @forelse($this->results as $player)

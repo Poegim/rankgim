@@ -3,7 +3,6 @@
 namespace Database\Seeders;
 
 use App\Models\User;
-use Database\Seeders\GamesTableSeeder;
 use Illuminate\Database\Seeder;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
@@ -25,6 +24,7 @@ class DatabaseSeeder extends Seeder
         User::create([
             'name' => 'Admin',
             'email' => 'admin@example.com',
+            'role' => 'admin',
             'password' => bcrypt('password'),
             'created_at' => now(),
             'updated_at' => now(),
@@ -34,6 +34,7 @@ class DatabaseSeeder extends Seeder
             PlayersTableSeeder::class,
             TournamentsTableSeeder::class,
             GamesTableSeeder::class,
+            PlayerNamesSeeder::class,
         ]);
     }
 }

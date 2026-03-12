@@ -67,6 +67,12 @@ class Index extends Component
             ->get();
     }
 
+    public function clearEditAka()
+    {
+        $this->editAkaId = null;
+        $this->editAkaSearch = '';
+    }
+
     public function openAddModal()
     {
         $this->reset(['name', 'country', 'countryCode', 'race', 'playerId', 'akaSearch']);

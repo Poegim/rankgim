@@ -109,6 +109,22 @@ class EloService
             PlayerRating::query()->delete();
             RatingSnapshot::query()->delete();
 
+            // Remap alias IDs to main player IDs in games
+            echo "Remapping alias players in games...\n";
+            $aliasMap = DB::table('players')
+                ->whereNotNull('player_id')
+                ->pluck('player_id', 'id');
+
+            if ($aliasMap->isNotEmpty()) {
+                DB::table('games')
+                    ->whereIn('winner_id', $aliasMap->keys())
+                    ->update(['winner_id' => DB::raw('(SELECT player_id FROM players WHERE id = games.winner_id AND player_id IS NOT NULL)')]);
+                DB::table('games')
+                    ->whereIn('loser_id', $aliasMap->keys())
+                    ->update(['loser_id' => DB::raw('(SELECT player_id FROM players WHERE id = games.loser_id AND player_id IS NOT NULL)')]);
+                echo "Remapped " . $aliasMap->count() . " aliases.\n";
+            }
+
             $total = Game::count();
             echo "Processing {$total} games...\n";
 
@@ -140,7 +156,6 @@ class EloService
 
                     $r1 = $ratings[$winnerId];
                     $r2 = $ratings[$loserId];
-
                     $result = $this->calculate($r1, $r2, $game->result);
 
                     // Save history to batch
@@ -171,7 +186,6 @@ class EloService
                     // Update in-memory state
                     $ratings[$winnerId] = $result['r1_new'];
                     $ratings[$loserId]  = $result['r2_new'];
-
                     $stats[$winnerId]['games_played']++;
                     $stats[$winnerId]['wins']++;
                     $stats[$loserId]['games_played']++;

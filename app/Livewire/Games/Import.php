@@ -88,37 +88,41 @@ class Import extends Component
 
     public function parse(): void
     {
-        $lines = array_filter(
-            array_map('trim', explode("\n", $this->rawInput)),
-            fn($line) => $line !== ''
-        );
+        $lines = array_filter(array_map('trim', explode("\n", $this->rawInput)), fn($line) => $line !== '');
+        
         $results = [];
+        $currentDate = null;
+
         foreach ($lines as $line) {
-            $parts = array_map('trim', explode(',', $line));
-            if (count($parts) !== 2) {
-                $results[] = [
-                    'raw'    => $line,
-                    'error'  => 'Invalid format — expected: winner,loser',
-                    'winner' => null,
-                    'loser'  => null,
-                    'status' => 'error',
-                ];
+            // Sprawdź czy linia to data
+            if (preg_match('/^\d{4}-\d{2}-\d{2}/', $line)) {
+                $currentDate = trim($line);
                 continue;
             }
+
+            $parts = array_map('trim', explode(',', $line));
+            if (count($parts) !== 2) {
+                $results[] = ['raw' => $line, 'error' => 'Invalid format', 'winner' => null, 'loser' => null, 'status' => 'error', 'date' => $currentDate];
+                continue;
+            }
+
             [$winnerName, $loserName] = $parts;
             $winner = $this->findPlayer($winnerName);
-            $loser  = $this->findPlayer($loserName);
+            $loser = $this->findPlayer($loserName);
+
             $results[] = [
-                'raw'         => $line,
+                'raw' => $line,
                 'winner_name' => $winnerName,
-                'loser_name'  => $loserName,
-                'winner'      => $winner,
-                'loser'       => $loser,
-                'winner_id'   => $winner?->id,
-                'loser_id'    => $loser?->id,
-                'status'      => ($winner && $loser) ? 'ok' : 'unmatched',
+                'loser_name' => $loserName,
+                'winner' => $winner,
+                'loser' => $loser,
+                'winner_id' => $winner?->id,
+                'loser_id' => $loser?->id,
+                'date' => $currentDate,
+                'status' => ($winner && $loser) ? 'ok' : 'unmatched',
             ];
         }
+
         $this->parsed = $results;
         $this->isParsed = true;
     }
@@ -146,10 +150,10 @@ class Import extends Component
         foreach ($ready as $row) {
             Game::create([
                 'tournament_id' => $this->tournamentId,
-                'winner_id'     => $row['winner_id'],
-                'loser_id'      => $row['loser_id'],
-                'date_time'     => $this->dateTime,
-                'result'        => 1,
+                'winner_id' => $row['winner_id'],
+                'loser_id' => $row['loser_id'],
+                'date_time' => $row['date'] ?? $this->dateTime,
+                'result' => 1,
             ]);
         }
         session()->flash('success', $ready->count() . ' games imported!');

@@ -1,6 +1,5 @@
 @use('Illuminate\Support\Str')
 <div class="flex flex-col gap-6">
-
     {{-- Player header --}}
     <div class="flex items-center justify-between">
         <div class="flex items-center gap-4">
@@ -15,9 +14,8 @@
                 <p class="text-zinc-500 dark:text-zinc-400">{{ $this->player->race }} · {{ $this->player->country }}</p>
             </div>
         </div>
-
-        <flux:button 
-            variant="primary" 
+        <flux:button
+            variant="primary"
             icon="identification"
             x-on:click="$flux.modal('player-card').show()"
         >
@@ -55,8 +53,8 @@
             </p>
         </div>
     </div>
-    @endif
 
+    {{-- Race stats --}}
     <div class="grid grid-cols-3 gap-4">
         @foreach($this->raceStats as $stat)
         @php
@@ -81,6 +79,7 @@
         @endforeach
     </div>
 
+    {{-- Head to Head --}}
     <div class="rounded-xl border border-zinc-200 dark:border-zinc-700 p-4">
         <p class="text-sm text-zinc-500 dark:text-zinc-400 mb-4">Head to Head</p>
         <flux:table>
@@ -94,29 +93,29 @@
             <flux:table.rows>
                 @foreach($this->headToHead as $h2h)
                 <flux:table.row :key="$h2h['opponent']->id" class="[&>td]:py-2">
-                <flux:table.cell>
-                    <div class="flex items-center gap-2">
-                        <img
-                            src="{{ asset('images/country_flags/' . strtolower($h2h['opponent']->country_code) . '.svg') }}"
-                            alt="{{ $h2h['opponent']->country }}"
-                            class="w-6 h-4 rounded-sm"
-                            title="{{ $h2h['opponent']->country }}"
-                        >
-                        <a href="{{ route('players.show', ['id' => $h2h['opponent']->id, 'slug' => Str::slug($h2h['opponent']->name)]) }}"
-                           class="hover:underline">
-                            {{ $h2h['opponent']->name }}
-                        </a>
-                        @php
-                            $raceText = match($h2h['opponent']->race) {
-                                'Terran'  => 'text-blue-500 dark:text-blue-400',
-                                'Zerg'    => 'text-purple-500 dark:text-purple-400',
-                                'Protoss' => 'text-yellow-500 dark:text-yellow-400',
-                                default   => 'text-zinc-400',
-                            };
-                        @endphp
-                        <span class="text-xs {{ $raceText }}">{{ $h2h['opponent']->race }}</span>
-                    </div>
-                </flux:table.cell>
+                    <flux:table.cell>
+                        <div class="flex items-center gap-2">
+                            <img
+                                src="{{ asset('images/country_flags/' . strtolower($h2h['opponent']->country_code) . '.svg') }}"
+                                alt="{{ $h2h['opponent']->country }}"
+                                class="w-6 h-4 rounded-sm"
+                                title="{{ $h2h['opponent']->country }}"
+                            >
+                            <a href="{{ route('players.show', ['id' => $h2h['opponent']->id, 'slug' => Str::slug($h2h['opponent']->name)]) }}"
+                               class="hover:underline">
+                                {{ $h2h['opponent']->name }}
+                            </a>
+                            @php
+                                $raceText = match($h2h['opponent']->race) {
+                                    'Terran'  => 'text-blue-500 dark:text-blue-400',
+                                    'Zerg'    => 'text-purple-500 dark:text-purple-400',
+                                    'Protoss' => 'text-yellow-500 dark:text-yellow-400',
+                                    default   => 'text-zinc-400',
+                                };
+                            @endphp
+                            <span class="text-xs {{ $raceText }}">{{ $h2h['opponent']->race }}</span>
+                        </div>
+                    </flux:table.cell>
                     <flux:table.cell class="text-green-500">{{ $h2h['wins'] }}</flux:table.cell>
                     <flux:table.cell class="text-red-500">{{ $h2h['losses'] }}</flux:table.cell>
                     <flux:table.cell>{{ $h2h['total'] }}</flux:table.cell>
@@ -130,8 +129,15 @@
             </flux:table.rows>
         </flux:table>
     </div>
+    @else
+    {{-- No rating yet --}}
+    <div class="rounded-xl border border-zinc-200 dark:border-zinc-700 p-6 text-center">
+        <p class="text-zinc-400 dark:text-zinc-500">No rating data yet — this player has no recalculated games.</p>
+    </div>
+    @endif
 
     {{-- ELO Chart --}}
+    @if($this->history->isNotEmpty())
     <div class="rounded-xl border border-zinc-200 dark:border-zinc-700 p-4">
         <p class="text-sm text-zinc-500 dark:text-zinc-400 mb-4">ELO History</p>
         <div
@@ -177,6 +183,7 @@
             <div x-ref="chart"></div>
         </div>
     </div>
+    @endif
 
     {{-- Game history --}}
     <div class="rounded-xl border border-zinc-200 dark:border-zinc-700 p-4">
@@ -184,11 +191,10 @@
         <livewire:players.game-history :playerId="$this->player->id" />
     </div>
 
-    {{-- Modal --}}
+    {{-- Player Card Modal --}}
     <flux:modal name="player-card" class="w-96">
         <div class="relative overflow-hidden rounded-2xl bg-zinc-900 text-white p-6 flex flex-col gap-4"
              style="background: linear-gradient(135deg, #18181b 60%, #27272a 100%);">
-
             {{-- Header --}}
             <div class="flex items-center gap-3">
                 <img
@@ -200,9 +206,8 @@
                     <p class="text-sm text-zinc-400">{{ $this->player->race }} · {{ $this->player->country }}</p>
                 </div>
             </div>
-
             <hr class="border-zinc-700">
-
+            @if($this->rating)
             {{-- Stats grid --}}
             <div class="grid grid-cols-4 gap-3 text-center">
                 <div>
@@ -242,9 +247,7 @@
                     <p class="text-xs text-zinc-400">Streak</p>
                 </div>
             </div>
-
             <hr class="border-zinc-700">
-
             {{-- Race stats --}}
             <div class="grid grid-cols-3 gap-2 text-center">
                 @foreach($this->raceStats as $stat)
@@ -263,9 +266,9 @@
                 </div>
                 @endforeach
             </div>
-
+            @else
+            <p class="text-zinc-400 text-sm text-center">No rating data yet.</p>
+            @endif
         </div>
     </flux:modal>
-
-
 </div>

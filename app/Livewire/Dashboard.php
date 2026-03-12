@@ -1,7 +1,5 @@
 <?php
-
 namespace App\Livewire;
-
 use Livewire\Component;
 use Livewire\Attributes\Computed;
 use App\Models\Player;
@@ -10,33 +8,35 @@ use App\Models\RatingHistory;
 use App\Models\RatingSnapshot;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
-
 class Dashboard extends Component
 {
     public bool $showMore = false;
 
     #[Computed]
-    public function lastGameDate(): string
+    public function lastGameDate(): ?string
     {
         return RatingHistory::max('played_at');
     }
 
     #[Computed]
-    public function since(): Carbon
+    public function since(): ?Carbon
     {
-        return Carbon::parse($this->lastGameDate)->subYear();
+        return $this->lastGameDate ? Carbon::parse($this->lastGameDate)->subYear() : null;
     }
 
     #[Computed]
-    public function previousSnapshotDate(): string
+    public function previousSnapshotDate(): ?string
     {
         $latestDate = RatingSnapshot::max('snapshot_date');
+        if (!$latestDate) return null;
         return RatingSnapshot::where('snapshot_date', '<', $latestDate)->max('snapshot_date');
     }
 
     #[Computed]
     public function top10()
     {
+        if (!$this->since) return collect();
+
         $activePlayerIds = RatingHistory::where('played_at', '>=', $this->since)
             ->distinct()
             ->pluck('player_id');
@@ -62,7 +62,8 @@ class Dashboard extends Component
     #[Computed]
     public function biggestRisers()
     {
-        if (!$this->showMore) return collect();
+        if (!$this->showMore || !$this->previousSnapshotDate) return collect();
+
         return DB::table('player_ratings')
             ->join('players', 'players.id', '=', 'player_ratings.player_id')
             ->join('rating_snapshots', function ($join) {
@@ -78,7 +79,8 @@ class Dashboard extends Component
     #[Computed]
     public function biggestFallers()
     {
-        if (!$this->showMore) return collect();
+        if (!$this->showMore || !$this->previousSnapshotDate) return collect();
+
         return DB::table('player_ratings')
             ->join('players', 'players.id', '=', 'player_ratings.player_id')
             ->join('rating_snapshots', function ($join) {
@@ -94,7 +96,7 @@ class Dashboard extends Component
     #[Computed]
     public function longestStreaks()
     {
-        if (!$this->showMore) return collect();
+        if (!$this->showMore || !$this->since) return collect();
 
         $activePlayers = RatingHistory::where('played_at', '>=', $this->since)
             ->pluck('player_id')
@@ -127,7 +129,8 @@ class Dashboard extends Component
     #[Computed]
     public function mostActives()
     {
-        if (!$this->showMore) return collect();
+        if (!$this->showMore || !$this->since) return collect();
+
         return RatingHistory::where('played_at', '>=', $this->since)
             ->selectRaw('player_id, count(*) as games_count')
             ->groupBy('player_id')
@@ -140,7 +143,8 @@ class Dashboard extends Component
     #[Computed]
     public function biggestUpsets()
     {
-        if (!$this->showMore) return collect();
+        if (!$this->showMore || !$this->since) return collect();
+
         return RatingHistory::where('result', 'win')
             ->where('played_at', '>=', $this->since)
             ->with('game.winner', 'game.loser')
@@ -154,7 +158,8 @@ class Dashboard extends Component
     #[Computed]
     public function mostDominant()
     {
-        if (!$this->showMore) return collect();
+        if (!$this->showMore || !$this->since) return collect();
+
         return RatingHistory::where('played_at', '>=', $this->since)
             ->selectRaw('player_id, count(*) as total, sum(result = "win") as wins')
             ->groupBy('player_id')
@@ -169,6 +174,7 @@ class Dashboard extends Component
     public function topRivalries()
     {
         if (!$this->showMore) return collect();
+
         $rows = DB::table('rating_histories as rh1')
             ->join('rating_histories as rh2', function ($join) {
                 $join->on('rh1.game_id', '=', 'rh2.game_id')
@@ -230,7 +236,8 @@ class Dashboard extends Component
     #[Computed]
     public function qualifiedCountries()
     {
-        if (!$this->showMore) return collect();
+        if (!$this->showMore || !$this->since) return collect();
+
         return DB::table('players')
             ->join('player_ratings', 'player_ratings.player_id', '=', 'players.id')
             ->join('rating_histories', 'rating_histories.player_id', '=', 'players.id')
@@ -249,7 +256,8 @@ class Dashboard extends Component
     #[Computed]
     public function topCountries()
     {
-        if (!$this->showMore) return collect();
+        if (!$this->showMore || !$this->since || empty($this->qualifiedCountries)) return collect();
+
         $activePlayerIds = DB::table('rating_histories')
             ->where('played_at', '>=', $this->since)
             ->distinct()
@@ -277,7 +285,8 @@ class Dashboard extends Component
     #[Computed]
     public function countryMatchups()
     {
-        if (!$this->showMore) return collect();
+        if (!$this->showMore || !$this->since || empty($this->qualifiedCountries)) return collect();
+
         return DB::table('rating_histories as rh1')
             ->join('rating_histories as rh2', function ($join) {
                 $join->on('rh1.game_id', '=', 'rh2.game_id')

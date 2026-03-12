@@ -16,14 +16,9 @@
     <div class="max-w-xl flex flex-col gap-4">
         <flux:textarea
             wire:model="rawInput"
-            label="Paste games (winner,loser — one per line)"
-            placeholder="Flash,Bonyth&#10;Jaedong,Fantasy&#10;Rain,TY"
+            label="Paste games (winner,loser — one per line, date as header)"
+            placeholder="2021-02-06 02:00&#10;Flash,Bonyth&#10;Jaedong,Fantasy&#10;&#10;2021-03-01&#10;Rain,TY"
             rows="10"
-        />
-        <flux:input
-            type="datetime-local"
-            wire:model="dateTime"
-            label="Date & Time for all games"
         />
         <div>
             <flux:button variant="primary" wire:click="parse" wire:loading.attr="disabled">
@@ -54,6 +49,7 @@
                     <tr>
                         <th class="text-left px-4 py-2 text-zinc-500 font-medium">Winner</th>
                         <th class="text-left px-4 py-2 text-zinc-500 font-medium">Loser</th>
+                        <th class="text-left px-4 py-2 text-zinc-500 font-medium">Date</th>
                         <th class="text-left px-4 py-2 text-zinc-500 font-medium">Status</th>
                         <th class="px-4 py-2"></th>
                     </tr>
@@ -95,6 +91,9 @@
                                     @endif
                                 </button>
                             @endif
+                        </td>
+                        <td class="px-4 py-2">
+                            <span class="text-xs text-zinc-400">{{ $row['date'] ?? '—' }}</span>
                         </td>
                         <td class="px-4 py-2">
                             @if($row['status'] === 'ok')
