@@ -1,80 +1,70 @@
 @use('Illuminate\Support\Str')
 <div class="flex flex-col gap-6" x-data="{ showMore: false }">
-    {{-- Row 1: Top 10 + Recent games --}}
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-
-        <div class="rounded-xl border border-zinc-200 dark:border-zinc-700 p-4">
-            <p class="text-sm font-medium text-zinc-500 dark:text-zinc-400 mb-4">🏆 Top 10</p>
-            <flux:table>
-                <flux:table.columns>
-                    <flux:table.column class="w-8">#</flux:table.column>
-                    <flux:table.column>Player</flux:table.column>
-                    <flux:table.column>Rating</flux:table.column>
-                    <flux:table.column>Win%</flux:table.column>
-                </flux:table.columns>
-                <flux:table.rows>
-                    @foreach($this->top10 as $index => $row)
-                    <flux:table.row :key="$row->id" class="[&>td]:py-2">
-                        <flux:table.cell>
-                            <span class="text-zinc-400 font-mono text-sm">{{ $index + 1 }}</span>
-                        </flux:table.cell>
-                        <flux:table.cell>
-                            <div class="flex items-center gap-2">
-                                <img src="{{ asset('images/country_flags/' . strtolower($row->player->country_code) . '.svg') }}" class="w-5 h-3 rounded-sm">
-                                <a href="{{ route('players.show', ['id' => $row->player->id, 'slug' => Str::slug($row->player->name)]) }}" class="hover:underline font-medium text-zinc-800 dark:text-white">{{ $row->player->name }}</a>
-                            </div>
-                        </flux:table.cell>
-                        <flux:table.cell><span class="font-bold text-zinc-800 dark:text-white">{{ $row->rating }}</span></flux:table.cell>
-                        <flux:table.cell>
-                            <span class="{{ $row->games_played > 0 && round(($row->wins / $row->games_played) * 100) >= 50 ? 'text-green-500' : 'text-red-500' }}">
-                                {{ $row->games_played > 0 ? round(($row->wins / $row->games_played) * 100) : 0 }}%
+    {{-- Top 10 full width --}}
+    <div class="rounded-xl border border-zinc-200 dark:border-zinc-700 p-4">
+        <p class="text-sm font-medium text-zinc-500 dark:text-zinc-400 mb-4">🏆 Top 10</p>
+        <flux:table>
+            <flux:table.columns>
+                <flux:table.column class="w-8">#</flux:table.column>
+                <flux:table.column>Player</flux:table.column>
+                <flux:table.column>Rating</flux:table.column>
+                <flux:table.column class="hidden md:table-cell">Change</flux:table.column>
+                <flux:table.column class="hidden lg:table-cell">Games</flux:table.column>
+                <flux:table.column>Win%</flux:table.column>
+                <flux:table.column class="hidden md:table-cell">W / L</flux:table.column>
+            </flux:table.columns>
+            <flux:table.rows>
+                @foreach($this->top10 as $index => $row)
+                @php
+                    $winRatio = $row->games_played > 0 ? round(($row->wins / $row->games_played) * 100) : 0;
+                    $change = $row->prev_rating !== null ? $row->rating - $row->prev_rating : null;
+                @endphp
+                <flux:table.row :key="$row->id" class="[&>td]:py-2">
+                    <flux:table.cell>
+                        <span class="text-zinc-400 font-mono text-sm">{{ $index + 1 }}</span>
+                    </flux:table.cell>
+                    <flux:table.cell>
+                        <div class="flex items-center gap-2">
+                            <img src="{{ asset('images/country_flags/' . strtolower($row->player->country_code) . '.svg') }}" class="w-5 h-3 rounded-sm">
+                            <a href="{{ route('players.show', ['id' => $row->player->id, 'slug' => Str::slug($row->player->name)]) }}" class="hover:underline font-medium text-zinc-800 dark:text-white">{{ $row->player->name }}</a>
+                            <span class="hidden sm:inline text-xs {{ match($row->player->race) { 'Terran' => 'text-blue-500', 'Zerg' => 'text-purple-500', 'Protoss' => 'text-yellow-500', default => 'text-zinc-400' } }}">{{ $row->player->race }}</span>
+                        </div>
+                    </flux:table.cell>
+                    <flux:table.cell>
+                        <span class="font-bold text-zinc-800 dark:text-white">{{ $row->rating }}</span>
+                    </flux:table.cell>
+                    <flux:table.cell class="hidden md:table-cell">
+                        @if($change !== null)
+                            <span class="text-xs font-medium {{ $change > 0 ? 'text-green-500' : ($change < 0 ? 'text-red-500' : 'text-zinc-400') }}">
+                                {{ $change > 0 ? '+' : '' }}{{ $change }}
                             </span>
-                        </flux:table.cell>
-                    </flux:table.row>
-                    @endforeach
-                </flux:table.rows>
-            </flux:table>
-            <div class="mt-3 text-center">
-                <a href="{{ route('rankings.index') }}" class="text-sm text-zinc-500 dark:text-zinc-400 hover:underline">View full rankings →</a>
-            </div>
+                        @else
+                            <span class="text-xs text-zinc-400">—</span>
+                        @endif
+                    </flux:table.cell>
+                    <flux:table.cell class="hidden lg:table-cell">
+                        <span class="text-zinc-500 dark:text-zinc-400 text-sm">{{ $row->games_played }}</span>
+                    </flux:table.cell>
+                    <flux:table.cell>
+                        <div class="flex items-center gap-2">
+                            <span class="text-sm {{ $winRatio >= 50 ? 'text-green-500' : 'text-red-500' }}">{{ $winRatio }}%</span>
+                        </div>
+                    </flux:table.cell>
+                    <flux:table.cell class="hidden md:table-cell">
+                        <span class="text-xs text-green-500">{{ $row->wins }}W</span>
+                        <span class="text-xs text-zinc-400 mx-0.5">/</span>
+                        <span class="text-xs text-red-500">{{ $row->losses }}L</span>
+                    </flux:table.cell>
+                </flux:table.row>
+                @endforeach
+            </flux:table.rows>
+        </flux:table>
+        <div class="mt-3 text-center">
+            <a href="{{ route('rankings.index') }}" class="text-sm text-zinc-500 dark:text-zinc-400 hover:underline">View full rankings →</a>
         </div>
-
-        <div class="rounded-xl border border-zinc-200 dark:border-zinc-700 p-4">
-            <p class="text-sm font-medium text-zinc-500 dark:text-zinc-400 mb-4">🎮 Recent games</p>
-            <flux:table>
-                <flux:table.columns>
-                    <flux:table.column>Winner</flux:table.column>
-                    <flux:table.column>Loser</flux:table.column>
-                    <flux:table.column>Date</flux:table.column>
-                </flux:table.columns>
-                <flux:table.rows>
-                    @foreach($this->recentGames as $entry)
-                    <flux:table.row :key="$entry->id" class="[&>td]:py-2">
-                        <flux:table.cell>
-                            <div class="flex items-center gap-2">
-                                <img src="{{ asset('images/country_flags/' . strtolower($entry->game->winner->country_code) . '.svg') }}" class="w-5 h-3 rounded-sm">
-                                <a href="{{ route('players.show', ['id' => $entry->game->winner->id, 'slug' => Str::slug($entry->game->winner->name)]) }}" class="hover:underline font-medium text-green-500">{{ $entry->game->winner->name }}</a>
-                            </div>
-                        </flux:table.cell>
-                        <flux:table.cell>
-                            <div class="flex items-center gap-2">
-                                <img src="{{ asset('images/country_flags/' . strtolower($entry->game->loser->country_code) . '.svg') }}" class="w-5 h-3 rounded-sm">
-                                <a href="{{ route('players.show', ['id' => $entry->game->loser->id, 'slug' => Str::slug($entry->game->loser->name)]) }}" class="hover:underline text-zinc-500 dark:text-zinc-400">{{ $entry->game->loser->name }}</a>
-                            </div>
-                        </flux:table.cell>
-                        <flux:table.cell><span class="text-xs text-zinc-400">{{ \Carbon\Carbon::parse($entry->played_at)->format('Y-m-d') }}</span></flux:table.cell>
-                    </flux:table.row>
-                    @endforeach
-                </flux:table.rows>
-            </flux:table>
-            <div class="mt-3 text-center">
-                <a href="{{ route('games.index') }}" class="text-sm text-zinc-500 dark:text-zinc-400 hover:underline">View all games →</a>
-            </div>
-        </div>
-
     </div>
 
-    {{-- Race matchups --}}
+    {{-- Race matchups full width --}}
     <div class="rounded-xl border border-zinc-200 dark:border-zinc-700 p-4">
         <p class="text-sm font-medium text-zinc-500 dark:text-zinc-400 mb-4">⚔️ Global race matchups</p>
         <div class="grid grid-cols-3 gap-3">
@@ -119,6 +109,74 @@
                 </div>
             @endforeach
         </div>
+    </div>
+
+    {{-- Recent games + Highest peaks --}}
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+        <div class="rounded-xl border border-zinc-200 dark:border-zinc-700 p-4">
+            <p class="text-sm font-medium text-zinc-500 dark:text-zinc-400 mb-4">🎮 Recent games</p>
+            <flux:table>
+                <flux:table.columns>
+                    <flux:table.column>Winner</flux:table.column>
+                    <flux:table.column>Loser</flux:table.column>
+                    <flux:table.column>Date</flux:table.column>
+                </flux:table.columns>
+                <flux:table.rows>
+                    @foreach($this->recentGames as $entry)
+                    <flux:table.row :key="$entry->id" class="[&>td]:py-2">
+                        <flux:table.cell>
+                            <div class="flex items-center gap-2">
+                                <img src="{{ asset('images/country_flags/' . strtolower($entry->game->winner->country_code) . '.svg') }}" class="w-5 h-3 rounded-sm">
+                                <a href="{{ route('players.show', ['id' => $entry->game->winner->id, 'slug' => Str::slug($entry->game->winner->name)]) }}" class="hover:underline font-medium text-green-500">{{ $entry->game->winner->name }}</a>
+                            </div>
+                        </flux:table.cell>
+                        <flux:table.cell>
+                            <div class="flex items-center gap-2">
+                                <img src="{{ asset('images/country_flags/' . strtolower($entry->game->loser->country_code) . '.svg') }}" class="w-5 h-3 rounded-sm">
+                                <a href="{{ route('players.show', ['id' => $entry->game->loser->id, 'slug' => Str::slug($entry->game->loser->name)]) }}" class="hover:underline text-zinc-500 dark:text-zinc-400">{{ $entry->game->loser->name }}</a>
+                            </div>
+                        </flux:table.cell>
+                        <flux:table.cell><span class="text-xs text-zinc-400">{{ \Carbon\Carbon::parse($entry->played_at)->format('Y-m-d') }}</span></flux:table.cell>
+                    </flux:table.row>
+                    @endforeach
+                </flux:table.rows>
+            </flux:table>
+            <div class="mt-3 text-center">
+                <a href="{{ route('games.index') }}" class="text-sm text-zinc-500 dark:text-zinc-400 hover:underline">View all games →</a>
+            </div>
+        </div>
+
+        <div class="rounded-xl border border-zinc-200 dark:border-zinc-700 p-4">
+            <p class="text-sm font-medium text-zinc-500 dark:text-zinc-400 mb-4">🔝 Highest peaks</p>
+            <flux:table>
+                <flux:table.columns>
+                    <flux:table.column class="w-8">#</flux:table.column>
+                    <flux:table.column>Player</flux:table.column>
+                    <flux:table.column>Peak</flux:table.column>
+                </flux:table.columns>
+                <flux:table.rows>
+                    @foreach($this->highestPeaks as $index => $row)
+                    <flux:table.row :key="$row->player_id" class="[&>td]:py-2">
+                        <flux:table.cell>
+                            <span class="text-zinc-400 font-mono text-sm">{{ $index + 1 }}</span>
+                        </flux:table.cell>
+                        <flux:table.cell>
+                            <div class="flex items-center gap-2">
+                                <img src="{{ asset('images/country_flags/' . strtolower($row->player->country_code) . '.svg') }}" class="w-5 h-3 rounded-sm">
+                                <a href="{{ route('players.show', ['id' => $row->player->id, 'slug' => Str::slug($row->player->name)]) }}" class="hover:underline font-medium text-zinc-800 dark:text-white">{{ $row->player->name }}</a>
+                                <span class="text-xs {{ match($row->player->race) { 'Terran' => 'text-blue-500', 'Zerg' => 'text-purple-500', 'Protoss' => 'text-yellow-500', default => 'text-zinc-400' } }}">{{ $row->player->race }}</span>
+                            </div>
+                        </flux:table.cell>
+                        <flux:table.cell>
+                            <span class="font-bold text-yellow-500">{{ $row->peak_rating }}</span>
+                        </flux:table.cell>
+                    </flux:table.row>
+                    @endforeach
+                </flux:table.rows>
+            </flux:table>
+        </div>
+
     </div>
 
     {{-- Hidden stats --}}

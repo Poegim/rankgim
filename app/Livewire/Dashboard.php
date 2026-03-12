@@ -38,13 +38,34 @@ class Dashboard extends Component
         if (!$this->since) return collect();
 
         $activePlayerIds = RatingHistory::where('played_at', '>=', $this->since)
-            ->distinct()
-            ->pluck('player_id');
+            ->distinct()->pluck('player_id');
 
-        return PlayerRating::with('player')
+        $ratings = PlayerRating::with('player')
             ->whereIn('player_id', $activePlayerIds)
             ->where('games_played', '>=', 15)
             ->orderByDesc('rating')
+            ->limit(10)
+            ->get();
+
+        $playerIds = $ratings->pluck('player_id');
+        $snapshots = \App\Models\RatingSnapshot::whereIn('player_id', $playerIds)
+            ->where('snapshot_date', $this->previousSnapshotDate)
+            ->get()
+            ->keyBy('player_id');
+
+        return $ratings->map(function ($row) use ($snapshots) {
+            $row->prev_rating = $snapshots->get($row->player_id)?->rating;
+            return $row;
+        });
+    }
+
+    #[Computed]
+    public function highestPeaks()
+    {
+        return RatingHistory::selectRaw('player_id, MAX(rating_after) as peak_rating')
+            ->groupBy('player_id')
+            ->orderByDesc('peak_rating')
+            ->with('player')
             ->limit(10)
             ->get();
     }

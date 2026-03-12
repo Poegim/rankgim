@@ -38,6 +38,7 @@
                 :direction="$sortDirection"
                 wire:click="sort('rating')"
             >Rating</flux:table.column>
+            <flux:table.column class="hidden md:table-cell">Change</flux:table.column>
             <flux:table.column
                 sortable
                 :sorted="$sortBy === 'wins'"
@@ -87,6 +88,16 @@
                 </flux:table.cell>
                 <flux:table.cell>
                     <span class="font-bold text-zinc-800 dark:text-white">{{ $row->rating }}</span>
+                </flux:table.cell>
+                <flux:table.cell class="hidden md:table-cell">
+                    @php $change = $row->prev_rating !== null ? $row->rating - $row->prev_rating : null; @endphp
+                    @if($change !== null)
+                        <span class="text-xs font-medium {{ $change > 0 ? 'text-green-500' : ($change < 0 ? 'text-red-500' : 'text-zinc-400') }}">
+                            {{ $change > 0 ? '+' : '' }}{{ $change }}
+                        </span>
+                    @else
+                        <span class="text-xs text-zinc-400">—</span>
+                    @endif
                 </flux:table.cell>
                 <flux:table.cell>
                     <span class="font-medium text-green-500">{{ $row->wins }}</span>
