@@ -76,7 +76,7 @@
                                              class="w-5 h-3.5 rounded-sm shrink-0">
                                         <span class="font-medium text-zinc-800 dark:text-white">{{ $row['winner']['name'] }}</span>
                                     @else
-                                        <span class="text-red-500">{{ $row['winner_name'] }} <span class="text-xs">(not found)</span></span>
+                                        <span class="text-red-500 cursor-pointer" x-on:click.stop="navigator.clipboard.writeText('{{ $row['winner_name'] }}')">{{ $row['winner_name'] }} <span class="text-xs">(not found)</span></span>
                                     @endif
                                 </button>
                             @endif
@@ -91,7 +91,7 @@
                                              class="w-5 h-3.5 rounded-sm shrink-0">
                                         <span class="font-medium text-zinc-800 dark:text-white">{{ $row['loser']['name'] }}</span>
                                     @else
-                                        <span class="text-red-500">{{ $row['loser_name'] }} <span class="text-xs">(not found)</span></span>
+                                        <span class="text-red-500 cursor-pointer" x-on:click.stop="navigator.clipboard.writeText('{{ $row['loser_name'] }}')">{{ $row['loser_name'] }} <span class="text-xs">(not found)</span></span>
                                     @endif
                                 </button>
                             @endif
