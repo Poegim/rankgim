@@ -356,9 +356,17 @@
 
             {{-- Edit AKA Autocomplete --}}
             <div x-data="{ open: false, selected: 0 }" class="relative">
+                <div class="flex items-center justify-between mb-1">
+                    <flux:label>AKA (Also Known As)</flux:label>
+                    @if($editAkaId)
+                        <button type="button" wire:click="clearEditAka"
+                            class="text-xs text-red-400 hover:text-red-600">
+                            ✕ Remove AKA
+                        </button>
+                    @endif
+                </div>
                 <flux:input 
                     wire:model.live.debounce.300ms="editAkaSearch" 
-                    label="AKA (Also Known As)" 
                     placeholder="Search for main player..."
                     autocomplete="off"
                     x-on:focus="open = true"
