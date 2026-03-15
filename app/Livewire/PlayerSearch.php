@@ -21,7 +21,7 @@ class PlayerSearch extends Component
         return Player::whereIn('id', $playerIds)
             ->whereNull('player_id')
             ->orderBy('name')
-            ->limit(8)
+            ->limit(50)
             ->get();
     }
 

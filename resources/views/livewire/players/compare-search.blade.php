@@ -16,7 +16,7 @@
                 <button wire:click="clearPlayer1" class="absolute right-3 top-2.5 text-zinc-400 hover:text-white">✕</button>
             @endif
             @if($open1 && strlen($search1) >= 2)
-                <div class="absolute z-50 mt-1 w-full bg-zinc-800 border border-zinc-700 rounded-lg shadow-xl overflow-hidden">
+                <div class="absolute z-50 mt-1 w-full bg-zinc-800 border border-zinc-700 rounded-lg shadow-xl overflow-hidden max-h-64 overflow-y-auto">
                     @forelse($this->results1 as $player)
                         <button
                             wire:click="selectPlayer1({{ $player->id }}, '{{ addslashes($player->name) }}')"
@@ -60,7 +60,7 @@
                 <button wire:click="clearPlayer2" class="absolute right-3 top-2.5 text-zinc-400 hover:text-white">✕</button>
             @endif
             @if($open2 && strlen($search2) >= 2)
-                <div class="absolute z-50 mt-1 w-full bg-zinc-800 border border-zinc-700 rounded-lg shadow-xl overflow-hidden">
+                <div class="absolute z-50 mt-1 w-full bg-zinc-800 border border-zinc-700 rounded-lg shadow-xl overflow-hidden max-h-64 overflow-y-auto">
                     @forelse($this->results2 as $player)
                         <button
                             wire:click="selectPlayer2({{ $player->id }}, '{{ addslashes($player->name) }}')"

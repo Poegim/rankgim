@@ -29,7 +29,7 @@ class CompareSearch extends Component
         return Player::whereIn('id', $ids)
             ->whereNull('player_id')
             ->orderBy('name')
-            ->limit(8)
+            ->limit(50)
             ->get();
     }
 
@@ -43,7 +43,7 @@ class CompareSearch extends Component
         return Player::whereIn('id', $ids)
             ->whereNull('player_id')
             ->orderBy('name')
-            ->limit(8)
+            ->limit(50)
             ->get();
     }
 
