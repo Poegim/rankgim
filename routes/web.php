@@ -19,6 +19,10 @@ Route::get('/players/{id}-{slug}', function ($id, $slug) {
 
 // Players route
 Route::get('/players', fn() => view('players.index'))->name('players.index');
+// Player comparison search route
+Route::get('/compare', fn() => view('players.compare-search'))->name('players.compare-search');
+// Player comparison route with two player IDs in the URL
+Route::get('/compare/{id1}-vs-{id2}', fn($id1, $id2) => view('players.compare', ['id1' => $id1, 'id2' => $id2]))->name('players.compare');
 
 // Tournament routes
 Route::get('/tournaments', fn() => view('tournaments.index'))->name('tournaments.index');

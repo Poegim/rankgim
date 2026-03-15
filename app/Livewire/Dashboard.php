@@ -8,6 +8,7 @@ use App\Models\RatingHistory;
 use App\Models\RatingSnapshot;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
+
 class Dashboard extends Component
 {
     public bool $showMore = false;
