@@ -111,6 +111,18 @@
         </div>
     </div>
 
+    {{-- Games & Active Players per Year --}}
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="rounded-xl border border-zinc-200 dark:border-zinc-700 p-4">
+            <p class="text-sm font-medium text-zinc-500 dark:text-zinc-400 mb-4">📊 Games per year</p>
+            <div id="chart-games-year" class="h-56"></div>
+        </div>
+        <div class="rounded-xl border border-zinc-200 dark:border-zinc-700 p-4">
+            <p class="text-sm font-medium text-zinc-500 dark:text-zinc-400 mb-4">👥 Active players per year</p>
+            <div id="chart-players-year" class="h-56"></div>
+        </div>
+    </div>
+
     {{-- Recent games + Highest peaks --}}
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
 
@@ -289,8 +301,7 @@
 
         {{-- Country stats --}}
         <div x-show="showMore" x-cloak class="rounded-xl border border-zinc-200 dark:border-zinc-700 p-4">
-            <p class="text-sm font-medium text-zinc-500 dark:text-zinc-400 mb-4">🌍 Country stats <span class="text-xs">(min. 5 players with 15+ games)</span></p>
-            <flux:table>
+            <p class="text-sm font-medium text-zinc-500 dark:text-zinc-400 mb-4">🌍 Country stats <span class="text-xs">(active players with 15+ games · all-time stats)</span></p>            <flux:table>
                 <flux:table.columns>
                     <flux:table.column class="w-8">#</flux:table.column>
                     <flux:table.column>Country</flux:table.column>
@@ -481,7 +492,7 @@
         <div  x-show="showMore" x-cloak class="rounded-xl border border-zinc-200 dark:border-zinc-700 p-4 mt-4">
             <div class="flex items-center justify-between mb-4">
                 <p class="text-sm font-medium text-zinc-500 dark:text-zinc-400">🌍 Country vs Country</p>
-                <span class="text-xs text-zinc-400">last 12 months · top 10 countries by player count</span>
+                <span class="text-xs text-zinc-400">all games · top 10 countries by active player count</span>
             </div>
             <div class="flex flex-col gap-2">
                 @php
@@ -562,6 +573,37 @@
 
     </div>
 
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const isDark = document.documentElement.classList.contains('dark');
+    const textColor = isDark ? '#a1a1aa' : '#71717a';
+    const gridColor = isDark ? '#27272a' : '#e4e4e7';
 
+    const baseOptions = {
+        chart: { toolbar: { show: false }, fontFamily: 'inherit' },
+        dataLabels: { enabled: false },
+        grid: { borderColor: gridColor },
+        xaxis: { labels: { style: { colors: textColor } } },
+        yaxis: { labels: { style: { colors: textColor } } },
+        tooltip: { theme: isDark ? 'dark' : 'light' },
+    };
+
+    new ApexCharts(document.querySelector('#chart-games-year'), {
+        ...baseOptions,
+        chart: { ...baseOptions.chart, type: 'bar', height: 224 },
+        series: [{ name: 'Games', data: @json($this->gamesPerYear->pluck('total')) }],
+        xaxis: { ...baseOptions.xaxis, categories: @json($this->gamesPerYear->pluck('year')) },
+        colors: ['#6366f1'],
+    }).render();
+
+    new ApexCharts(document.querySelector('#chart-players-year'), {
+        ...baseOptions,
+        chart: { ...baseOptions.chart, type: 'bar', height: 224 },
+        series: [{ name: 'Players', data: @json($this->activePlayersPerYear->pluck('total')) }],
+        xaxis: { ...baseOptions.xaxis, categories: @json($this->activePlayersPerYear->pluck('year')) },
+        colors: ['#8b5cf6'],
+    }).render();
+});
+</script>
 
 </div>

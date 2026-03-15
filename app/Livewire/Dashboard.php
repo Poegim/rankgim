@@ -327,6 +327,32 @@ class Dashboard extends Component
             ->get();
     }
 
+    #[Computed]
+    public function gamesPerYear()
+    {
+        return DB::table('games')
+            ->selectRaw('YEAR(date_time) as year, COUNT(*) as total')
+            ->groupByRaw('YEAR(date_time)')
+            ->orderBy('year')
+            ->get();
+    }
+
+    #[Computed]
+    public function activePlayersPerYear()
+    {
+        return DB::query()
+            ->fromSub(function ($query) {
+                $query->selectRaw('YEAR(date_time) as year, winner_id as player_id')->from('games')
+                    ->unionAll(
+                        DB::table('games')->selectRaw('YEAR(date_time) as year, loser_id as player_id')
+                    );
+            }, 'all_players')
+            ->selectRaw('year, COUNT(DISTINCT player_id) as total')
+            ->groupBy('year')
+            ->orderBy('year')
+            ->get();
+    }
+
     public function render()
     {
         return view('livewire.dashboard');
