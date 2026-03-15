@@ -27,7 +27,7 @@
                     <flux:sidebar.item icon="users" :href="route('players.index')" :current="request()->routeIs('players.index')" wire:navigate>
                         {{ __('Players') }}
                     </flux:sidebar.item>
-                    <flux:sidebar.item icon="users" :href="route('players.compare-search')" :current="request()->routeIs('players.compare-search')" wire:navigate>
+                    <flux:sidebar.item icon="scale" :href="route('players.compare-search')" :current="request()->routeIs('players.compare-search')" wire:navigate>
                         {{ __('Compare Players') }}
                     </flux:sidebar.item>
                 </flux:sidebar.group>
