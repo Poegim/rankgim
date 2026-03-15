@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\DB;
 class Dashboard extends Component
 {
     public bool $showMore = false;
+    public bool $excludeKoreans = false;
 
     #[Computed]
     public function lastGameDate(): ?string
@@ -64,10 +65,13 @@ class Dashboard extends Component
     public function highestPeaks()
     {
         return RatingHistory::selectRaw('player_id, MAX(rating_after) as peak_rating')
+            ->when($this->excludeKoreans, function ($query) {
+                $query->whereHas('player', fn($q) => $q->where('country_code', '!=', 'KR'));
+            })
             ->groupBy('player_id')
             ->orderByDesc('peak_rating')
             ->with('player')
-            ->limit(20)
+            ->limit(10)
             ->get();
     }
 
