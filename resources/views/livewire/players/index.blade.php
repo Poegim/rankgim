@@ -64,13 +64,28 @@
     </div>
 
     {{-- Search --}}
-    <div class="mb-4">
-        <flux:input 
-            type="text" 
-            autocomplete="off"
-            wire:model.live.debounce.300ms="search" 
-            placeholder="Search players..."
-        />
+    <div class="mb-4 flex items-center gap-2">
+        <div class="flex-1">
+            <flux:input 
+                type="text" 
+                autocomplete="off"
+                wire:model.live.debounce.300ms="search" 
+                placeholder="Search players..."
+            />
+        </div>
+        @auth
+            @if(auth()->user()->canManageGames())
+                <flux:button 
+                    variant="primary" 
+                    size="sm"
+                    wire:click="openAddModal(search)"
+                    class="shrink-0"
+                    title="Add player with this name"
+                >
+                    +
+                </flux:button>
+            @endif
+        @endauth
     </div>
 
     {{-- Players Table --}}
@@ -205,7 +220,9 @@
                         if (!this.search) return $wire.countriesList;
                         return $wire.countriesList.filter(c => c.name.toLowerCase().includes(this.search.toLowerCase()));
                     }
-                }" class="relative">
+                }"
+                x-init="$watch(() => $wire.showAddModal, (val) => { if (val) search = '' })"
+                class="relative">
                     <flux:label>Country</flux:label>
                     <flux:input
                         x-model="search"
@@ -214,6 +231,7 @@
                         x-on:focus="open = true; selected = 0"
                         x-on:click.away="open = false"
                         x-on:input="open = true; selected = 0"
+                        x-on:keydown.tab="open = false"
                         x-on:keydown.arrow-down.prevent="selected = Math.min(selected + 1, filtered.length - 1)"
                         x-on:keydown.arrow-up.prevent="selected = Math.max(selected - 1, 0)"
                         x-on:keydown.enter.prevent="if (filtered[selected]) { $wire.set('country', filtered[selected].code); search = filtered[selected].name; open = false; }"
@@ -323,6 +341,7 @@
                         x-model="search"
                         placeholder="Search country..."
                         autocomplete="off"
+                        x-on:keydown.tab="open = false"
                         x-on:focus="open = true; selected = 0"
                         x-on:click.away="open = false"
                         x-on:input="open = true; selected = 0"

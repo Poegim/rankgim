@@ -80,11 +80,14 @@ class Index extends Component
         $this->editAkaSearch = '';
     }
 
-    public function openAddModal()
+    public function openAddModal($prefill = null)
     {
         $this->reset(['name', 'country', 'countryCode', 'race', 'playerId', 'akaSearch']);
         $this->race = 'Unknown';
-        $this->country = 'XX';  // Unknown country
+        $this->country = 'XX';
+        if ($prefill) {
+            $this->name = $prefill;
+        }
         $this->resetValidation();
         $this->showAddModal = true;
     }
