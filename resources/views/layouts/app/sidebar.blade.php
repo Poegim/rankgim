@@ -12,7 +12,7 @@
             <flux:sidebar.nav>
                 <flux:sidebar.group class="grid">
                     <livewire:player-search />
-                    <flux:sidebar.item icon="home" :href="route('dashboard')" :current="request()->routeIs('dashboard')" wire:navigate>
+                    <flux:sidebar.item icon="home" :href="route('dashboard')" :current="request()->routeIs('dashboard')" >
                         {{ __('Dashboard') }}
                     </flux:sidebar.item>
                     <flux:sidebar.item icon="trophy" :href="route('rankings.index')" :current="request()->routeIs('rankings.index')" wire:navigate>
