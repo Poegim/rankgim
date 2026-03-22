@@ -24,7 +24,7 @@
                         >
                             @if($player->country_code && $player->country_code !== 'XX')
                                 <img src="{{ asset('images/country_flags/' . strtolower($player->country_code) . '.svg') }}"
-                                     class="w-5 h-3.5 rounded-sm shrink-0">
+                                     class="w-7 h-5 rounded-sm shrink-0">
                             @endif
                             <span>{{ $player->name }}</span>
                             <span class="ml-auto text-xs text-zinc-500">{{ $player->race }}</span>
@@ -68,7 +68,7 @@
                         >
                             @if($player->country_code && $player->country_code !== 'XX')
                                 <img src="{{ asset('images/country_flags/' . strtolower($player->country_code) . '.svg') }}"
-                                     class="w-5 h-3.5 rounded-sm shrink-0">
+                                     class="w-7 h-5 rounded-sm shrink-0">
                             @endif
                             <span>{{ $player->name }}</span>
                             <span class="ml-auto text-xs text-zinc-500">{{ $player->race }}</span>

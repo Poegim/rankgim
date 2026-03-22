@@ -90,28 +90,28 @@
                     <div class="flex flex-col gap-2">
                         <div class="flex items-center gap-2">
                             <span class="text-lg">🎮</span>
-                            <span class="font-medium text-zinc-800 dark:text-white text-sm">Minimum 15 games</span>
+                            <span class="font-semibold text-[0.9375rem] text-zinc-800 dark:text-white text-sm">Minimum 15 games</span>
                         </div>
                         <p class="text-sm text-zinc-500">Players need at least 15 rated games to appear in the ranking. This filters out one-time participants and ensures ratings are meaningful.</p>
                     </div>
                     <div class="flex flex-col gap-2">
                         <div class="flex items-center gap-2">
                             <span class="text-lg">📅</span>
-                            <span class="font-medium text-zinc-800 dark:text-white text-sm">Active in last 12 months</span>
+                            <span class="font-semibold text-[0.9375rem] text-zinc-800 dark:text-white text-sm">Active in last 12 months</span>
                         </div>
                         <p class="text-sm text-zinc-500">Only players who have played at least one game in the last 12 months (from the date of the most recent game) are shown in the ranking.</p>
                     </div>
                     <div class="flex flex-col gap-2">
                         <div class="flex items-center gap-2">
                             <span class="text-lg">🔄</span>
-                            <span class="font-medium text-zinc-800 dark:text-white text-sm">Full recalculation</span>
+                            <span class="font-semibold text-[0.9375rem] text-zinc-800 dark:text-white text-sm">Full recalculation</span>
                         </div>
                         <p class="text-sm text-zinc-500">Ratings are recalculated from scratch every time new games are added. All games are processed in chronological order to ensure accuracy.</p>
                     </div>
                     <div class="flex flex-col gap-2">
                         <div class="flex items-center gap-2">
                             <span class="text-lg">👤</span>
-                            <span class="font-medium text-zinc-800 dark:text-white text-sm">AKA system</span>
+                            <span class="font-semibold text-[0.9375rem] text-zinc-800 dark:text-white text-sm">AKA system</span>
                         </div>
                         <p class="text-sm text-zinc-500">Players who use multiple nicknames are linked together. All their games count towards a single rating, so the ranking reflects the actual person, not the alias.</p>
                     </div>
@@ -146,7 +146,7 @@
         <div class="flex flex-col gap-3">
             <h2 class="text-sm font-semibold text-zinc-400 uppercase tracking-widest">Credits</h2>
             <p class="text-zinc-600 dark:text-zinc-300 leading-relaxed">
-                Special thanks to <span class="font-medium text-zinc-800 dark:text-white">GruGloG</span> and <span class="font-medium text-zinc-800 dark:text-white">Ziggy</span> for submitting game results to the database — 577 and 317 games added respectively.
+                Special thanks to <span class="font-semibold text-[0.9375rem] text-zinc-800 dark:text-white">GruGloG</span> and <span class="font-semibold text-[0.9375rem] text-zinc-800 dark:text-white">Ziggy</span> for submitting game results to the database — 577 and 317 games added respectively.
             </p>
         </div>
 
@@ -154,7 +154,7 @@
         <div class="flex flex-col gap-3">
             <h2 class="text-sm font-semibold text-zinc-400 uppercase tracking-widest">Author</h2>
             <p class="text-zinc-600 dark:text-zinc-300 leading-relaxed">
-                Built by <span class="font-medium text-zinc-800 dark:text-white">poegim</span>. To get in touch, find me under the same nick on Netwars, TeamLiquid or Battle.net.
+                Built by <span class="font-semibold text-[0.9375rem] text-zinc-800 dark:text-white">poegim</span>. To get in touch, find me under the same nick on Netwars, TeamLiquid or Battle.net.
             </p>
         </div>
 

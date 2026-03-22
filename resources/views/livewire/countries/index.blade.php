@@ -60,8 +60,8 @@
                         <a href="{{ route('rankings.index', ['filterCountryCode' => $row->country_code]) }}"
                            class="flex items-center gap-2 hover:underline">
                             <img src="{{ asset('images/country_flags/' . strtolower($row->country_code) . '.svg') }}"
-                                 class="w-6 h-4 rounded-sm">
-                            <span class="font-medium text-zinc-800 dark:text-white">{{ $row->country }}</span>
+                                 class="w-7 h-5 rounded-sm">
+                            <span class="font-semibold text-[0.9375rem] text-zinc-800 dark:text-white">{{ $row->country }}</span>
                         </a>
                     </flux:table.cell>
                     <flux:table.cell>
@@ -108,8 +108,8 @@
                         <flux:table.cell>
                             <div class="flex items-center gap-2">
                                 <img src="{{ asset('images/country_flags/' . strtolower($row->country_code) . '.svg') }}"
-                                     class="w-6 h-4 rounded-sm">
-                                <span class="font-medium text-zinc-800 dark:text-white">{{ $row->country }}</span>
+                                     class="w-7 h-5 rounded-sm">
+                                <span class="font-semibold text-[0.9375rem] text-zinc-800 dark:text-white">{{ $row->country }}</span>
                             </div>
                         </flux:table.cell>
                         <flux:table.cell>
@@ -156,8 +156,8 @@
                         <flux:table.cell>
                             <div class="flex items-center gap-2">
                                 <img src="{{ asset('images/country_flags/' . strtolower($row->country_code) . '.svg') }}"
-                                     class="w-6 h-4 rounded-sm">
-                                <span class="font-medium text-zinc-800 dark:text-white">{{ $row->country }}</span>
+                                     class="w-7 h-5 rounded-sm">
+                                <span class="font-semibold text-[0.9375rem] text-zinc-800 dark:text-white">{{ $row->country }}</span>
                             </div>
                         </flux:table.cell>
                         <flux:table.cell>
@@ -203,8 +203,8 @@
                     <div class="flex items-center gap-3">
                         <span class="text-xs text-zinc-400 font-mono w-4">{{ $index + 1 }}</span>
                         <img src="{{ asset('images/country_flags/' . strtolower($country->country_code) . '.svg') }}"
-                             class="w-6 h-4 rounded-sm">
-                        <span class="font-medium text-zinc-800 dark:text-white">{{ $country->country }}</span>
+                             class="w-7 h-5 rounded-sm">
+                        <span class="font-semibold text-[0.9375rem] text-zinc-800 dark:text-white">{{ $country->country }}</span>
                         <span class="text-xs text-zinc-400">{{ $country->player_count }} players</span>
                     </div>
                     <div class="flex items-center gap-3">
@@ -232,7 +232,7 @@
                             <div class="flex items-center justify-between rounded-lg bg-zinc-50 dark:bg-zinc-800 px-3 py-2">
                                 <div class="flex items-center gap-2">
                                     <img src="{{ asset('images/country_flags/' . strtolower($opponent->country_code) . '.svg') }}"
-                                         class="w-5 h-3 rounded-sm">
+                                         class="w-7 h-5 rounded-sm">
                                     <div>
                                         <p class="text-sm text-zinc-600 dark:text-zinc-400">{{ $opponent->country }}</p>
                                         <p class="text-xs text-zinc-400">{{ $wins }}W / {{ $losses }}L</p>

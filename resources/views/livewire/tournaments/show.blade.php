@@ -100,7 +100,7 @@
                 <flux:table.cell>
                     <div class="flex items-center gap-2">
                         <img src="{{ asset('images/country_flags/' . strtolower($game->winner->country_code) . '.svg') }}"
-                             class="w-5 h-3.5 rounded-sm shrink-0"
+                             class="w-7 h-5 rounded-sm shrink-0"
                              alt="{{ $game->winner->country }}">
                         <a href="{{ route('players.show', ['id' => $game->winner->id, 'slug' => Str::slug($game->winner->name)]) }}"
                            class="hover:underline font-medium text-green-600 dark:text-green-500">
@@ -114,7 +114,7 @@
                 <flux:table.cell>
                     <div class="flex items-center gap-2">
                         <img src="{{ asset('images/country_flags/' . strtolower($game->loser->country_code) . '.svg') }}"
-                             class="w-5 h-3.5 rounded-sm shrink-0"
+                             class="w-7 h-5 rounded-sm shrink-0"
                              alt="{{ $game->loser->country }}">
                         <a href="{{ route('players.show', ['id' => $game->loser->id, 'slug' => Str::slug($game->loser->name)]) }}"
                            class="hover:underline text-zinc-500 dark:text-zinc-400">
@@ -225,7 +225,7 @@
                             class="w-full px-3 py-2 text-left hover:bg-zinc-100 dark:hover:bg-zinc-700">
                         <div class="flex items-center gap-2">
                             <img src="{{ asset('images/country_flags/' . strtolower($player->country_code) . '.svg') }}"
-                                 class="w-5 h-3.5 rounded-sm shrink-0">
+                                 class="w-7 h-5 rounded-sm shrink-0">
                             <span class="text-sm text-zinc-800 dark:text-white">{{ $player->name }}</span>
                             <span class="text-xs {{ $raceColors[$player->race] ?? 'text-zinc-400' }}">
                                 {{ $raceLabels[$player->race] ?? '?' }}
@@ -272,7 +272,7 @@
                                 class="w-full px-3 py-2 text-left hover:bg-zinc-100 dark:hover:bg-zinc-700">
                             <div class="flex items-center gap-2">
                                 <img src="{{ asset('images/country_flags/' . strtolower($player->country_code) . '.svg') }}"
-                                     class="w-5 h-3.5 rounded-sm shrink-0">
+                                     class="w-7 h-5 rounded-sm shrink-0">
                                 <span class="text-sm text-zinc-800 dark:text-white">{{ $player->name }}</span>
                                 <span class="text-xs {{ $raceColors[$player->race] ?? 'text-zinc-400' }}">
                                     {{ $raceLabels[$player->race] ?? '?' }}
@@ -349,7 +349,7 @@
                             x-bind:class="selected === {{ $index }} ? 'bg-indigo-100 dark:bg-indigo-900' : ''"
                             class="w-full px-3 py-2 text-left hover:bg-zinc-100 dark:hover:bg-zinc-700 flex items-center gap-2">
                         <img src="{{ asset('images/country_flags/' . strtolower($player->country_code) . '.svg') }}"
-                             class="w-5 h-3.5 rounded-sm shrink-0">
+                             class="w-7 h-5 rounded-sm shrink-0">
                         <span class="text-sm text-zinc-800 dark:text-white">{{ $player->name }}</span>
                         <span class="text-xs {{ $raceColors[$player->race] ?? 'text-zinc-400' }}">
                             {{ $raceLabels[$player->race] ?? '?' }}
@@ -389,7 +389,7 @@
                             x-bind:class="selected === {{ $index }} ? 'bg-indigo-100 dark:bg-indigo-900' : ''"
                             class="w-full px-3 py-2 text-left hover:bg-zinc-100 dark:hover:bg-zinc-700 flex items-center gap-2">
                         <img src="{{ asset('images/country_flags/' . strtolower($player->country_code) . '.svg') }}"
-                             class="w-5 h-3.5 rounded-sm shrink-0">
+                             class="w-7 h-5 rounded-sm shrink-0">
                         <span class="text-sm text-zinc-800 dark:text-white">{{ $player->name }}</span>
                         <span class="text-xs {{ $raceColors[$player->race] ?? 'text-zinc-400' }}">
                             {{ $raceLabels[$player->race] ?? '?' }}

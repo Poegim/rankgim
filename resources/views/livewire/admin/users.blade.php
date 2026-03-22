@@ -26,7 +26,7 @@
                 @foreach($this->users as $user)
                 <flux:table.row :key="$user->id" class="[&>td]:py-2">
                     <flux:table.cell>
-                        <span class="font-medium text-zinc-800 dark:text-white">{{ $user->name }}</span>
+                        <span class="font-semibold text-[0.9375rem] text-zinc-800 dark:text-white">{{ $user->name }}</span>
                         @if($user->id === auth()->id())
                             <span class="ml-2 text-xs text-zinc-400">(you)</span>
                         @endif

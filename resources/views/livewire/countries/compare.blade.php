@@ -107,7 +107,7 @@
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div class="rounded-xl border border-zinc-200 dark:border-zinc-700 p-4">
             <div class="flex items-center gap-2 mb-4">
-                <img src="{{ asset('images/country_flags/' . strtolower($code1) . '.svg') }}" class="w-6 h-4 rounded-sm">
+                <img src="{{ asset('images/country_flags/' . strtolower($code1) . '.svg') }}" class="w-7 h-5 rounded-sm">
                 <p class="text-sm font-medium text-zinc-500 dark:text-zinc-400">Top players · {{ $this->country1 }}</p>
             </div>
             <flux:table>
@@ -122,7 +122,7 @@
                     <flux:table.row :key="'c1-'.$p->id" class="[&>td]:py-2">
                         <flux:table.cell><span class="text-zinc-400 font-mono text-sm">{{ $index + 1 }}</span></flux:table.cell>
                         <flux:table.cell>
-                            <a href="{{ route('players.show', ['id' => $p->id, 'slug' => Str::slug($p->name)]) }}" class="hover:underline font-medium text-zinc-800 dark:text-white">
+                            <a href="{{ route('players.show', ['id' => $p->id, 'slug' => Str::slug($p->name)]) }}" class="hover:underline font-semibold text-[0.9375rem] text-zinc-800 dark:text-white">
                                 {{ $p->name }}
                             </a>
                             <span class="text-xs {{ $raceColors[$p->race] ?? 'text-zinc-400' }} ml-1">{{ $p->race }}</span>
@@ -141,7 +141,7 @@
 
         <div class="rounded-xl border border-zinc-200 dark:border-zinc-700 p-4">
             <div class="flex items-center gap-2 mb-4">
-                <img src="{{ asset('images/country_flags/' . strtolower($code2) . '.svg') }}" class="w-6 h-4 rounded-sm">
+                <img src="{{ asset('images/country_flags/' . strtolower($code2) . '.svg') }}" class="w-7 h-5 rounded-sm">
                 <p class="text-sm font-medium text-zinc-500 dark:text-zinc-400">Top players · {{ $this->country2 }}</p>
             </div>
             <flux:table>
@@ -156,7 +156,7 @@
                     <flux:table.row :key="'c2-'.$p->id" class="[&>td]:py-2">
                         <flux:table.cell><span class="text-zinc-400 font-mono text-sm">{{ $index + 1 }}</span></flux:table.cell>
                         <flux:table.cell>
-                            <a href="{{ route('players.show', ['id' => $p->id, 'slug' => Str::slug($p->name)]) }}" class="hover:underline font-medium text-zinc-800 dark:text-white">
+                            <a href="{{ route('players.show', ['id' => $p->id, 'slug' => Str::slug($p->name)]) }}" class="hover:underline font-semibold text-[0.9375rem] text-zinc-800 dark:text-white">
                                 {{ $p->name }}
                             </a>
                             <span class="text-xs {{ $raceColors[$p->race] ?? 'text-zinc-400' }} ml-1">{{ $p->race }}</span>
@@ -188,13 +188,13 @@
                 <flux:table.row :key="$entry->id" class="[&>td]:py-2">
                     <flux:table.cell>
                         <div class="flex items-center gap-2">
-                            <img src="{{ asset('images/country_flags/' . strtolower($entry->game->winner->country_code) . '.svg') }}" class="w-5 h-3 rounded-sm">
+                            <img src="{{ asset('images/country_flags/' . strtolower($entry->game->winner->country_code) . '.svg') }}" class="w-7 h-5 rounded-sm">
                             <a href="{{ route('players.show', ['id' => $entry->game->winner->id, 'slug' => Str::slug($entry->game->winner->name)]) }}" class="hover:underline font-medium text-green-500">{{ $entry->game->winner->name }}</a>
                         </div>
                     </flux:table.cell>
                     <flux:table.cell>
                         <div class="flex items-center gap-2">
-                            <img src="{{ asset('images/country_flags/' . strtolower($entry->game->loser->country_code) . '.svg') }}" class="w-5 h-3 rounded-sm">
+                            <img src="{{ asset('images/country_flags/' . strtolower($entry->game->loser->country_code) . '.svg') }}" class="w-7 h-5 rounded-sm">
                             <a href="{{ route('players.show', ['id' => $entry->game->loser->id, 'slug' => Str::slug($entry->game->loser->name)]) }}" class="hover:underline text-zinc-500 dark:text-zinc-400">{{ $entry->game->loser->name }}</a>
                         </div>
                     </flux:table.cell>

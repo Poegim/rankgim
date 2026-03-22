@@ -71,7 +71,7 @@
             <flux:table.row :key="$tournament->id">
                 <flux:table.cell>
                     <a href="{{ route('tournaments.show', $tournament->id) }}"
-                       class="hover:underline font-medium text-zinc-800 dark:text-white">
+                       class="hover:underline font-semibold text-[0.9375rem] text-zinc-800 dark:text-white">
                         {{ $tournament->name }}
                     </a>
                 </flux:table.cell>

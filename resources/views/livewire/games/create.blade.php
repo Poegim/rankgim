@@ -44,8 +44,8 @@
                         class="w-full px-3 py-2 text-left hover:bg-zinc-100 dark:hover:bg-zinc-700">
                     <div class="flex items-center gap-2">
                         <img src="{{ asset('images/country_flags/' . strtolower($player->country_code) . '.svg') }}"
-                             class="w-5 h-3.5 rounded-sm shrink-0">
-                        <span class="font-medium text-zinc-800 dark:text-white">{{ $player->name }}</span>
+                             class="w-7 h-5 rounded-sm shrink-0">
+                        <span class="font-semibold text-[0.9375rem] text-zinc-800 dark:text-white">{{ $player->name }}</span>
                         <span class="text-xs {{ $raceColors[$player->race] ?? 'text-zinc-400' }}">{{ $player->race }}</span>
                     </div>
                     @if($player->aliases->isNotEmpty())
@@ -81,8 +81,8 @@
                         class="w-full px-3 py-2 text-left hover:bg-zinc-100 dark:hover:bg-zinc-700">
                     <div class="flex items-center gap-2">
                         <img src="{{ asset('images/country_flags/' . strtolower($player->country_code) . '.svg') }}"
-                             class="w-5 h-3.5 rounded-sm shrink-0">
-                        <span class="font-medium text-zinc-800 dark:text-white">{{ $player->name }}</span>
+                             class="w-7 h-5 rounded-sm shrink-0">
+                        <span class="font-semibold text-[0.9375rem] text-zinc-800 dark:text-white">{{ $player->name }}</span>
                         <span class="text-xs {{ $raceColors[$player->race] ?? 'text-zinc-400' }}">{{ $player->race }}</span>
                     </div>
                     @if($player->aliases->isNotEmpty())

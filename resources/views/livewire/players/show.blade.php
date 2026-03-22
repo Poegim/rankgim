@@ -98,7 +98,7 @@
                             <img
                                 src="{{ asset('images/country_flags/' . strtolower($h2h['opponent']->country_code) . '.svg') }}"
                                 alt="{{ $h2h['opponent']->country }}"
-                                class="w-6 h-4 rounded-sm"
+                                class="w-7 h-5 rounded-sm"
                                 title="{{ $h2h['opponent']->country }}"
                             >
                             <a href="{{ route('players.show', ['id' => $h2h['opponent']->id, 'slug' => Str::slug($h2h['opponent']->name)]) }}"

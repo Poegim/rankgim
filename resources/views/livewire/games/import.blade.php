@@ -71,8 +71,8 @@
                                             class="flex items-center gap-2 hover:opacity-70 text-left">
                                         @if($row['winner'])
                                             <img src="{{ asset('images/country_flags/' . strtolower($row['winner']['country_code']) . '.svg') }}"
-                                                 class="w-5 h-3.5 rounded-sm shrink-0">
-                                            <span class="font-medium text-zinc-800 dark:text-white">{{ $row['winner']['name'] }}</span>
+                                                 class="w-7 h-5 rounded-sm shrink-0">
+                                            <span class="font-semibold text-[0.9375rem] text-zinc-800 dark:text-white">{{ $row['winner']['name'] }}</span>
                                         @else
                                             <span class="text-red-500">{{ $row['winner_name'] }} <span class="text-xs">(not found)</span></span>
                                         @endif
@@ -93,8 +93,8 @@
                                             class="flex items-center gap-2 hover:opacity-70 text-left">
                                         @if($row['loser'])
                                             <img src="{{ asset('images/country_flags/' . strtolower($row['loser']['country_code']) . '.svg') }}"
-                                                 class="w-5 h-3.5 rounded-sm shrink-0">
-                                            <span class="font-medium text-zinc-800 dark:text-white">{{ $row['loser']['name'] }}</span>
+                                                 class="w-7 h-5 rounded-sm shrink-0">
+                                            <span class="font-semibold text-[0.9375rem] text-zinc-800 dark:text-white">{{ $row['loser']['name'] }}</span>
                                         @else
                                             <span class="text-red-500">{{ $row['loser_name'] }} <span class="text-xs">(not found)</span></span>
                                         @endif
@@ -181,8 +181,8 @@
                             class="w-full px-3 py-2 text-left hover:bg-zinc-100 dark:hover:bg-zinc-700 rounded-lg">
                         <div class="flex items-center gap-2">
                             <img src="{{ asset('images/country_flags/' . strtolower($player->country_code) . '.svg') }}"
-                                 class="w-5 h-3.5 rounded-sm shrink-0">
-                            <span class="text-sm font-medium text-zinc-800 dark:text-white">{{ $player->name }}</span>
+                                 class="w-7 h-5 rounded-sm shrink-0">
+                            <span class="text-sm font-semibold text-[0.9375rem] text-zinc-800 dark:text-white">{{ $player->name }}</span>
                         </div>
                         @if($player->aliases->isNotEmpty())
                         <div class="pl-7">

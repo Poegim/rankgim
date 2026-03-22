@@ -37,8 +37,8 @@
             >
                 <div class="flex items-center gap-2 min-w-0">
                     <img src="{{ asset('images/country_flags/' . strtolower($player->country_code) . '.svg') }}"
-                         class="w-5 h-3 rounded-sm shrink-0">
-                    <span class="text-sm font-medium text-zinc-800 dark:text-white truncate">{{ $player->name }}</span>
+                         class="w-7 h-5 rounded-sm shrink-0">
+                    <span class="text-sm font-semibold text-[0.9375rem] text-zinc-800 dark:text-white truncate">{{ $player->name }}</span>
                     <span class="text-xs shrink-0 {{ $player->race === 'Terran' ? 'text-blue-500' : ($player->race === 'Zerg' ? 'text-purple-500' : 'text-yellow-500') }}">
                         {{ $player->race }}
                     </span>

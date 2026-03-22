@@ -97,7 +97,7 @@
                         <img
                             src="{{ asset('images/country_flags/' . strtolower($row->player->country_code) . '.svg') }}"
                             alt="{{ $row->player->country }}"
-                            class="w-6 h-4 rounded-sm cursor-pointer {{ $filterCountryCode === $row->player->country_code ? 'ring-2 ring-blue-500' : '' }}"
+                            class="w-7 h-5 rounded-sm cursor-pointer {{ $filterCountryCode === $row->player->country_code ? 'ring-2 ring-blue-500' : '' }}"
                             title="{{ $row->player->country }}"
                             wire:click="filterByCountry('{{ $row->player->country_code }}')"
                         >

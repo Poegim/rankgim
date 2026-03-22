@@ -105,14 +105,14 @@
     <flux:table.row :key="$player->id">
         <flux:table.cell>
             <a href="{{ route('players.show', ['id' => $player->id, 'slug' => $player->name]) }}"
-               class="hover:underline font-medium text-zinc-800 dark:text-white">
+               class="hover:underline font-semibold text-[0.9375rem] text-zinc-800 dark:text-white">
                 {{ $player->name }}
             </a>
         </flux:table.cell>
         <flux:table.cell>
             <div class="flex items-center gap-2">
                 <img src="{{ asset('images/country_flags/' . strtolower($player->country_code) . '.svg') }}"
-                     class="w-5 h-3.5 rounded-sm shrink-0" alt="{{ $player->country }}">
+                     class="w-7 h-5 rounded-sm shrink-0" alt="{{ $player->country }}">
                 <span class="text-sm text-zinc-600 dark:text-zinc-400">{{ $player->country }}</span>
             </div>
         </flux:table.cell>
@@ -244,7 +244,7 @@
                                     x-on:mouseover="selected = index"
                                     x-on:click="$wire.set('country', c.code); search = c.name; open = false; selected = 0"
                                     class="w-full px-3 py-2 text-left text-sm hover:bg-zinc-100 dark:hover:bg-zinc-700 flex items-center gap-2">
-                                <img :src="`/images/country_flags/${c.code.toLowerCase()}.svg`" class="w-5 h-3.5 rounded-sm shrink-0">
+                                <img :src="`/images/country_flags/${c.code.toLowerCase()}.svg`" class="w-7 h-5 rounded-sm shrink-0">
                                 <span x-text="c.name" class="text-zinc-800 dark:text-white"></span>
                             </button>
                         </template>
@@ -287,7 +287,7 @@
                             x-bind:class="selected === {{ $index }} ? 'bg-indigo-100 dark:bg-indigo-900' : ''"
                             class="w-full px-3 py-2 text-left hover:bg-zinc-100 dark:hover:bg-zinc-700 flex items-center gap-2">
                         <img src="{{ asset('images/country_flags/' . strtolower($p->country_code) . '.svg') }}"
-                             class="w-5 h-3.5 rounded-sm shrink-0">
+                             class="w-7 h-5 rounded-sm shrink-0">
                         <span class="text-sm text-zinc-800 dark:text-white">{{ $p->name }}</span>
                         <span class="text-xs {{ $raceColors[$p->race] ?? 'text-zinc-400' }}">
                             {{ $p->race }}
@@ -357,7 +357,7 @@
                                     x-on:mouseover="selected = index"
                                     x-on:click="$wire.set('editCountry', c.code); search = c.name; open = false; selected = 0"
                                     class="w-full px-3 py-2 text-left text-sm hover:bg-zinc-100 dark:hover:bg-zinc-700 flex items-center gap-2">
-                                <img :src="`/images/country_flags/${c.code.toLowerCase()}.svg`" class="w-5 h-3.5 rounded-sm shrink-0">
+                                <img :src="`/images/country_flags/${c.code.toLowerCase()}.svg`" class="w-7 h-5 rounded-sm shrink-0">
                                 <span x-text="c.name" class="text-zinc-800 dark:text-white"></span>
                             </button>
                         </template>
@@ -408,7 +408,7 @@
                             x-bind:class="selected === {{ $index }} ? 'bg-indigo-100 dark:bg-indigo-900' : ''"
                             class="w-full px-3 py-2 text-left hover:bg-zinc-100 dark:hover:bg-zinc-700 flex items-center gap-2">
                         <img src="{{ asset('images/country_flags/' . strtolower($p->country_code) . '.svg') }}"
-                             class="w-5 h-3.5 rounded-sm shrink-0">
+                             class="w-7 h-5 rounded-sm shrink-0">
                         <span class="text-sm text-zinc-800 dark:text-white">{{ $p->name }}</span>
                         <span class="text-xs {{ $raceColors[$p->race] ?? 'text-zinc-400' }}">
                             {{ $p->race }}
