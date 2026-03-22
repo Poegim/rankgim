@@ -12,7 +12,6 @@ use Illuminate\Support\Facades\DB;
 class Dashboard extends Component
 {
     public bool $showMore = false;
-    public bool $excludeKoreans = false;
 
     #[Computed]
     public function lastGameDate(): ?string
@@ -50,7 +49,7 @@ class Dashboard extends Component
             ->get();
 
         $playerIds = $ratings->pluck('player_id');
-        $snapshots = \App\Models\RatingSnapshot::whereIn('player_id', $playerIds)
+        $snapshots = RatingSnapshot::whereIn('player_id', $playerIds)
             ->where('snapshot_date', $this->previousSnapshotDate)
             ->get()
             ->keyBy('player_id');
@@ -65,9 +64,6 @@ class Dashboard extends Component
     public function highestPeaks()
     {
         return RatingHistory::selectRaw('player_id, MAX(rating_after) as peak_rating')
-            ->when($this->excludeKoreans, function ($query) {
-                $query->whereHas('player', fn($q) => $q->where('country_code', '!=', 'KR'));
-            })
             ->groupBy('player_id')
             ->orderByDesc('peak_rating')
             ->with('player')
@@ -257,77 +253,6 @@ class Dashboard extends Component
             ->whereNotIn('p2.race', ['Random', 'Unknown'])
             ->selectRaw('p1.race as winner_race, p2.race as loser_race, count(*) as games')
             ->groupBy('p1.race', 'p2.race')
-            ->get();
-    }
-
-    #[Computed]
-    public function qualifiedCountries()
-    {
-        if (!$this->showMore || !$this->since) return collect();
-
-        return DB::table('players')
-            ->join('player_ratings', 'player_ratings.player_id', '=', 'players.id')
-            ->join('rating_histories', 'rating_histories.player_id', '=', 'players.id')
-            ->where('player_ratings.games_played', '>=', 15)
-            ->where('rating_histories.played_at', '>=', $this->since)
-            ->whereNotIn('players.country_code', ['XX'])
-            ->selectRaw('players.country, players.country_code, count(distinct players.id) as player_count')
-            ->groupBy('players.country', 'players.country_code')
-            ->having('player_count', '>=', 5)
-            ->orderByDesc('player_count')
-            ->limit(10)
-            ->pluck('country_code')
-            ->toArray();
-    }
-
-    #[Computed]
-    public function topCountries()
-    {
-        if (!$this->showMore || !$this->since || empty($this->qualifiedCountries)) return collect();
-
-        $activePlayerIds = DB::table('rating_histories')
-            ->where('played_at', '>=', $this->since)
-            ->distinct()
-            ->pluck('player_id');
-
-        return DB::table('players')
-            ->join('player_ratings', 'player_ratings.player_id', '=', 'players.id')
-            ->where('player_ratings.games_played', '>=', 15)
-            ->whereIn('players.country_code', $this->qualifiedCountries)
-            ->whereIn('players.id', $activePlayerIds)
-            ->selectRaw('
-                players.country,
-                players.country_code,
-                count(distinct players.id) as player_count,
-                round(avg(player_ratings.rating)) as avg_rating,
-                sum(player_ratings.wins) as total_wins,
-                sum(player_ratings.losses) as total_losses,
-                round(sum(player_ratings.wins) / (sum(player_ratings.wins) + sum(player_ratings.losses)) * 100) as win_ratio
-            ')
-            ->groupBy('players.country', 'players.country_code')
-            ->orderByDesc('avg_rating')
-            ->get();
-    }
-
-    #[Computed]
-    public function countryMatchups()
-    {
-        if (!$this->showMore || !$this->since || empty($this->qualifiedCountries)) return collect();
-
-        return DB::table('rating_histories as rh1')
-            ->join('rating_histories as rh2', function ($join) {
-                $join->on('rh1.game_id', '=', 'rh2.game_id')
-                     ->where('rh1.result', '=', 'win')
-                     ->where('rh2.result', '=', 'loss');
-            })
-            ->join('players as p1', 'p1.id', '=', 'rh1.player_id')
-            ->join('players as p2', 'p2.id', '=', 'rh2.player_id')
-            ->whereIn('p1.country_code', $this->qualifiedCountries)
-            ->whereIn('p2.country_code', $this->qualifiedCountries)
-            ->where('p1.country_code', '!=', 'p2.country_code')
-            ->where('rh1.played_at', '>=', $this->since)
-            ->selectRaw('p1.country_code as winner_country, p2.country_code as loser_country, count(*) as games')
-            ->groupBy('p1.country_code', 'p2.country_code')
             ->get();
     }
 

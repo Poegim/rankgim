@@ -1,5 +1,8 @@
 <?php
 
+use App\Livewire\Countries\Index;
+use App\Livewire\Players\Compare;
+use App\Livewire\Countries\Compare as CountriesCompare;
 use Illuminate\Support\Facades\Route;
 
 // Dashboard route
@@ -32,6 +35,10 @@ Route::get('/tournaments/{id}', fn($id) => view('tournaments.show', ['tournament
 Route::middleware(['auth', App\Http\Middleware\EnsureUserCanManageGames::class])->group(function () {
     Route::get('/tournaments/{id}/games/import', fn($id) => view('games.import', ['tournamentId' => $id]))->name('games.import');
 });
+
+// Countries route
+Route::get('/countries', Index::class)->name('countries.index');
+Route::get('/countries/{code1}-vs-{code2}', CountriesCompare::class)->name('countries.compare');
 
 
 // Games route
