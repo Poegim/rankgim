@@ -16,6 +16,7 @@ class Import extends Component
     public ?int $editingIndex = null;
     public ?string $editingSide = null;
     public string $modalSearch = '';
+    public bool $modalOpen = false;
 
     public function mount(): void
     {
@@ -53,7 +54,7 @@ class Import extends Component
         $this->editingSide = $side;
         $this->modalSearch = '';
         $this->resetErrorBag();
-        $this->dispatch('open-pick-player');
+        $this->modalOpen = true;
     }
 
     public function selectPlayer(int $playerId): void
@@ -74,16 +75,15 @@ class Import extends Component
             $this->addError('modalSearch', 'Winner and loser must be different');
             return;
         }
-
         $this->parsed[$index][$side . '_id'] = $playerId;
-        $this->parsed[$index][$side] = $player->toArray();
+        $this->parsed[$index][$side] = ['id' => $player->id, 'name' => $player->name, 'country_code' => $player->country_code];
         $this->parsed[$index]['status'] =
             ($this->parsed[$index]['winner_id'] && $this->parsed[$index]['loser_id']) ? 'ok' : 'unmatched';
 
         $this->editingIndex = null;
         $this->editingSide = null;
         $this->modalSearch = '';
-        $this->dispatch('close-pick-player');
+        $this->modalOpen = false;
     }
 
     public function parse(): void
@@ -114,8 +114,8 @@ class Import extends Component
                 'raw' => $line,
                 'winner_name' => $winnerName,
                 'loser_name' => $loserName,
-                'winner' => $winner,
-                'loser' => $loser,
+                'winner' => $winner ? ['id' => $winner->id, 'name' => $winner->name, 'country_code' => $winner->country_code] : null,
+                'loser' => $loser ? ['id' => $loser->id, 'name' => $loser->name, 'country_code' => $loser->country_code] : null,
                 'winner_id' => $winner?->id,
                 'loser_id' => $loser?->id,
                 'date' => $currentDate,

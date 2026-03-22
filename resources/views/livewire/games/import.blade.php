@@ -27,10 +27,7 @@
         </div>
     </div>
     @else
-    <div x-data="{ modalOpen: false }"
-         x-on:open-pick-player.window="modalOpen = true; $nextTick(() => $refs.modalSearch.focus())"
-         x-on:close-pick-player.window="modalOpen = false"
-         class="flex flex-col gap-4">
+    <div class="flex flex-col gap-4">
 
         <div class="flex items-center justify-between">
             <div class="flex gap-4 text-sm">
@@ -68,38 +65,46 @@
                             @if($row['status'] === 'error')
                                 <span class="text-red-500 text-xs">{{ $row['raw'] }}</span>
                             @else
-                                <button type="button"
-                                        wire:click="openModal({{ $index }}, 'winner')"
-                                        class="flex items-center gap-2 hover:opacity-70 text-left">
-                                    @if($row['winner'])
-                                        <img src="{{ asset('images/country_flags/' . strtolower($row['winner']['country_code']) . '.svg') }}"
-                                             class="w-5 h-3.5 rounded-sm shrink-0">
-                                        <span class="font-medium text-zinc-800 dark:text-white">{{ $row['winner']['name'] }}</span>
-                                    @else
-                                        <span class="text-red-500">{{ $row['winner_name'] }} <span class="text-xs">(not found)</span></span>
-                                        <button type="button" x-on:click.stop="navigator.clipboard.writeText('{{ $row['winner_name'] }}')" class="text-zinc-400 hover:text-zinc-200 ml-1" title="Copy name">
-                                            <svg class="w-3.5 h-3.5 inline" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
-                                        </button>
+                                <div class="flex items-center gap-1">
+                                    <button type="button"
+                                            wire:click="openModal({{ $index }}, 'winner')"
+                                            class="flex items-center gap-2 hover:opacity-70 text-left">
+                                        @if($row['winner'])
+                                            <img src="{{ asset('images/country_flags/' . strtolower($row['winner']['country_code']) . '.svg') }}"
+                                                 class="w-5 h-3.5 rounded-sm shrink-0">
+                                            <span class="font-medium text-zinc-800 dark:text-white">{{ $row['winner']['name'] }}</span>
+                                        @else
+                                            <span class="text-red-500">{{ $row['winner_name'] }} <span class="text-xs">(not found)</span></span>
+                                        @endif
+                                    </button>
+                                    @if(!$row['winner'])
+                                        <span x-on:click="navigator.clipboard.writeText('{{ $row['winner_name'] }}')" class="text-zinc-400 hover:text-zinc-200 cursor-pointer" title="Copy name">
+                                            <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+                                        </span>
                                     @endif
-                                </button>
+                                </div>
                             @endif
                         </td>
                         <td class="px-4 py-2">
                             @if($row['status'] !== 'error')
-                                <button type="button"
-                                        wire:click="openModal({{ $index }}, 'loser')"
-                                        class="flex items-center gap-2 hover:opacity-70 text-left">
-                                    @if($row['loser'])
-                                        <img src="{{ asset('images/country_flags/' . strtolower($row['loser']['country_code']) . '.svg') }}"
-                                             class="w-5 h-3.5 rounded-sm shrink-0">
-                                        <span class="font-medium text-zinc-800 dark:text-white">{{ $row['loser']['name'] }}</span>
-                                    @else
-                                        <span class="text-red-500">{{ $row['loser_name'] }} <span class="text-xs">(not found)</span></span>
-                                        <button type="button" x-on:click.stop="navigator.clipboard.writeText('{{ $row['loser_name'] }}')" class="text-zinc-400 hover:text-zinc-200 ml-1" title="Copy name">
-                                            <svg class="w-3.5 h-3.5 inline" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
-                                        </button>
+                                <div class="flex items-center gap-1">
+                                    <button type="button"
+                                            wire:click="openModal({{ $index }}, 'loser')"
+                                            class="flex items-center gap-2 hover:opacity-70 text-left">
+                                        @if($row['loser'])
+                                            <img src="{{ asset('images/country_flags/' . strtolower($row['loser']['country_code']) . '.svg') }}"
+                                                 class="w-5 h-3.5 rounded-sm shrink-0">
+                                            <span class="font-medium text-zinc-800 dark:text-white">{{ $row['loser']['name'] }}</span>
+                                        @else
+                                            <span class="text-red-500">{{ $row['loser_name'] }} <span class="text-xs">(not found)</span></span>
+                                        @endif
+                                    </button>
+                                    @if(!$row['loser'])
+                                        <span x-on:click="navigator.clipboard.writeText('{{ $row['loser_name'] }}')" class="text-zinc-400 hover:text-zinc-200 cursor-pointer" title="Copy name">
+                                            <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+                                        </span>
                                     @endif
-                                </button>
+                                </div>
                             @endif
                         </td>
                         <td class="px-4 py-2">
@@ -133,12 +138,15 @@
         </div>
         @endif
 
-        {{-- Alpine Modal --}}
-        <div x-show="modalOpen"
+        {{-- Modal --}}
+        <div x-data
+             x-cloak
+             x-show="$wire.modalOpen"
              x-transition.opacity
              class="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
-             x-on:click.self="modalOpen = false">
-            <div class="bg-white dark:bg-zinc-900 rounded-xl shadow-xl w-full max-w-md p-6 space-y-4">
+             x-on:click.self="$wire.set('modalOpen', false)">
+            <div class="bg-white dark:bg-zinc-900 rounded-xl shadow-xl w-full max-w-md p-6 space-y-4"
+                 x-init="$watch(() => $wire.modalOpen, val => { if (val) $nextTick(() => $refs.modalSearch.focus()) })">
                 <div class="flex items-center justify-between">
                     <h2 class="text-lg font-semibold text-zinc-800 dark:text-white">
                         @if($editingSide === 'winner') Pick Winner
@@ -146,7 +154,7 @@
                         @else Pick Player
                         @endif
                     </h2>
-                    <button type="button" x-on:click="modalOpen = false" class="text-zinc-400 hover:text-zinc-600">
+                    <button type="button" x-on:click="$wire.set('modalOpen', false)" class="text-zinc-400 hover:text-zinc-600">
                         <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
                         </svg>
