@@ -27,6 +27,15 @@ class Index extends Component
     #[Url]
     public ?string $filterRace = null;
 
+    #[Url]
+    public ?string $filterRegion = null;
+
+    public function filterByRegion(string $region): void
+    {
+        $this->filterRegion = $this->filterRegion === $region ? null : $region;
+        $this->resetPage();
+    }
+
     public function sort(string $column): void
     {
         if ($this->sortBy === $column) {
@@ -66,6 +75,10 @@ class Index extends Component
             ->where('games_played', '>=', 15)
             ->when($this->filterCountryCode, fn($q) => $q->whereHas('player', fn($q) => $q->where('country_code', $this->filterCountryCode)))
             ->when($this->filterRace, fn($q) => $q->whereHas('player', fn($q) => $q->where('race', $this->filterRace)))
+            ->when($this->filterRegion, function ($q) {
+                    $codes = collect(config('countries'))->where('region', $this->filterRegion)->pluck('code')->toArray();
+                    $q->whereHas('player', fn($q) => $q->whereIn('country_code', $codes));
+                })
             ->orderBy($this->sortBy, $this->sortDirection)
             ->paginate(100);
 

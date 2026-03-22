@@ -1,8 +1,35 @@
 @use('Illuminate\Support\Str')
 <div>
-    @if($filterCountryCode || $filterRace)
+
+    {{-- Region filters --}}
+    <div class="flex flex-wrap items-center gap-2 mb-4">
+        @foreach([
+            'Europe' => '🌍',
+            'Asia' => '🌏',
+            'North America' => '🌎',
+            'South America' => '🌎',
+        ] as $region => $emoji)
+            <button
+                wire:click="filterByRegion('{{ $region }}')"
+                class="px-3 py-1.5 text-xs font-medium rounded-lg transition-colors
+                    {{ $filterRegion === $region
+                        ? 'bg-indigo-500 text-white'
+                        : 'bg-zinc-100 dark:bg-zinc-800 text-zinc-500 dark:text-zinc-400 hover:bg-zinc-200 dark:hover:bg-zinc-700' }}"
+            >
+                {{ $emoji }} {{ $region }}
+            </button>
+        @endforeach
+    </div>
+
+    @if($filterCountryCode || $filterRace || $filterRegion)
     <div class="flex items-center gap-2 mb-4">
         <span class="text-zinc-500 dark:text-zinc-400 text-sm">Active filters:</span>
+
+        @if($filterRegion)
+        <flux:badge wire:click="filterByRegion('{{ $filterRegion }}')" class="cursor-pointer">
+            {{ $filterRegion }} <span class="ml-1">×</span>
+        </flux:badge>
+        @endif
 
         @if($filterCountryCode)
         <flux:badge wire:click="filterByCountry('{{ $filterCountryCode }}')" class="cursor-pointer gap-1">
@@ -21,7 +48,7 @@
         </flux:badge>
         @endif
 
-        <flux:button size="sm" variant="ghost" wire:click="$set('filterCountryCode', null); $set('filterRace', null)">
+        <flux:button size="sm" variant="ghost" wire:click="$set('filterCountryCode', null); $set('filterRace', null); $set('filterRegion', null)">
             Clear all
         </flux:button>
     </div>
