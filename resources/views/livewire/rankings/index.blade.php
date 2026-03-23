@@ -114,16 +114,16 @@
                 Rating {!! $sortBy === 'rating' ? ($sortDirection === 'desc' ? '↓' : '↑') : '' !!}
             </div>
             <div class="col-span-1 hidden md:block">+/-</div>
-            <div class="col-span-1 cursor-pointer hover:text-zinc-200 transition-colors {{ $sortBy === 'wins' ? 'text-indigo-400' : '' }}" wire:click="sort('wins')">
+            <div class="col-span-1 hidden md:block cursor-pointer hover:text-zinc-200 transition-colors {{ $sortBy === 'wins' ? 'text-indigo-400' : '' }}" wire:click="sort('wins')">
                 W {!! $sortBy === 'wins' ? ($sortDirection === 'desc' ? '↓' : '↑') : '' !!}
             </div>
-            <div class="col-span-1 cursor-pointer hover:text-zinc-200 transition-colors {{ $sortBy === 'losses' ? 'text-indigo-400' : '' }}" wire:click="sort('losses')">
+            <div class="col-span-1 hidden md:block cursor-pointer hover:text-zinc-200 transition-colors {{ $sortBy === 'losses' ? 'text-indigo-400' : '' }}" wire:click="sort('losses')">
                 L {!! $sortBy === 'losses' ? ($sortDirection === 'desc' ? '↓' : '↑') : '' !!}
             </div>
             <div class="col-span-1 hidden lg:block cursor-pointer hover:text-zinc-200 transition-colors {{ $sortBy === 'games_played' ? 'text-indigo-400' : '' }}" wire:click="sort('games_played')">
                 GP {!! $sortBy === 'games_played' ? ($sortDirection === 'desc' ? '↓' : '↑') : '' !!}
             </div>
-            <div class="col-span-2 lg:col-span-1">Win%</div>
+            <div class="col-span-3 sm:col-span-2 lg:col-span-1 text-right">Win%</div>
         </div>
 
         {{-- Rows --}}
@@ -137,7 +137,8 @@
         @endphp
         <div
             wire:key="ranking-{{ $row->id }}"
-            class="group grid grid-cols-12 gap-0 items-center px-5 py-3 border-b border-zinc-200/50 dark:border-zinc-700/50 border-l-4 {{ $raceBorderColors[$row->player->race] ?? 'border-l-zinc-600' }} {{ $raceBgSubtle[$row->player->race] ?? '' }} hover:bg-zinc-50 dark:hover:bg-zinc-800/40 transition-all duration-150 {{ $tier['rowClass'] }}"
+            class="group grid grid-cols-12 gap-0 items-center px-5 py-3 border-b border-zinc-200/50 dark:border-zinc-700/50 {{ $raceBgSubtle[$row->player->race] ?? '' }} hover:bg-zinc-50 dark:hover:bg-zinc-800/40 transition-all duration-150 {{ $tier['rowClass'] }}"
+style="border-left: 4px solid {{ match($row->player->race) { 'Terran' => '#3b82f6', 'Zerg' => '#a855f7', 'Protoss' => '#eab308', 'Random' => '#f97316', default => '#52525b' } }};"
         >
             {{-- Rank --}}
             <div class="col-span-1">
@@ -145,25 +146,24 @@
             </div>
 
             {{-- Player --}}
-            <div class="col-span-4 md:col-span-3">
-                <div class="flex items-center gap-3">
+            <div class="col-span-5 sm:col-span-4 md:col-span-3">
+                <div class="flex items-center gap-2 sm:gap-3">
                     <img
                         src="{{ asset('images/country_flags/' . strtolower($row->player->country_code) . '.svg') }}"
                         alt="{{ $row->player->country }}"
-                        class="w-7 h-5 rounded-sm cursor-pointer hover:ring-2 hover:ring-indigo-500/50 transition-all {{ $filterCountryCode === $row->player->country_code ? 'ring-2 ring-indigo-500' : '' }}"
+                        class="w-6 h-4 sm:w-7 sm:h-5 rounded-sm cursor-pointer hover:ring-2 hover:ring-indigo-500/50 transition-all {{ $filterCountryCode === $row->player->country_code ? 'ring-2 ring-indigo-500' : '' }}"
                         title="{{ $row->player->country }}"
                         wire:click="filterByCountry('{{ $row->player->country_code }}')"
                     >
                     <div class="min-w-0 flex items-center gap-1.5">
                         @if($tier['icon'])
-                            <span class="text-sm">{{ $tier['icon'] }}</span>
+                            <span class="text-sm hidden sm:inline">{{ $tier['icon'] }}</span>
                         @endif
                         <a href="{{ route('players.show', ['id' => $row->player->id, 'slug' => Str::slug($row->player->name)]) }}"
                            class="hover:underline font-semibold {{ $tier['nameClass'] ?: 'text-zinc-800 dark:text-white' }} block truncate">
                             {{ $row->player->name }}
                         </a>
                     </div>
-                    <span class="sm:hidden w-2 h-2 rounded-full {{ $raceDots[$row->player->race] ?? 'bg-zinc-500' }}" title="{{ $row->player->race }}"></span>
                 </div>
             </div>
 
@@ -176,7 +176,7 @@
             </div>
 
             {{-- Rating --}}
-            <div class="col-span-2">
+            <div class="col-span-2  text-right sm:text-left">
                 <span class="font-mono text-lg font-bold {{ $tier['ratingColor'] }}">{{ $row->rating }}</span>
             </div>
 
@@ -190,14 +190,10 @@
                     <span class="text-zinc-600">—</span>
                 @endif
             </div>
-
-            {{-- Wins --}}
-            <div class="col-span-1">
+            <div class="col-span-1 hidden sm:block">
                 <span class="font-mono font-semibold text-green-400">{{ $row->wins }}</span>
             </div>
-
-            {{-- Losses --}}
-            <div class="col-span-1">
+            <div class="col-span-1 hidden sm:block">
                 <span class="font-mono font-semibold text-red-400">{{ $row->losses }}</span>
             </div>
 
@@ -207,8 +203,8 @@
             </div>
 
             {{-- Win% with bar --}}
-            <div class="col-span-2 lg:col-span-1">
-                <div class="flex items-center gap-2">
+            <div class="col-span-3 sm:col-span-2 lg:col-span-1">
+                <div class="flex items-center gap-2 justify-end">
                     <span class="font-mono font-bold text-sm {{ $winRatio >= 60 ? 'text-green-300' : ($winRatio >= 50 ? 'text-green-400' : 'text-red-400') }}">{{ $winRatio }}%</span>
                     <div class="hidden md:block w-14 h-1.5 rounded-full bg-zinc-700/50 overflow-hidden">
                         <div class="h-full rounded-full transition-all duration-500 {{ $winRatio >= 60 ? 'bg-green-400' : ($winRatio >= 50 ? 'bg-green-500/70' : 'bg-red-500/70') }}"
