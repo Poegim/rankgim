@@ -97,9 +97,9 @@
     {{-- Rank tier legend --}}
         <div class="flex flex-wrap items-center gap-4 mb-4 px-1">
             <span class="text-xs text-zinc-500">Ranks:</span>
-            <span class="flex items-center gap-1 text-xs text-amber-300">👑 S-Rank · Top 1%</span>
-            <span class="flex items-center gap-1 text-xs text-red-400">💎 A-Rank · Top 8%</span>
-            <span class="flex items-center gap-1 text-xs text-purple-400">⭐ B-Rank · Top 29%</span>
+            <span class="flex items-center gap-1 text-xs text-amber-300">👑 · Top 1%</span>
+            <span class="flex items-center gap-1 text-xs text-red-400">💎 · Top 8%</span>
+            <span class="flex items-center gap-1 text-xs text-purple-400">⭐ · Top 29%</span>
         </div>
 
     {{-- Rankings --}}
