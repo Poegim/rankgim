@@ -50,55 +50,55 @@ class EloService
     /**
      * Process a single game and update ratings and history.
      */
-    public function processGame(Game $game): void
-    {
-        $winnerRating = PlayerRating::firstOrCreate(
-            ['player_id' => $game->winner_id],
-            ['rating' => self::DEFAULT_RATING]
-        );
+    // public function processGame(Game $game): void
+    // {
+    //     $winnerRating = PlayerRating::firstOrCreate(
+    //         ['player_id' => $game->winner_id],
+    //         ['rating' => self::DEFAULT_RATING]
+    //     );
 
-        $loserRating = PlayerRating::firstOrCreate(
-            ['player_id' => $game->loser_id],
-            ['rating' => self::DEFAULT_RATING]
-        );
+    //     $loserRating = PlayerRating::firstOrCreate(
+    //         ['player_id' => $game->loser_id],
+    //         ['rating' => self::DEFAULT_RATING]
+    //     );
 
-        $kWinner = ($loserRating->games_played < 15) ? 20 : self::K_FACTOR;
-        $kLoser = ($winnerRating->games_played < 15) ? 20 : self::K_FACTOR;
+    //     $kWinner = ($loserRating->games_played < 15) ? 20 : self::K_FACTOR;
+    //     $kLoser = ($winnerRating->games_played < 15) ? 20 : self::K_FACTOR;
 
-        $result = $this->calculate($winnerRating->rating, $loserRating->rating, $game->result, $kWinner, $kLoser);
+    //     $result = $this->calculate($winnerRating->rating, $loserRating->rating, $game->result, $kWinner, $kLoser);
 
-        RatingHistory::create([
-            'player_id'     => $game->winner_id,
-            'game_id'       => $game->id,
-            'rating_before' => $winnerRating->rating,
-            'rating_after'  => $result['r1_new'],
-            'rating_change' => $result['r1_change'],
-            'result'        => 'win',
-            'played_at'     => $game->date_time,
-        ]);
+    //     RatingHistory::create([
+    //         'player_id'     => $game->winner_id,
+    //         'game_id'       => $game->id,
+    //         'rating_before' => $winnerRating->rating,
+    //         'rating_after'  => $result['r1_new'],
+    //         'rating_change' => $result['r1_change'],
+    //         'result'        => 'win',
+    //         'played_at'     => $game->date_time,
+    //     ]);
 
-        RatingHistory::create([
-            'player_id'     => $game->loser_id,
-            'game_id'       => $game->id,
-            'rating_before' => $loserRating->rating,
-            'rating_after'  => $result['r2_new'],
-            'rating_change' => $result['r2_change'],
-            'result'        => 'loss',
-            'played_at'     => $game->date_time,
-        ]);
+    //     RatingHistory::create([
+    //         'player_id'     => $game->loser_id,
+    //         'game_id'       => $game->id,
+    //         'rating_before' => $loserRating->rating,
+    //         'rating_after'  => $result['r2_new'],
+    //         'rating_change' => $result['r2_change'],
+    //         'result'        => 'loss',
+    //         'played_at'     => $game->date_time,
+    //     ]);
 
-        $winnerRating->update([
-            'rating'       => $result['r1_new'],
-            'games_played' => $winnerRating->games_played + 1,
-            'wins'         => $winnerRating->wins + 1,
-        ]);
+    //     $winnerRating->update([
+    //         'rating'       => $result['r1_new'],
+    //         'games_played' => $winnerRating->games_played + 1,
+    //         'wins'         => $winnerRating->wins + 1,
+    //     ]);
 
-        $loserRating->update([
-            'rating'       => $result['r2_new'],
-            'games_played' => $loserRating->games_played + 1,
-            'losses'       => $loserRating->losses + 1,
-        ]);
-    }
+    //     $loserRating->update([
+    //         'rating'       => $result['r2_new'],
+    //         'games_played' => $loserRating->games_played + 1,
+    //         'losses'       => $loserRating->losses + 1,
+    //     ]);
+    // }
 
     /**
      * Recalculate all ratings from scratch, ordered by date.
@@ -160,9 +160,10 @@ class EloService
                     $r1 = $ratings[$winnerId];
                     $r2 = $ratings[$loserId];
 
-                    // Shield: reduce your rating change if opponent has < 15 games
-                    $kWinner = ($stats[$loserId]['games_played'] < 15) ? 20 : self::K_FACTOR;
-                    $kLoser = ($stats[$winnerId]['games_played'] < 15) ? 20 : self::K_FACTOR;
+
+                    // Determine K-factor based on experience
+                    $kWinner = ($stats[$winnerId]['games_played'] < 15) ? 60 : self::K_FACTOR;
+                    $kLoser = ($stats[$winnerId]['games_played'] < 15) ? 10 : self::K_FACTOR;
 
                     $result = $this->calculate($r1, $r2, $game->result, $kWinner, $kLoser);
 
