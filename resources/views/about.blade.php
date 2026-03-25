@@ -73,8 +73,13 @@
                     Beating a higher-rated player earns you more points than beating someone rated below you. Losing to a weaker opponent costs you more than losing to a stronger one. Upsets are rewarded, dominance is recognised.
                 </p>
                 <p>
-                    The <span class="font-medium text-zinc-800 dark:text-zinc-200">K-factor of 40</span> means each game has a significant impact on your rating. This keeps the ranking responsive — a few good (or bad) tournament runs will show up quickly.
+                    The <span class="font-medium text-zinc-800 dark:text-zinc-200">K-factor of 40</span> determines how strongly each game affects a player's rating. To handle new high level players Rankgim adjusts K values:
                 </p>
+                <ul>
+                    <li><span class="font-medium text-zinc-800 dark:text-zinc-200">New players (<15 games):</span> gain rating points quickly when they win, allowing them to reach their true skill level faster.</li>
+                    <li><span class="font-medium text-zinc-800 dark:text-zinc-200">Opponents of these new players:</span> lose fewer points in these matches, preventing sudden drops in the ranking of experienced top players.</li>
+                    <li><span class="font-medium text-zinc-800 dark:text-zinc-200">After 15 games:</span> K values normalize to the standard K-factor (40), ensuring stable and fair rating changes for all players.</li>
+                </ul>
             </div>
         </div>
 
@@ -90,7 +95,7 @@
                     <div class="flex flex-col gap-2">
                         <div class="flex items-center gap-2">
                             <span class="text-lg">🎮</span>
-                            <span class="font-semibold text-[0.9375rem] text-zinc-800 dark:text-white text-sm">Minimum 15 games</span>
+                            <span class="font-semibold text-[0.9375rem] text-zinc-800 dark:text-white text-sm">Minimum 15 games </span>
                         </div>
                         <p class="text-sm text-zinc-500">Players need at least 15 rated games to appear in the ranking. This filters out one-time participants and ensures ratings are meaningful.</p>
                     </div>
