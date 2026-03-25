@@ -26,17 +26,17 @@ class EloService
      * Calculate new ratings after a game.
      * Result: 1 = r1 wins, 3 = draw
      */
-    private function calculate(float $r1, float $r2, int $result): array
+    private function calculate(float $r1, float $r2, int $result, int $k1 = self::K_FACTOR, int $k2 = self::K_FACTOR): array
     {
         $we1 = $this->winningExpectancy($r1, $r2);
 
         if ($result === 1) {
-            $r1_new = round($r1 + self::K_FACTOR * (1 - $we1));
-            $r2_new = round($r2 - ($r1_new - $r1));
+            $r1_new = round($r1 + $k1 * (1 - $we1));
+            $r2_new = round($r2 + $k2 * (0 - (1 - $we1)));
         } elseif ($result === 3) {
             $we2 = $this->winningExpectancy($r2, $r1);
-            $r1_new = round($r1 + self::K_FACTOR * (0.5 - $we1));
-            $r2_new = round($r2 + self::K_FACTOR * (0.5 - $we2));
+            $r1_new = round($r1 + $k1 * (0.5 - $we1));
+            $r2_new = round($r2 + $k2 * (0.5 - $we2));
         }
 
         return [
@@ -62,7 +62,10 @@ class EloService
             ['rating' => self::DEFAULT_RATING]
         );
 
-        $result = $this->calculate($winnerRating->rating, $loserRating->rating, $game->result);
+        $kWinner = ($loserRating->games_played < 15) ? 20 : self::K_FACTOR;
+        $kLoser = ($winnerRating->games_played < 15) ? 20 : self::K_FACTOR;
+
+        $result = $this->calculate($winnerRating->rating, $loserRating->rating, $game->result, $kWinner, $kLoser);
 
         RatingHistory::create([
             'player_id'     => $game->winner_id,
@@ -156,7 +159,12 @@ class EloService
 
                     $r1 = $ratings[$winnerId];
                     $r2 = $ratings[$loserId];
-                    $result = $this->calculate($r1, $r2, $game->result);
+
+                    // Shield: reduce your rating change if opponent has < 15 games
+                    $kWinner = ($stats[$loserId]['games_played'] < 15) ? 20 : self::K_FACTOR;
+                    $kLoser = ($stats[$winnerId]['games_played'] < 15) ? 20 : self::K_FACTOR;
+
+                    $result = $this->calculate($r1, $r2, $game->result, $kWinner, $kLoser);
 
                     // Save history to batch
                     $now = now();
