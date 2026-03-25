@@ -212,21 +212,7 @@
             </div>
         </div>
 
-        <div class="rounded-xl border border-zinc-200 dark:border-zinc-700 p-5">
-            <h2 class="text-base font-bold text-zinc-500 dark:text-zinc-400 mb-4">🔝 Highest peaks</h2>
-            <div class="divide-y divide-zinc-200 dark:divide-zinc-700">
-                @foreach($this->highestPeaks as $index => $row)
-                <a href="{{ route('players.show', ['id' => $row->player->id, 'slug' => Str::slug($row->player->name)]) }}"
-                   class="flex items-center gap-3 py-2.5 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 -mx-2 px-2 rounded-lg transition-colors group">
-                    <span class="font-mono text-sm text-zinc-400 w-6 text-right">{{ $index + 1 }}</span>
-                    <img src="{{ asset('images/country_flags/' . strtolower($row->player->country_code) . '.svg') }}" class="w-6 h-4 rounded-sm">
-                    <span class="font-semibold text-zinc-800 dark:text-white group-hover:underline flex-1">{{ $row->player->name }}</span>
-                    <span class="text-xs {{ $raceColors[$row->player->race] ?? 'text-zinc-400' }}">{{ $row->player->race }}</span>
-                    <span class="font-mono text-lg font-bold text-yellow-400">{{ $row->peak_rating }}</span>
-                </a>
-                @endforeach
-            </div>
-        </div>
+        <livewire:highest-peaks />
     </div>
 
     {{-- Show more button --}}

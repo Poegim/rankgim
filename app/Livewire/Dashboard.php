@@ -12,6 +12,8 @@ use Illuminate\Support\Facades\DB;
 class Dashboard extends Component
 {
     public bool $showMore = false;
+    public string $peaksRegion = '';
+
 
     #[Computed]
     public function lastGameDate(): ?string
@@ -64,6 +66,10 @@ class Dashboard extends Component
     public function highestPeaks()
     {
         return RatingHistory::selectRaw('player_id, MAX(rating_after) as peak_rating')
+            ->when($this->peaksRegion, function ($query) {
+                $codes = collect(config('countries'))->where('region', $this->peaksRegion)->pluck('code')->toArray();
+                $query->whereHas('player', fn($q) => $q->whereIn('country_code', $codes));
+            })
             ->groupBy('player_id')
             ->orderByDesc('peak_rating')
             ->with('player')
@@ -297,6 +303,8 @@ class Dashboard extends Component
             ->orderBy('snapshot_date')
             ->get();
     }
+
+    
 
     #[Computed]
     public function top10AvgTrend()
