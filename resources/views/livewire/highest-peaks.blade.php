@@ -15,7 +15,7 @@
         <div class="flex items-center gap-1">
             <button wire:click="$set('region', '')"
                 class="px-2 py-1 text-xs rounded-md transition-colors {{ $region === '' ? 'bg-indigo-500 text-white' : 'text-zinc-400 hover:text-zinc-200 hover:bg-zinc-700' }}">All</button>
-            @foreach(['Europe' => 'EU', 'Asia' => 'AS', 'North America' => 'NA', 'South America' => 'SA'] as $r => $label)
+            @foreach(['Europe' => 'EU', 'North America' => 'NA', 'South America' => 'SA', 'Asia' => 'AS'] as $r => $label)
                 <button wire:click="$set('region', '{{ $r }}')"
                     class="px-2 py-1 text-xs rounded-md transition-colors {{ $region === $r ? 'bg-indigo-500 text-white' : 'text-zinc-400 hover:text-zinc-200 hover:bg-zinc-700' }}">{{ $label }}</button>
             @endforeach
