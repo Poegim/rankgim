@@ -53,23 +53,22 @@ class Index extends Component
         return $years;
     }
 
-    #[Computed]
-    public function gamesAllTimeByCountry()
-    {
-        return DB::query()
-            ->fromSub(function ($query) {
-                $query->selectRaw('winner_id as player_id')->from('games')
-                    ->unionAll(DB::table('games')->selectRaw('loser_id as player_id'));
-            }, 'all_players')
-            ->join('players', 'players.id', '=', 'all_players.player_id')
-            ->whereNull('players.player_id')
-            ->whereNotIn('players.country_code', ['XX'])
-            ->selectRaw('players.country, players.country_code, COUNT(*) as games_count')
-            ->groupBy('players.country', 'players.country_code')
-            ->orderByDesc('games_count')
-            ->limit(15)
-            ->get();
-    }
+    // #[Computed]
+    // public function gamesAllTimeByCountry()
+    // {
+    //     return DB::query()
+    //         ->fromSub(function ($query) {
+    //             $query->selectRaw('winner_id as player_id')->from('games')
+    //                 ->unionAll(DB::table('games')->selectRaw('loser_id as player_id'));
+    //         }, 'all_players')
+    //         ->join('players', 'players.id', '=', 'all_players.player_id')
+    //         ->whereNull('players.player_id')
+    //         ->whereNotIn('players.country_code', ['XX'])
+    //         ->selectRaw('players.country, players.country_code, COUNT(*) as games_count')
+    //         ->groupBy('players.country', 'players.country_code')
+    //         ->orderByDesc('games_count')
+    //         ->paginate(15);
+    // }
 
     #[Computed]
     public function gamesYearlyByCountry()

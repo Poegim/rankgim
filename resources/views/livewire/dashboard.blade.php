@@ -71,7 +71,7 @@
                             @endif
                         </span>
                         <span class="text-sm sm:text-base font-semibold w-11 sm:w-12 text-right {{ $winRatio >= 50 ? 'text-green-400' : 'text-red-400' }}">{{ $winRatio }}%</span>
-                        <div class="hidden md:flex items-center gap-1 w-20 justify-end">
+                        <div class="hidden md:flex items-center gap-1 w-24 justify-end">
                             <span class="text-sm text-green-400">{{ $row->wins }}W</span>
                             <span class="text-sm text-zinc-600">/</span>
                             <span class="text-sm text-red-400">{{ $row->losses }}L</span>
