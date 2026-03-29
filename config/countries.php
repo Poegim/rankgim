@@ -56,7 +56,7 @@ return [
     ['name' => 'Curaçao', 'code' => 'CW', 'region' => 'North America'],
     ['name' => 'Christmas Island', 'code' => 'CX', 'region' => 'Asia'],
     ['name' => 'Cyprus', 'code' => 'CY', 'region' => 'Europe'],
-    ['name' => 'Czech Republic', 'code' => 'CZ', 'region' => 'Europe'],
+    ['name' => 'Czechia', 'code' => 'CZ', 'region' => 'Europe'],
     ['name' => 'Germany', 'code' => 'DE', 'region' => 'Europe'],
     ['name' => 'Djibouti', 'code' => 'DJ', 'region' => 'Africa'],
     ['name' => 'Denmark', 'code' => 'DK', 'region' => 'Europe'],

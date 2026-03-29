@@ -72,7 +72,6 @@ class PlayersTableSeeder extends Seeder
             'Curaçao' => 'CW',
             'Cyprus' => 'CY',
             'Czechia' => 'CZ',
-            'Czech Republic' => 'CZ',
             'Denmark' => 'DK',
             'Djibouti' => 'DJ',
             'Dominica' => 'DM',
