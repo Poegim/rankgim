@@ -12,6 +12,11 @@ class GamesAllTimeByCountry extends Component
 
     use WithPagination;
 
+    /**
+     * This component calculates the total number of games played by country, regardless of the year.
+     * It does this by creating a subquery that combines all winner and loser player IDs from the games table,
+     * then joins this with the players table to get the country information, and finally groups and counts the games by country.
+     */
     #[Computed]
     public function gamesAllTimeByCountry()
     {

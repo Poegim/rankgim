@@ -39,7 +39,7 @@
 
     {{-- Country stats table --}}
     <div class="rounded-xl border border-zinc-200 dark:border-zinc-700 p-4">
-        <p class="text-sm font-medium text-zinc-500 dark:text-zinc-400 mb-4">🌍 Country stats <span class="text-xs">(active players with 15+ games · all-time stats)</span></p>
+        <p class="text-sm font-medium text-zinc-500 dark:text-zinc-400 mb-4">🌍 Top countries <span class="text-xs">(average calculated from top 5 active players · last 12 months · games of all players)</span></p>
         <flux:table>
             <flux:table.columns>
                 <flux:table.column class="w-8">#</flux:table.column>

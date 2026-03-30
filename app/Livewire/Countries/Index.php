@@ -124,67 +124,76 @@ class Index extends Component
             ->pluck('country_code')
             ->toArray();
     }
-#[Computed]
-public function topCountries()
-{
-    if (!$this->since) return collect();
 
-    // 1. Get all games from last 12 months with player info
-    $games = DB::table('rating_histories')
-        ->join('players', 'players.id', '=', 'rating_histories.player_id')
-        ->join('player_ratings', 'player_ratings.player_id', '=', 'players.id')
-        ->whereNull('players.player_id')
-        ->where('player_ratings.games_played', '>=', 15)
-        ->where('rating_histories.played_at', '>=', $this->since)
-        ->whereNotIn('players.country_code', ['XX'])
-        ->select(
-            'players.id',
-            'players.country',
-            'players.country_code',
-            'player_ratings.rating',
-            'rating_histories.result'
-        )
-        ->get();
+    /** 
+     * This method calculates the top countries based on the average rating of their top 5 players, 
+     * but only includes countries that have at least 5 active players in the last 12 months. 
+     * It first retrieves all games played in the last 12 months along with player and rating information, 
+     * then aggregates this data to calculate wins/losses per player, 
+     * groups players by country, filters for qualified countries, 
+     * and finally calculates the average rating and win ratio for the top 5 players of each qualified country.
+     */
+    #[Computed]
+    public function topCountries()
+    {
+        if (!$this->since) return collect();
 
-    // 2. Aggregate per player
-    $players = $games->groupBy('id')->map(function ($rows) {
-        $first = $rows->first();
-        return (object) [
-            'id' => $first->id,
-            'country' => $first->country,
-            'country_code' => $first->country_code,
-            'rating' => $first->rating,
-            'wins' => $rows->where('result', 'win')->count(),
-            'losses' => $rows->where('result', 'loss')->count(),
-        ];
-    });
+        // 1. Get all games from last 12 months with player info
+        $games = DB::table('rating_histories')
+            ->join('players', 'players.id', '=', 'rating_histories.player_id')
+            ->join('player_ratings', 'player_ratings.player_id', '=', 'players.id')
+            ->whereNull('players.player_id')
+            ->where('player_ratings.games_played', '>=', 15)
+            ->where('rating_histories.played_at', '>=', $this->since)
+            ->whereNotIn('players.country_code', ['XX'])
+            ->select(
+                'players.id',
+                'players.country',
+                'players.country_code',
+                'player_ratings.rating',
+                'rating_histories.result'
+            )
+            ->get();
 
-    // 3. Group by country
-    $grouped = $players->groupBy('country_code');
+        // 2. Aggregate per player
+        $players = $games->groupBy('id')->map(function ($rows) {
+            $first = $rows->first();
+            return (object) [
+                'id' => $first->id,
+                'country' => $first->country,
+                'country_code' => $first->country_code,
+                'rating' => $first->rating,
+                'wins' => $rows->where('result', 'win')->count(),
+                'losses' => $rows->where('result', 'loss')->count(),
+            ];
+        });
 
-    // 4. Filter countries with >= 5 players
-    $qualified = $grouped->filter(fn($group) => $group->count() >= 5);
+        // 3. Group by country
+        $grouped = $players->groupBy('country_code');
 
-    // 5. Build stats: player_count = real count, stats from top 5
-    return $qualified->map(function ($players) {
-    $sorted = $players->sortByDesc('rating');
-    $top5 = $sorted->take(5);
-    
-    // Wins/losses from ALL players of this country
-    $totalWins = $players->sum('wins');
-    $totalLosses = $players->sum('losses');
+        // 4. Filter countries with >= 5 players
+        $qualified = $grouped->filter(fn($group) => $group->count() >= 5);
 
-    return (object) [
-        'country' => $players->first()->country,
-        'country_code' => $players->first()->country_code,
-        'player_count' => $players->count(),
-        'avg_rating' => round($top5->avg('rating')),
-        'total_wins' => $totalWins,
-        'total_losses' => $totalLosses,
-        'win_ratio' => ($totalWins + $totalLosses) > 0 ? round($totalWins / ($totalWins + $totalLosses) * 100) : 0,
-    ];
-})->sortByDesc('avg_rating')->values();
-}
+        // 5. Build stats: player_count = real count, stats from top 5
+        return $qualified->map(function ($players) {
+            $sorted = $players->sortByDesc('rating');
+            $top5 = $sorted->take(5);
+            
+            // Wins/losses from ALL players of this country
+            $totalWins = $players->sum('wins');
+            $totalLosses = $players->sum('losses');
+
+            return (object) [
+                'country' => $players->first()->country,
+                'country_code' => $players->first()->country_code,
+                'player_count' => $players->count(),
+                'avg_rating' => round($top5->avg('rating')),
+                'total_wins' => $totalWins,
+                'total_losses' => $totalLosses,
+                'win_ratio' => ($totalWins + $totalLosses) > 0 ? round($totalWins / ($totalWins + $totalLosses) * 100) : 0,
+            ];
+        })->sortByDesc('avg_rating')->values();
+    }
 
     #[Computed]
     public function countryMatchups()
