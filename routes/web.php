@@ -40,6 +40,32 @@ Route::middleware(['auth', App\Http\Middleware\EnsureUserCanManageGames::class])
 Route::get('/countries', Index::class)->name('countries.index');
 Route::get('/countries/{code1}-vs-{code2}', CountriesCompare::class)->name('countries.compare');
 
+Route::get('/test-countries2', function () {
+    $component = new \App\Livewire\Countries\Index();
+    return [
+        'qualified' => $component->qualifiedCountries,
+        'topCountries' => $component->topCountries,
+    ];
+});
+
+Route::get('/test-countries', function () {
+    $lastGame = \App\Models\RatingHistory::max('played_at');
+    $since = \Carbon\Carbon::parse($lastGame)->subYear();
+    
+    $result = DB::table('players')
+        ->join('player_ratings', 'player_ratings.player_id', '=', 'players.id')
+        ->join('rating_histories', 'rating_histories.player_id', '=', 'players.id')
+        ->where('player_ratings.games_played', '>=', 15)
+        ->where('rating_histories.played_at', '>=', $since)
+        ->whereNotIn('players.country_code', ['XX'])
+        ->selectRaw('players.country_code, count(distinct players.id) as player_count')
+        ->groupBy('players.country_code')
+        ->having('player_count', '>=', 15)
+        ->orderByDesc('player_count')
+        ->get();
+    
+    return $result;
+});
 
 // Games route
 Route::get('/games', fn() => view('games.index'))->name('games.index');
