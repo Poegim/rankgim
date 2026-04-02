@@ -197,7 +197,7 @@
                             <div class="flex flex-col items-center gap-2">
                                 <span class="text-xs uppercase tracking-widest text-zinc-400 dark:text-zinc-500">For being the great clanmates</span>
                                 <div class="flex flex-wrap justify-center gap-x-6 gap-y-3">
-                                    @foreach(['aFF]WolF[', 'aFF]sluslu['] as $friend)
+                                    @foreach(['aFF]WolF[', 'aFF]sluslu[', 'aFF]Mido['] as $friend)
                                     <span class="text-lg font-bold tracking-wide bg-gradient-to-r from-amber-600 via-orange-500 to-red-400 dark:from-amber-400 dark:via-orange-400 dark:to-red-300 bg-clip-text text-transparent">
                                         {{ $friend }}
                                     </span>
@@ -221,7 +221,7 @@
                             <div class="flex flex-col items-center gap-2">
                                 <span class="text-xs uppercase tracking-widest text-zinc-400 dark:text-zinc-500">For being part of my StarCraft life — and sometimes my real one. Whether you were an inspiration, a familiar face, or someone I only met once.</span>
                                 <div class="flex flex-wrap justify-center gap-x-6 gap-y-3">
-                                    @foreach(['Arcanos', 'LadiesFirst', 'MoreAndMore', 'FurryDrone', 'Taehee', 'KubciO', 'Bonyth', 'Koget', 'Yeti', 'ZZZero'] as $friend)
+                                    @foreach(['Arcanos', 'LadiesFirst', 'MoreAndMore', 'FurryDrone', 'Taehee', 'KubciO', 'Shocker_40', 'Pike', 'Radley', 'Bonyth', 'Koget', 'Yeti', 'Rasowy', 'ZZZero'] as $friend)
                                     <span class="text-lg font-bold tracking-wide bg-gradient-to-r from-amber-600 via-orange-500 to-red-400 dark:from-amber-400 dark:via-orange-400 dark:to-red-300 bg-clip-text text-transparent">
                                         {{ $friend }}
                                     </span>
