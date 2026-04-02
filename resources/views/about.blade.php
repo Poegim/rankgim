@@ -155,13 +155,47 @@
             </p>
         </div>
 
-        {{-- Author --}}
-        <div class="flex flex-col gap-3">
-            <h2 class="text-sm font-semibold text-zinc-400 uppercase tracking-widest">Author</h2>
-            <p class="text-zinc-600 dark:text-zinc-300 leading-relaxed">
-                Built by <span class="font-semibold text-[0.9375rem] text-zinc-800 dark:text-white">poegim</span>. To get in touch, find me under the same nick on Netwars, TeamLiquid or Battle.net.
-            </p>
+        {{-- In honour --}}
+        <div class="flex flex-col gap-4">
+            <h2 class="text-sm font-semibold text-zinc-400 uppercase tracking-widest">To the people who made those years unforgettable</h2>
+            <div class="rounded-xl border border-zinc-300 dark:border-zinc-600 p-8 bg-zinc-100 dark:bg-zinc-800/80">
+                <div class="flex flex-col items-center gap-6">
+                    <p class="text-zinc-500 dark:text-zinc-400 text-center max-w-lg leading-relaxed">
+                        For the hours we spent playing together, the conversations that lasted longer than the games, and all the emotions in between. Those were some of the best years of my life and I miss you guys.                    <div class="w-12 border-t border-zinc-300 dark:border-zinc-600"></div>
+                    <div class="flex flex-wrap justify-center gap-x-6 gap-y-3">
+                        @foreach(['moagim', 'MofD)Respect', 'PzH.MT', 'Azoun', 'Darkelf-', 'Katerina', 'Driver[soasc]', 'fallen.apollyon', 'ALK_aida', 'Effka[pG]', 'Sadef', 'GreenGosu', 'aFF]Kiv[', 'aFF]WolF[', 'aFF]sluslu[', 'Kebes', 'Apogeum', 'RedEyes', 'FuriaKutasów', 'peR aka eRa', 'metody[watb]'] as $friend)
+                        <span class="text-lg font-bold tracking-wide bg-gradient-to-r from-amber-600 via-orange-500 to-red-400 dark:from-amber-400 dark:via-orange-400 dark:to-red-300 bg-clip-text text-transparent">
+                            {{ $friend }}
+                        </span>
+                        @endforeach
+                    </div>
+                    <p class="text italic text-zinc-400 dark:text-zinc-200 text-center">
+                        …and the rest of <b>StarCraft POL-1 @ Europe </b> — plus everyone I forgot, because I'm old and bad with names.
+                        If you see this and feel you should be here, don't hesitate to reach out.
+                    </p>
+                </div>
+            </div>
         </div>
+
+{{-- Author --}}
+<div class="flex flex-col gap-3">
+    <h2 class="text-sm font-semibold text-zinc-400 uppercase tracking-widest">Author</h2>
+    <div class="flex flex-col gap-2">
+        <p class="text-zinc-600 dark:text-zinc-300 leading-relaxed">
+            Built by <span class="font-semibold text-zinc-800 dark:text-white">poegim</span> — also known as
+        </p>
+        <p class="text-sm font-mono text-zinc-500 dark:text-zinc-400 leading-relaxed">
+            Krakow · aFF]ZuluNation · PzM.Zimbabwe · Poezja[T4] · iloveania · zulu[WL]Nation
+        </p>
+        <p class="text-zinc-600 dark:text-zinc-300 leading-relaxed">
+            To get in touch, find me as <span class="font-semibold text-zinc-800 dark:text-white">poegim</span> on Netwars, TeamLiquid or Battle.net.
+        </p>
+    </div>
+</div>
+
+
+
+
 
         {{-- Divider --}}
         <div class="border-t border-zinc-200 dark:border-zinc-700"></div>
