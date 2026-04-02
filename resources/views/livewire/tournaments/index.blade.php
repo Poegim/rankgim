@@ -68,6 +68,9 @@
 
         <flux:table.rows>
             @foreach($this->tournaments as $tournament)
+            
+            
+            @if($tournament->games_count > 0)
             <flux:table.row :key="$tournament->id">
                 <flux:table.cell>
                     <a href="{{ route('tournaments.show', $tournament->id) }}"
@@ -145,6 +148,89 @@
                     @endif
                 @endauth
             </flux:table.row>
+            @elseif(($tournament->games_count === 0) && (auth()->check() && (auth()->user()->isAdmin() || auth()->user()->isMod())))
+            <flux:table.row :key="$tournament->id">
+                <flux:table.cell>
+                    <a href="{{ route('tournaments.show', $tournament->id) }}"
+                       class="hover:underline font-semibold text-[0.9375rem] text-zinc-800 dark:text-white">
+                        {{ $tournament->name }}
+                    </a>
+                </flux:table.cell>
+                <flux:table.cell>
+                    <span class="text-zinc-500 dark:text-zinc-400">{{ $tournament->games_count }}</span>
+                </flux:table.cell>
+                <flux:table.cell>
+                    <span class="text-xs text-zinc-400">
+                        {{ $tournament->first_game ? \Carbon\Carbon::parse($tournament->first_game)->format('Y-m-d') : '—' }}
+                    </span>
+                </flux:table.cell>
+                <flux:table.cell>
+                    <span class="text-xs text-zinc-400">
+                        {{ $tournament->last_game ? \Carbon\Carbon::parse($tournament->last_game)->format('Y-m-d') : '—' }}
+                    </span>
+                </flux:table.cell>
+                @auth
+                    @if(auth()->user()->canManageGames())
+                    <flux:table.cell>
+                        <div class="flex items-center gap-2">
+                            <flux:button 
+                                size="sm" 
+                                variant="ghost" 
+                                wire:click="edit({{ $tournament->id }})"
+                                wire:loading.attr="disabled"
+                                wire:target="edit({{ $tournament->id }})">
+                                Edit
+                            </flux:button>
+                            
+                            @if($tournament->games_count > 0)
+                                <flux:button 
+                                    size="sm" 
+                                    variant="danger" 
+                                    disabled
+                                    wire:click="$dispatch('cannot-delete')">
+                                    Delete
+                                </flux:button>
+                            @else
+                                <flux:modal.trigger name="delete-{{ $tournament->id }}">
+                                    <flux:button size="sm" variant="danger">
+                                        Delete
+                                    </flux:button>
+                                </flux:modal.trigger>
+                                
+                                <flux:modal name="delete-{{ $tournament->id }}" class="min-w-[22rem]">
+                                    <form class="space-y-6" wire:submit="delete({{ $tournament->id }})">
+                                        <div>
+                                            <flux:heading size="lg">Delete tournament?</flux:heading>
+                                            <flux:subheading class="mt-2">
+                                                Are you sure you want to delete <strong>{{ $tournament->name }}</strong>? 
+                                                This action cannot be undone.
+                                            </flux:subheading>
+                                        </div>
+                                        
+                                        <div class="flex justify-end gap-2">
+                                            <flux:modal.close>
+                                                <flux:button variant="ghost">Cancel</flux:button>
+                                            </flux:modal.close>
+                                            <flux:button 
+                                                type="submit"
+                                                variant="danger"
+                                                wire:loading.attr="disabled">
+                                                Delete
+                                            </flux:button>
+                                        </div>
+                                    </form>
+                                </flux:modal>
+                            @endif
+                        </div>
+                    </flux:table.cell>
+                    @endif
+                @endauth
+            </flux:table.row>
+            @endif
+
+
+
+
             @endforeach
         </flux:table.rows>
     </flux:table>
