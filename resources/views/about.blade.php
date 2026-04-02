@@ -144,33 +144,102 @@
             </a>
         </div>
 
-        {{-- Divider --}}
-        <div class="border-t border-zinc-200 dark:border-zinc-700"></div>
-
-        {{-- Credits --}}
+                {{-- Credits --}}
         <div class="flex flex-col gap-3">
-            <h2 class="text-sm font-semibold text-zinc-400 uppercase tracking-widest">Credits</h2>
-            <p class="text-zinc-600 dark:text-zinc-300 leading-relaxed">
-                Special thanks to <span class="font-semibold text-[0.9375rem] text-zinc-800 dark:text-white">GruGloG</span> and <span class="font-semibold text-[0.9375rem] text-zinc-800 dark:text-white">Ziggy</span> for submitting game results to the database — 577 and 317 games added respectively.
+            <h2 class="text-sm font-semibold text-zinc-400 uppercase tracking-widest">Acknowledgements</h2>
+            <p class="text-zinc-600 dark:text-zinc-300 leading-relaxed text-sm">
+                Special thanks to <span class="font-semibold text-zinc-800 dark:text-white">GruGloG</span> and <span class="font-semibold text-zinc-800 dark:text-white">Ziggy</span> for submitting game results to the database — 577 and 317 games added respectively.
             </p>
         </div>
+
+        {{-- Divider --}}
+        <div class="border-t border-zinc-200 dark:border-zinc-700"></div>
 
         {{-- In honour --}}
         <div class="flex flex-col gap-4">
             <h2 class="text-sm font-semibold text-zinc-400 uppercase tracking-widest">To the people who made those years unforgettable</h2>
             <div class="rounded-xl border border-zinc-300 dark:border-zinc-600 p-8 bg-zinc-100 dark:bg-zinc-800/80">
                 <div class="flex flex-col items-center gap-6">
-                    <p class="text-zinc-500 dark:text-zinc-400 text-center max-w-lg leading-relaxed">
-                        For the hours we spent playing together, the conversations that lasted longer than the games, and all the emotions in between. Those were some of the best years of my life and I miss you guys.                    <div class="w-12 border-t border-zinc-300 dark:border-zinc-600"></div>
-                    <div class="flex flex-wrap justify-center gap-x-6 gap-y-3">
-                        @foreach(['moagim', 'MofD)Respect', 'PzH.MT', 'Azoun', 'Darkelf-', 'Katerina', 'Driver[soasc]', 'fallen.apollyon', 'ALK_aida', 'Effka[pG]', 'Sadef', 'GreenGosu', 'aFF]Kiv[', 'aFF]WolF[', 'aFF]sluslu[', 'Kebes', 'Apogeum', 'RedEyes', 'FuriaKutasów', 'peR aka eRa', 'metody[watb]'] as $friend)
-                        <span class="text-lg font-bold tracking-wide bg-gradient-to-r from-amber-600 via-orange-500 to-red-400 dark:from-amber-400 dark:via-orange-400 dark:to-red-300 bg-clip-text text-transparent">
-                            {{ $friend }}
-                        </span>
-                        @endforeach
+                    <div class="flex flex-col items-center gap-6">
+                        <p class="text-zinc-500 dark:text-zinc-400 text-center max-w-lg leading-relaxed">
+                            For the hours we spent playing together, the conversations that lasted longer than the games, and all the emotions in between. Those were some of the best years of my life and I miss you guys.
+                        </p>
+                        <div class="w-12 border-t border-zinc-300 dark:border-zinc-600"></div>
+
+                        <div class="flex flex-col gap-6 w-full">
+
+                            {{-- Main crew --}}
+                            <div class="flex flex-col items-center gap-2">
+                                <span class="text-xs uppercase tracking-widest text-zinc-400 dark:text-zinc-500">For infinite hours of talks and thousands of games on Europe & ICCup — as teammates and rivals</span>
+                                <div class="flex flex-wrap justify-center gap-x-6 gap-y-3">
+                                    @foreach(['Moagim', 'MofD)Respect', 'PzH.MT', 'Azoun', 'Sadef', 'GreenGosu', 'aFF]oOKiVoo[', 'Darkelf-', 'Katerina-CZ', 'Effka[pG]', 'Driver[soasc]', 'fallen.apollyon', 'ALK_aida', 'wiz[WL]ard', 'Super-Nova[TT]'] as $friend)
+                                    <span class="text-lg font-bold tracking-wide bg-gradient-to-r from-amber-600 via-orange-500 to-red-400 dark:from-amber-400 dark:via-orange-400 dark:to-red-300 bg-clip-text text-transparent">
+                                        {{ $friend }}
+                                    </span>
+                                    @endforeach
+                                </div>
+                            </div>
+
+                            {{-- LAN & real life --}}
+                            <div class="flex flex-col items-center gap-2">
+                                <span class="text-xs uppercase tracking-widest text-zinc-400 dark:text-zinc-500">For the LAN parties and real-life memories</span>
+                                <div class="flex flex-wrap justify-center gap-x-6 gap-y-3">
+                                    @foreach(['Kebes', 'Apogeum', 'RedEyes', 'FuriaKutasów', 'Sprite', 'peR aka eRa', 'aFF]Squizen[', 'aFF]Amlacz['] as $friend)
+                                    <span class="text-lg font-bold tracking-wide bg-gradient-to-r from-amber-600 via-orange-500 to-red-400 dark:from-amber-400 dark:via-orange-400 dark:to-red-300 bg-clip-text text-transparent">
+                                        {{ $friend }}
+                                    </span>
+                                    @endforeach
+                                </div>
+                            </div>
+
+                            
+                            {{-- Clanmates --}}
+                            <div class="flex flex-col items-center gap-2">
+                                <span class="text-xs uppercase tracking-widest text-zinc-400 dark:text-zinc-500">For being the great clanmates</span>
+                                <div class="flex flex-wrap justify-center gap-x-6 gap-y-3">
+                                    @foreach(['aFF]WolF[', 'aFF]sluslu['] as $friend)
+                                    <span class="text-lg font-bold tracking-wide bg-gradient-to-r from-amber-600 via-orange-500 to-red-400 dark:from-amber-400 dark:via-orange-400 dark:to-red-300 bg-clip-text text-transparent">
+                                        {{ $friend }}
+                                    </span>
+                                    @endforeach
+                                </div>
+                            </div>
+
+                            {{-- Always online --}}
+                            <div class="flex flex-col items-center gap-2">
+                                <span class="text-xs uppercase tracking-widest text-zinc-400 dark:text-zinc-500">For being eternally online on POL-1</span>
+                                <div class="flex flex-wrap justify-center gap-x-6 gap-y-3">
+                                    @foreach(['metody[watb]'] as $friend)
+                                    <span class="text-lg font-bold tracking-wide bg-gradient-to-r from-amber-600 via-orange-500 to-red-400 dark:from-amber-400 dark:via-orange-400 dark:to-red-300 bg-clip-text text-transparent">
+                                        {{ $friend }}
+                                    </span>
+                                    @endforeach
+                                </div>
+                            </div>
+
+                            {{-- Others--}}
+                            <div class="flex flex-col items-center gap-2">
+                                <span class="text-xs uppercase tracking-widest text-zinc-400 dark:text-zinc-500">For being part of my StarCraft life — and sometimes my real one. Whether you were an inspiration, a familiar face, or someone I only met once.</span>
+                                <div class="flex flex-wrap justify-center gap-x-6 gap-y-3">
+                                    @foreach(['Arcanos', 'LadiesFirst', 'MoreAndMore', 'KubciO', 'Bonyth', 'Koget', 'Yeti', 'ZZZero'] as $friend)
+                                    <span class="text-lg font-bold tracking-wide bg-gradient-to-r from-amber-600 via-orange-500 to-red-400 dark:from-amber-400 dark:via-orange-400 dark:to-red-300 bg-clip-text text-transparent">
+                                        {{ $friend }}
+                                    </span>
+                                    @endforeach
+                                </div>
+                            </div>
+
+
+                        </div>
                     </div>
-                    <p class="text italic text-zinc-400 dark:text-zinc-200 text-center">
-                        …and the rest of <b>StarCraft POL-1 @ Europe </b> — plus everyone I forgot, because I'm old and bad with names.
+                    <p class="text-sm italic text-zinc-400 dark:text-zinc-200 text-center leading-relaxed">
+                        …and the rest of
+                        <span class="font-semibold not-italic text-zinc-500 dark:text-zinc-300">StarCraft POL-1 @ Europe</span>,
+                        <span class="font-semibold not-italic text-zinc-500 dark:text-zinc-300">Netwars.pl</span>,
+                        teams
+                        <span class="font-semibold not-italic text-zinc-500 dark:text-zinc-300">aFF] · [MiB] · Spot-G · PzM · [WL]</span>
+                        — plus everyone I forgot, because I'm old and bad with names.
+                        <br class="hidden sm:block">
                         If you see this and feel you should be here, don't hesitate to reach out.
                     </p>
                 </div>
@@ -181,9 +250,9 @@
 <div class="flex flex-col gap-3">
     <h2 class="text-sm font-semibold text-zinc-400 uppercase tracking-widest">Author</h2>
     <div class="flex flex-col gap-2">
-        <p class="text-zinc-600 dark:text-zinc-300 leading-relaxed">
-            Built by <span class="font-semibold text-zinc-800 dark:text-white">poegim</span> — also known as
-        </p>
+<p class="text-zinc-600 dark:text-zinc-300 leading-relaxed">
+    Built by <span class="font-semibold text-zinc-800 dark:text-white">poegim</span> — somewhere between StarCraft and real life since 1999. Also known as
+</p>
         <p class="text-sm font-mono text-zinc-500 dark:text-zinc-400 leading-relaxed">
             Krakow · aFF]ZuluNation · PzM.Zimbabwe · Poezja[T4] · iloveania · zulu[WL]Nation
         </p>
