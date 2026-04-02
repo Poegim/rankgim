@@ -172,7 +172,7 @@
                             <div class="flex flex-col items-center gap-2">
                                 <span class="text-xs uppercase tracking-widest text-zinc-400 dark:text-zinc-500">For infinite hours of talks and thousands of games on Europe & ICCup — as teammates and rivals</span>
                                 <div class="flex flex-wrap justify-center gap-x-6 gap-y-3">
-                                    @foreach(['Moagim', 'MofD)Respect', 'PzH.MT', 'Azoun', 'Hukk[bwd]', 'Havoc_', 'Sadeff', 'aFF]oOKiVoo[', 'Darkelf-', 'Katerina-CZ', 'Effka[pG]', 'Driver[soasc]', 'fallen.apollyon', 'ALK_aida', 'wiz[WL]ard', 'Super-Nova[TT]', 'GreenGosu', '[aSc]Arhon'] as $friend)
+                                    @foreach(['Moagim', 'MofD)Respect', 'PzH.MT', 'Azoun', 'Hukk[bwd]', 'Havoc_', 'Sadeff', 'aFF]oOKiVoo[', 'Darkelf-', 'Katerina-CZ', 'Effka[pG]', 'Driver[soasc]', 'fallen.apollyon', 'ALK_aida', 'wiz[WL]ard', 'Super-Nova[TT]', 'GreenGosu', '[aSc]Arhon', 'sFv.Dibuk', 'm4rlin', 'Bzium', 'wow.Seru_'] as $friend)
                                     <span class="text-lg font-bold tracking-wide bg-gradient-to-r from-amber-600 via-orange-500 to-red-400 dark:from-amber-400 dark:via-orange-400 dark:to-red-300 bg-clip-text text-transparent">
                                         {{ $friend }}
                                     </span>
@@ -184,7 +184,7 @@
                             <div class="flex flex-col items-center gap-2">
                                 <span class="text-xs uppercase tracking-widest text-zinc-400 dark:text-zinc-500">For the LAN parties and real-life memories</span>
                                 <div class="flex flex-wrap justify-center gap-x-6 gap-y-3">
-                                    @foreach(['Kebes', 'Apogeum', 'RedEyes', 'FuriaKutasów', 'Sprite', 'peR aka eRa', 'aFF]Squizen[', 'aFF]Amlacz['] as $friend)
+                                    @foreach(['Kebes', 'Apogeum', 'RedEyes', 'FuriaKutasów', 'Sprite', 'peR aka eRa', 'aFF]Squizen[', 'aFF]Amlacz[', 'Welder'] as $friend)
                                     <span class="text-lg font-bold tracking-wide bg-gradient-to-r from-amber-600 via-orange-500 to-red-400 dark:from-amber-400 dark:via-orange-400 dark:to-red-300 bg-clip-text text-transparent">
                                         {{ $friend }}
                                     </span>
@@ -197,7 +197,7 @@
                             <div class="flex flex-col items-center gap-2">
                                 <span class="text-xs uppercase tracking-widest text-zinc-400 dark:text-zinc-500">For being the great clanmates</span>
                                 <div class="flex flex-wrap justify-center gap-x-6 gap-y-3">
-                                    @foreach(['aFF]WolF[', 'aFF]sluslu[', 'aFF]Mido['] as $friend)
+                                    @foreach(['aFF]WolF[', 'aFF]sluslu[', 'aFF]Mido[', 'aFF]money[', 'aFF]Surgeon[', 'aFF]Sfiesu[', 'aFF]Borek[', 'aFF]Sneazel['] as $friend)
                                     <span class="text-lg font-bold tracking-wide bg-gradient-to-r from-amber-600 via-orange-500 to-red-400 dark:from-amber-400 dark:via-orange-400 dark:to-red-300 bg-clip-text text-transparent">
                                         {{ $friend }}
                                     </span>
@@ -221,7 +221,7 @@
                             <div class="flex flex-col items-center gap-2">
                                 <span class="text-xs uppercase tracking-widest text-zinc-400 dark:text-zinc-500">For being part of my StarCraft life — and sometimes my real one. Whether you were an inspiration, a familiar face, or someone I only met once.</span>
                                 <div class="flex flex-wrap justify-center gap-x-6 gap-y-3">
-                                    @foreach(['Arcanos', 'LadiesFirst', 'MoreAndMore', 'FurryDrone', 'Taehee', 'KubciO', 'Shocker_40', 'Pike', 'Radley', 'Bonyth', 'Koget', 'Yeti', 'Rasowy', 'ZZZero'] as $friend)
+                                    @foreach(['Arcanos', 'LadiesFirst', 'MMoreAndMore', 'FurryDrone', 'Taehee', 'KubciO', 'Shocker_40', 'Fosken', 'Radley', 'Bonyth', 'Koget', 'Yeti', 'aFF]Rasowy[', 'ZZZero', 'aFF]WolF['] as $friend)
                                     <span class="text-lg font-bold tracking-wide bg-gradient-to-r from-amber-600 via-orange-500 to-red-400 dark:from-amber-400 dark:via-orange-400 dark:to-red-300 bg-clip-text text-transparent">
                                         {{ $friend }}
                                     </span>
