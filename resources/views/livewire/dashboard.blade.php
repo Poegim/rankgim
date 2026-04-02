@@ -416,31 +416,8 @@ document.addEventListener('DOMContentLoaded', function () {
         colors: ['#8b5cf6'],
     }).render();
 
-    /**
-     * 
-    new ApexCharts(document.querySelector('#chart-top10-avg'), {
-        ...baseOptions,
-        chart: { ...baseOptions.chart, type: 'line', height: 224 },
-        series: [{ name: 'Avg Top 10', data: @json($this->top10AvgTrend->pluck('avg_top10')) }],
-        xaxis: { ...baseOptions.xaxis, categories: @json($this->top10AvgTrend->pluck('snapshot_date')), labels: { ...baseOptions.xaxis.labels, rotate: -45, rotateAlways: true } },
-        colors: ['#f59e0b'],
-        stroke: { width: 2 },
-    }).render();
 
-    new ApexCharts(document.querySelector('#chart-rating-spread'), {
-        ...baseOptions,
-        chart: { ...baseOptions.chart, type: 'line', height: 224 },
-        series: [
-            { name: 'Max', data: @json($this->ratingTrends->pluck('max_rating')) },
-            { name: 'Avg', data: @json($this->ratingTrends->pluck('avg_rating')) },
-            { name: 'Min', data: @json($this->ratingTrends->pluck('min_rating')) },
-        ],
-        xaxis: { ...baseOptions.xaxis, categories: @json($this->ratingTrends->pluck('snapshot_date')), labels: { ...baseOptions.xaxis.labels, rotate: -45, rotateAlways: true } },
-        colors: ['#22c55e', '#6366f1', '#ef4444'],
-        stroke: { width: 2 },
-    }).render();
 
-    **/
 });
 </script>
 
