@@ -288,39 +288,38 @@ class Dashboard extends Component
             ->get();
     }
 
-    #[Computed]
-    public function ratingTrends()
-    {
-        return DB::table('rating_snapshots')
-            ->selectRaw('
-                snapshot_date,
-                MAX(rating) as max_rating,
-                ROUND(AVG(rating)) as avg_rating,
-                MIN(rating) as min_rating
-            ')
-            ->where('games_played', '>=', 15)
-            ->groupBy('snapshot_date')
-            ->orderBy('snapshot_date')
-            ->get();
-    }
+    // #[Computed]
+    // public function ratingTrends()
+    // {
+    //     return DB::table('rating_snapshots')
+    //         ->selectRaw('
+    //             snapshot_date,
+    //             MAX(rating) as max_rating,
+    //             ROUND(AVG(rating)) as avg_rating,
+    //             MIN(rating) as min_rating
+    //         ')
+    //         ->where('games_played', '>=', 15)
+    //         ->groupBy('snapshot_date')
+    //         ->orderBy('snapshot_date')
+    //         ->get();
+    // }
 
-    
-
-    #[Computed]
-    public function top10AvgTrend()
-    {
-        return DB::query()
-            ->fromSub(function ($query) {
-                $query->from('rating_snapshots')
-                    ->selectRaw('snapshot_date, rating, ROW_NUMBER() OVER (PARTITION BY snapshot_date ORDER BY rating DESC) as rn')
-                    ->where('games_played', '>=', 15);
-            }, 'ranked')
-            ->where('rn', '<=', 10)
-            ->selectRaw('snapshot_date, ROUND(AVG(rating)) as avg_top10')
-            ->groupBy('snapshot_date')
-            ->orderBy('snapshot_date')
-            ->get();
-    }
+   
+    // #[Computed]
+    // public function top10AvgTrend()
+    // {
+    //     return DB::query()
+    //         ->fromSub(function ($query) {
+    //             $query->from('rating_snapshots')
+    //                 ->selectRaw('snapshot_date, rating, ROW_NUMBER() OVER (PARTITION BY snapshot_date ORDER BY rating DESC) as rn')
+    //                 ->where('games_played', '>=', 15);
+    //         }, 'ranked')
+    //         ->where('rn', '<=', 10)
+    //         ->selectRaw('snapshot_date, ROUND(AVG(rating)) as avg_top10')
+    //         ->groupBy('snapshot_date')
+    //         ->orderBy('snapshot_date')
+    //         ->get();
+    // }
 
     public function render()
     {

@@ -176,7 +176,7 @@
     </div>
 
     {{-- Charts: Rating trends --}}
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+    {{-- <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div class="rounded-xl border border-zinc-200 dark:border-zinc-700 p-5">
             <h2 class="text-base font-bold text-zinc-500 dark:text-zinc-400 mb-4">📈 Avg rating of top 10 over time</h2>
             <div id="chart-top10-avg" class="h-56"></div>
@@ -185,7 +185,7 @@
             <h2 class="text-base font-bold text-zinc-500 dark:text-zinc-400 mb-4">📊 Rating spread <span class="text-xs font-normal">(15+ games)</span></h2>
             <div id="chart-rating-spread" class="h-56"></div>
         </div>
-    </div>
+    </div> --}}
 
     {{-- Recent games + Highest peaks --}}
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -416,6 +416,8 @@ document.addEventListener('DOMContentLoaded', function () {
         colors: ['#8b5cf6'],
     }).render();
 
+    /**
+     * 
     new ApexCharts(document.querySelector('#chart-top10-avg'), {
         ...baseOptions,
         chart: { ...baseOptions.chart, type: 'line', height: 224 },
@@ -437,6 +439,8 @@ document.addEventListener('DOMContentLoaded', function () {
         colors: ['#22c55e', '#6366f1', '#ef4444'],
         stroke: { width: 2 },
     }).render();
+
+    **/
 });
 </script>
 
