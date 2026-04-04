@@ -30,9 +30,6 @@
                     <flux:sidebar.item icon="users" :href="route('players.index')" :current="request()->routeIs('players.index')" wire:navigate>
                         {{ __('Players') }}
                     </flux:sidebar.item>
-                    <flux:sidebar.item icon="scale" :href="route('players.compare-search')" :current="request()->routeIs('players.compare-search')" wire:navigate>
-                        {{ __('Compare Players') }}
-                    </flux:sidebar.item>
                     <flux:sidebar.item icon="calendar-days" :href="route('events.index')" :current="request()->routeIs('events.*')" wire:navigate>
                         Events
                     </flux:sidebar.item>
@@ -42,7 +39,6 @@
                 
             </flux:sidebar.nav>
             <flux:spacer />
-            {{-- Ko-fi support link --}}
             {{-- Ko-fi support link --}}
             <div class="mx-3 mb-3">
                 <a href="https://ko-fi.com/rankgim" target="_blank"

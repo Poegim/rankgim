@@ -63,8 +63,10 @@
         @endauth
     </div>
 
+    <livewire:players.compare-search />
+
     {{-- Search --}}
-    <div class="mb-4 flex items-center gap-2">
+    <div class="mb-4 flex items-center gap-2 mt-6">
         <div class="flex-1">
             <flux:input 
                 type="text" 

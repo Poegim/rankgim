@@ -32,7 +32,7 @@ Route::get('/tournaments', fn() => view('tournaments.index'))->name('tournaments
 Route::get('/tournaments/{id}', fn($id) => view('tournaments.show', ['tournamentId' => $id]))->name('tournaments.show');
 
 // Game creation route with middleware for authentication and tournament management permissions
-Route::middleware(['auth', App\Http\Middleware\EnsureUserCanManageGames::class])->group(function () {
+Route::middleware(['auth', 'verified',  App\Http\Middleware\EnsureUserCanManageGames::class])->group(function () {
     Route::get('/tournaments/{id}/games/import', fn($id) => view('games.import', ['tournamentId' => $id]))->name('games.import');
 });
 
@@ -84,7 +84,7 @@ Route::get('/about', function () {
 Route::get('/events', App\Livewire\Events\Index::class)->name('events.index');
 
 // Admin routes with middleware for authentication and admin access
-Route::middleware(['auth', App\Http\Middleware\EnsureUserIsAdmin::class])->prefix('admin')->name('admin.')->group(function () {
+Route::middleware(['auth', 'verified',  App\Http\Middleware\EnsureUserIsAdmin::class])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/', fn() => view('admin.index'))->name('index');
 });
 

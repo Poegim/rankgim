@@ -79,8 +79,9 @@ class Index extends Component
 
         $user = auth()->user();
         if (!$user || ($event->created_by !== $user->id && !$user->canManageGames())) {
-            return;
-        }
+                $this->confirmingDeleteId = null;  // ← ADD THIS
+                return;
+            }
 
         $event->delete();
 
@@ -103,6 +104,8 @@ class Index extends Component
         if (!$user || ($event->created_by !== $user->id && !$user->canManageGames())) {
             return;
         }
+
+        $this->resetForm();
 
         $this->editingId = $event->id;
         $this->name = $event->name;

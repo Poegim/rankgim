@@ -2,8 +2,10 @@
     {{-- Header --}}
     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
         <div>
-            <h1 class="text-2xl font-bold">Events</h1>
-            <p class="text-sm text-zinc-400 mt-1">Tournaments, showmatches & community events</p>
+            <flux:heading size="xl">Events</flux:heading>
+            <flux:subheading>
+                Tournaments, showmatches & community events
+            </flux:subheading>
         </div>
 
         <div class="flex items-center gap-3">
@@ -77,23 +79,22 @@
 
                 <div class="p-4">
                     <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-2">
-                        <div class="flex justify-between gap-2 w-full">
-                            <div class="grid gap-2">
-                                <div class="flex items-center gap-2">
-                                    <h3 class="font-semibold text-white truncate">{{ $event->name }}</h3>
-                                    @if($event->is_online)
-                                    <span class="text-xs text-zinc-500">Online</span>
-                                    @else
-                                    <span class="text-xs text-zinc-500">📍 {{ $event->location }}</span>
-                                    @endif
-                                </div>
-                                <div>
-                                    {{-- Description --}}
-                                    @if($event->description)
-                                    <p class="mt-2 text-sm text-zinc-400 line-clamp-2">{{ $event->description }}</p>
-                                    @endif
-                                </div>
-
+<div class="flex flex-col sm:flex-row justify-between gap-3 w-full min-w-0">
+    {{-- Left: name / description / links --}}
+    <div class="grid gap-2 min-w-0">
+        <div class="flex items-center gap-2 min-w-0">
+            <h3 class="font-semibold text-white truncate">{{ $event->name }}</h3>
+            @if($event->is_online)
+            <span class="text-xs text-zinc-500 shrink-0">Online</span>
+            @else
+            <span class="text-xs text-zinc-500 shrink-0">📍 {{ $event->location }}</span>
+            @endif
+        </div>
+        <div>
+            @if($event->description)
+            <p class="mt-2 text-sm text-zinc-400 line-clamp-2">{{ $event->description }}</p>
+            @endif
+        </div>
                                 {{-- External links --}}
                                 @if($event->hasLinks())
                                 <div class="flex flex-wrap gap-1.5 sm:flex-nowrap">
@@ -141,20 +142,40 @@
                                     @endforeach
                                 </div>
                                 @endif
+    </div>
 
-                            </div>
+    {{-- Right: dates + countdown --}}
+    <div class="flex flex-col gap-1 shrink-0">
+        <div class="flex flex-col gap-1 text-sm font-mono">
+            @foreach($event->displayDates() as $dt)
+            <div class="text-zinc-500 whitespace-nowrap">
+                {{ $dt['datetime'] }} {{ $dt['label'] }}
+            </div>
+            @endforeach
+        </div>
 
-                            {{-- Date & time — multiple timezones --}}
-                            <div class="flex-col gap-1 mt-1.5 text-sm font-mono">
-                                @foreach($event->displayDates() as $dt)
-                                <div class="text-zinc-500">
-                                    {{ $dt['datetime'] }} {{ $dt['label'] }}
-                                </div>
-                                @endforeach
-
-                            </div>
-
-                        </div>
+        @if(!$isPast)
+        <div
+            class="text-xs font-mono text-amber-400/80 mt-1"
+            x-data="{
+                target: {{ $event->starts_at->timestamp }},
+                d: 0, h: 0, m: 0, s: 0,
+                init() { this.tick(); setInterval(() => this.tick(), 1000); },
+                tick() {
+                    const diff = this.target - Math.floor(Date.now() / 1000);
+                    if (diff <= 0) { this.d = this.h = this.m = this.s = 0; return; }
+                    this.d = Math.floor(diff / 86400);
+                    this.h = Math.floor((diff % 86400) / 3600);
+                    this.m = Math.floor((diff % 3600) / 60);
+                    this.s = diff % 60;
+                }
+            }"
+        >
+            <span x-show="d > 0" x-text="d + 'd '"></span><span x-text="String(h).padStart(2,'0') + 'h ' + String(m).padStart(2,'0') + 'm ' + String(s).padStart(2,'0') + 's'"></span>
+        </div>
+        @endif
+    </div>
+</div>
 
 
                     </div>

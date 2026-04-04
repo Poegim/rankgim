@@ -5,7 +5,6 @@ namespace App\Models;
 use Carbon\CarbonInterface;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Support\Carbon;
 
 class Event extends Model
 {
@@ -89,58 +88,19 @@ class Event extends Model
         'Asia/Seoul' => 'KR',
     ];
 
-    /**
-     * Get starts_at in a specific timezone.
-     */
-    public function startsAtIn(string $tz)
-    {
-        return $this->starts_at->copy()->setTimezone($tz);
-    }
-
-    /**
-     * Date line: "Sat, Apr 4"
-     */
-    public function formattedDate(): string
-    {
-        return $this->startsAtLocal()->format('D, M j');
-    }
-
-    /**
-     * Get display times for the main timezones.
-     */
-    public function displayTimes(): array
-    {
-        $times = [];
-
-        foreach (self::DISPLAY_TIMEZONES as $tz => $label) {
-            $times[] = [
-                'label' => $label,
-                'time' => Carbon::parse($this->starts_at)->setTimezone($tz)->format('H:i'),
-            ];
-        }
-
-        return $times;
-    }
 
     /**
      * Return dates + times in multiple timezones
      */
     public function displayDates(): array
     {
-        $timezones = [
-            'Europe/Berlin' => 'CET',
-            'America/New_York' => 'NY',
-            'America/Los_Angeles' => 'LA',
-            'Asia/Seoul' => 'KR',
+    $dates = [];
+    foreach (self::DISPLAY_TIMEZONES as $tz => $label) {  // ← use constant
+        $dates[] = [
+            'label' => $label,
+            'datetime' => $this->starts_at->copy()->setTimezone($tz)->format('D, M j H:i'),
         ];
-
-        $dates = [];
-        foreach ($timezones as $tz => $label) {
-            $dates[] = [
-                'label' => $label,
-                'datetime' => $this->starts_at->copy()->setTimezone($tz)->format('D, M j H:i'),
-            ];
-        }
+    }
 
         return $dates;
     }
