@@ -80,6 +80,9 @@ Route::get('/about', function () {
     ]);
 })->name('about');
 
+// Events route using Livewire component
+Route::get('/events', App\Livewire\Events\Index::class)->name('events.index');
+
 // Admin routes with middleware for authentication and admin access
 Route::middleware(['auth', App\Http\Middleware\EnsureUserIsAdmin::class])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/', fn() => view('admin.index'))->name('index');

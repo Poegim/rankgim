@@ -33,7 +33,13 @@
                     <flux:sidebar.item icon="scale" :href="route('players.compare-search')" :current="request()->routeIs('players.compare-search')" wire:navigate>
                         {{ __('Compare Players') }}
                     </flux:sidebar.item>
+                    <flux:sidebar.item icon="calendar-days" :href="route('events.index')" :current="request()->routeIs('events.*')" wire:navigate>
+                        Events
+                    </flux:sidebar.item>
+
                 </flux:sidebar.group>
+
+                
             </flux:sidebar.nav>
             <flux:spacer />
             {{-- Ko-fi support link --}}
@@ -49,6 +55,7 @@
                     <span class="text-white text-sm font-semibold relative z-10">Help keep Rankgim alive ❤️</span>
                 </a>
             </div>
+            
             <flux:sidebar.item icon="information-circle" :href="route('about')" :current="request()->routeIs('about')" wire:navigate>
                 {{ __('About') }}
             </flux:sidebar.item>

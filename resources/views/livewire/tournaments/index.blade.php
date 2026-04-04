@@ -245,7 +245,7 @@
             <flux:input 
                 wire:model="name" 
                 label="Tournament name" 
-                placeholder="e.g. BW Weekly #42"
+                placeholder="e.g. Through life with Netwars #42"
             />
 
             <div class="flex justify-end gap-2">
