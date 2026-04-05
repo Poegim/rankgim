@@ -50,55 +50,20 @@ class Show extends Component
     #[Computed]
     public function stats()
     {
-        $history = $this->history;
         $rating = $this->rating;
-        
+        $ps     = \App\Models\PlayerStat::where('player_id', $this->playerId)->first();
+
         return [
             'win_ratio'          => $rating && $rating->games_played > 0
                                         ? round(($rating->wins / $rating->games_played) * 100)
                                         : 0,
-            'peak_rating'        => $history->max('rating_after') ?? 0,
-            'longest_win_streak' => $this->calculateWinStreak(),
-            'current_streak'     => $this->calculateCurrentStreak(),
-            'best_rank'          => RatingSnapshot::where('player_id', $this->playerId)->min('rank') ?? '—',
+            'peak_rating'        => $ps?->peak_rating ?? 0,
+            'longest_win_streak' => $ps?->longest_win_streak ?? 0,
+            'current_streak'     => $ps?->current_streak ?? 0,
+            'best_rank'          => $ps?->best_rank ?? '—',
         ];
     }
 
-    private function calculateWinStreak(): int
-    {
-        $streak = 0;
-        $max = 0;
-
-        foreach ($this->history as $entry) {
-            if ($entry->result === 'win') {
-                $streak++;
-                $max = max($max, $streak);
-            } else {
-                $streak = 0;
-            }
-        }
-
-        return $max;
-    }
-
-    private function calculateCurrentStreak(): int
-    {
-        $streak = 0;
-        $lastResult = null;
-
-        foreach ($this->history->reverse() as $entry) {
-            if ($lastResult === null) {
-                $lastResult = $entry->result;
-            }
-            if ($entry->result === $lastResult) {
-                $streak++;
-            } else {
-                break;
-            }
-        }
-
-        return $streak * ($lastResult === 'win' ? 1 : -1);
-    }
 
     #[Computed]
     public function raceStats()

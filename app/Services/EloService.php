@@ -48,65 +48,13 @@ class EloService
     }
 
     /**
-     * Process a single game and update ratings and history.
-     */
-    // public function processGame(Game $game): void
-    // {
-    //     $winnerRating = PlayerRating::firstOrCreate(
-    //         ['player_id' => $game->winner_id],
-    //         ['rating' => self::DEFAULT_RATING]
-    //     );
-
-    //     $loserRating = PlayerRating::firstOrCreate(
-    //         ['player_id' => $game->loser_id],
-    //         ['rating' => self::DEFAULT_RATING]
-    //     );
-
-    //     $kWinner = ($loserRating->games_played < 15) ? 20 : self::K_FACTOR;
-    //     $kLoser = ($winnerRating->games_played < 15) ? 20 : self::K_FACTOR;
-
-    //     $result = $this->calculate($winnerRating->rating, $loserRating->rating, $game->result, $kWinner, $kLoser);
-
-    //     RatingHistory::create([
-    //         'player_id'     => $game->winner_id,
-    //         'game_id'       => $game->id,
-    //         'rating_before' => $winnerRating->rating,
-    //         'rating_after'  => $result['r1_new'],
-    //         'rating_change' => $result['r1_change'],
-    //         'result'        => 'win',
-    //         'played_at'     => $game->date_time,
-    //     ]);
-
-    //     RatingHistory::create([
-    //         'player_id'     => $game->loser_id,
-    //         'game_id'       => $game->id,
-    //         'rating_before' => $loserRating->rating,
-    //         'rating_after'  => $result['r2_new'],
-    //         'rating_change' => $result['r2_change'],
-    //         'result'        => 'loss',
-    //         'played_at'     => $game->date_time,
-    //     ]);
-
-    //     $winnerRating->update([
-    //         'rating'       => $result['r1_new'],
-    //         'games_played' => $winnerRating->games_played + 1,
-    //         'wins'         => $winnerRating->wins + 1,
-    //     ]);
-
-    //     $loserRating->update([
-    //         'rating'       => $result['r2_new'],
-    //         'games_played' => $loserRating->games_played + 1,
-    //         'losses'       => $loserRating->losses + 1,
-    //     ]);
-    // }
-
-    /**
      * Recalculate all ratings from scratch, ordered by date.
      * Use this when importing historical data or adding games with older dates.
+     * After this completes, StatsService::rebuild() is called automatically.
      */
     public function recalculateAll(): void
     {
-        // Krok 1: Wyczyść tabele i remap aliasów w transakcji
+        // Step 1: Clear tables and remap aliases in a transaction
         DB::transaction(function () {
             echo "Truncating tables...\n";
             RatingHistory::query()->delete();
@@ -129,16 +77,16 @@ class EloService
             }
         });
 
-        // Krok 2: Przelicz in-memory (bez DB)
+        // Step 2: Calculate ratings in-memory (no DB writes during iteration)
         $total = Game::count();
         echo "Processing {$total} games...\n";
 
-        $ratings = [];
-        $stats = [];
-        $historyBatch = [];
+        $ratings          = [];
+        $stats            = [];
+        $historyBatch     = [];
         $lastProcessedMonth = null;
-        $snapshots = [];
-        $processed = 0;
+        $snapshots        = [];
+        $processed        = 0;
 
         Game::orderBy('date_time')->orderBy('id')->cursor()->each(
             function (Game $game) use (
@@ -150,18 +98,31 @@ class EloService
 
                 if (!isset($ratings[$winnerId])) {
                     $ratings[$winnerId] = self::DEFAULT_RATING;
-                    $stats[$winnerId]   = ['games_played' => 0, 'wins' => 0, 'losses' => 0, 'draws' => 0];
+                    $stats[$winnerId]   = [
+                        'games_played'  => 0,
+                        'wins'          => 0,
+                        'losses'        => 0,
+                        'draws'         => 0,
+                        'last_played_at' => null,
+                    ];
                 }
                 if (!isset($ratings[$loserId])) {
                     $ratings[$loserId] = self::DEFAULT_RATING;
-                    $stats[$loserId]   = ['games_played' => 0, 'wins' => 0, 'losses' => 0, 'draws' => 0];
+                    $stats[$loserId]   = [
+                        'games_played'  => 0,
+                        'wins'          => 0,
+                        'losses'        => 0,
+                        'draws'         => 0,
+                        'last_played_at' => null,
+                    ];
                 }
 
                 $r1 = $ratings[$winnerId];
                 $r2 = $ratings[$loserId];
 
-                $kWinner = ($stats[$winnerId]['games_played'] < 15) ? 60 : self::K_FACTOR;
-                $kLoser  = ($stats[$winnerId]['games_played'] < 15) ? 10 : self::K_FACTOR;
+                // Shield system: reduce K-factor impact when playing against unplaced players (<15 games)
+                $kWinner = ($stats[$loserId]['games_played'] < 15) ? 20 : self::K_FACTOR;
+                $kLoser  = ($stats[$winnerId]['games_played'] < 15) ? 20 : self::K_FACTOR;
 
                 $result = $this->calculate($r1, $r2, $game->result, $kWinner, $kLoser);
 
@@ -191,11 +152,16 @@ class EloService
 
                 $ratings[$winnerId] = $result['r1_new'];
                 $ratings[$loserId]  = $result['r2_new'];
+
                 $stats[$winnerId]['games_played']++;
                 $stats[$winnerId]['wins']++;
+                $stats[$winnerId]['last_played_at'] = $game->date_time;
+
                 $stats[$loserId]['games_played']++;
                 $stats[$loserId]['losses']++;
+                $stats[$loserId]['last_played_at'] = $game->date_time;
 
+                // Build monthly snapshot when month changes
                 $gameMonth = \Carbon\Carbon::parse($game->date_time)->format('Y-m');
                 if ($lastProcessedMonth !== null && $gameMonth !== $lastProcessedMonth) {
                     $snapshots = array_merge($snapshots, $this->buildSnapshot($ratings, $stats, $lastProcessedMonth));
@@ -207,9 +173,16 @@ class EloService
                 if ($processed % 1000 === 0) {
                     echo "Processed {$processed}/{$total} games...\n";
                 }
+
+                // Flush history batch every 500 records to avoid memory issues
+                if (count($historyBatch) >= 500) {
+                    DB::table('rating_histories')->insert($historyBatch);
+                    $historyBatch = [];
+                }
             }
         );
 
+        // Build final snapshot for the last month
         if ($lastProcessedMonth) {
             $snapshots = array_merge($snapshots, $this->buildSnapshot($ratings, $stats, $lastProcessedMonth));
             echo "Snapshot queued for {$lastProcessedMonth}\n";
@@ -230,14 +203,14 @@ class EloService
             ];
         }
 
-        // Krok 3: Inserty poza transakcją z wyłączonymi checkami
+        // Step 3: Bulk inserts outside transaction with checks disabled for speed
         DB::statement('SET unique_checks=0');
         DB::statement('SET foreign_key_checks=0');
 
-        echo "Saving " . count($historyBatch) . " history records...\n";
-        foreach (array_chunk($historyBatch, 1000) as $i => $chunk) {
-            DB::table('rating_histories')->insert($chunk);
-            echo "History chunk " . ($i + 1) . " saved...\n";
+        // Flush any remaining history records
+        if (!empty($historyBatch)) {
+            echo "Saving remaining " . count($historyBatch) . " history records...\n";
+            DB::table('rating_histories')->insert($historyBatch);
         }
 
         echo "Saving " . count($ratingsBatch) . " player ratings...\n";
@@ -252,19 +225,42 @@ class EloService
         DB::statement('SET unique_checks=1');
         DB::statement('SET foreign_key_checks=1');
 
-        echo "Done!\n";
+        echo "Done! Running StatsService...\n";
+
+        // Step 4: Rebuild all pre-computed stats tables
+        app(\App\Services\StatsService::class)->rebuild($stats, $ratings);
+
+        echo "All done!\n";
     }
 
+    /**
+     * Build a monthly ranking snapshot.
+     * Only includes players who qualify at the time of the snapshot:
+     * - 15+ games played
+     * - active in the last 12 months relative to the snapshot date
+     * This mirrors the exact same rules used in Rankings/Index.
+     */
     private function buildSnapshot(array $ratings, array $stats, string $yearMonth): array
     {
         $snapshotDate = \Carbon\Carbon::parse($yearMonth)->endOfMonth()->toDateString();
-        $now = now();
+        $cutoff       = \Carbon\Carbon::parse($snapshotDate)->subYear()->toDateString();
+        $now          = now();
 
-        arsort($ratings);
-        $rank = 1;
+        // Filter: 15+ games AND active in last 12 months from snapshot date
+        $qualified = array_filter(
+            $ratings,
+            fn($rating, $playerId) =>
+                ($stats[$playerId]['games_played'] ?? 0) >= 15 &&
+                isset($stats[$playerId]['last_played_at']) &&
+                $stats[$playerId]['last_played_at'] >= $cutoff,
+            ARRAY_FILTER_USE_BOTH
+        );
+
+        arsort($qualified);
+        $rank  = 1;
         $batch = [];
 
-        foreach ($ratings as $playerId => $rating) {
+        foreach ($qualified as $playerId => $rating) {
             $batch[] = [
                 'player_id'     => $playerId,
                 'rating'        => $rating,

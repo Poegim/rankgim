@@ -16,6 +16,11 @@ class PlayerRating extends Model
         'draws',
     ];
 
+    public function playerStat(): \Illuminate\Database\Eloquent\Relations\HasOne
+    {
+        return $this->hasOne(PlayerStat::class, 'player_id', 'player_id');
+    }
+
     public function player(): BelongsTo
     {
         return $this->belongsTo(Player::class);

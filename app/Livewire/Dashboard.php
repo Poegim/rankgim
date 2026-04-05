@@ -1,26 +1,26 @@
 <?php
+
 namespace App\Livewire;
 
-use Illuminate\Support\Facades\Cache;
-use Livewire\Component;
-use Livewire\Attributes\Computed;
-use App\Models\Player;
+use App\Models\HeadToHead;
 use App\Models\PlayerRating;
+use App\Models\PlayerStat;
 use App\Models\RatingHistory;
 use App\Models\RatingSnapshot;
+use App\Models\SystemStat;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
+use Livewire\Attributes\Computed;
+use Livewire\Component;
 
 class Dashboard extends Component
 {
     public bool $showMore = false;
-    public string $peaksRegion = '';
-
 
     #[Computed]
     public function lastGameDate(): ?string
     {
-        return RatingHistory::max('played_at');
+        return SystemStat::get('last_game_date');
     }
 
     #[Computed]
@@ -32,9 +32,7 @@ class Dashboard extends Component
     #[Computed]
     public function previousSnapshotDate(): ?string
     {
-        $latestDate = RatingSnapshot::max('snapshot_date');
-        if (!$latestDate) return null;
-        return RatingSnapshot::where('snapshot_date', '<', $latestDate)->max('snapshot_date');
+        return SystemStat::get('previous_snapshot_date');
     }
 
     #[Computed]
@@ -42,12 +40,11 @@ class Dashboard extends Component
     {
         if (!$this->since) return collect();
 
-        $activePlayerIds = RatingHistory::where('played_at', '>=', $this->since)
-            ->distinct()->pluck('player_id');
-
+        // Single query — active players with 15+ games, no separate distinct query needed
         $ratings = PlayerRating::with('player')
-            ->whereIn('player_id', $activePlayerIds)
+            ->whereHas('player', fn($q) => $q->whereNull('player_id'))
             ->where('games_played', '>=', 15)
+            ->whereHas('playerStat', fn($q) => $q->where('last_played_at', '>=', $this->since))
             ->orderByDesc('rating')
             ->limit(10)
             ->get();
@@ -114,32 +111,15 @@ class Dashboard extends Component
     {
         if (!$this->showMore || !$this->since) return collect();
 
-        $activePlayers = RatingHistory::where('played_at', '>=', $this->since)
-            ->pluck('player_id')
-            ->unique();
-
-        $results = RatingHistory::orderBy('player_id')
-            ->orderByDesc('played_at')
-            ->whereIn('player_id', $activePlayers)
-            ->get(['player_id', 'result'])
-            ->groupBy('player_id')
-            ->map(function ($entries) {
-                $streak = 0;
-                foreach ($entries as $entry) {
-                    if ($entry->result === 'win') $streak++;
-                    else break;
-                }
-                return $streak;
-            })
-            ->sortByDesc(fn($streak) => $streak)
-            ->take(5);
-
-        $players = Player::whereIn('id', $results->keys())->get()->keyBy('id');
-
-        return $results->map(fn($streak, $playerId) => [
-            'player' => $players[$playerId],
-            'streak' => $streak,
-        ])->values();
+        // Uses pre-computed player_stats instead of loading all history into PHP
+        return DB::table('player_stats')
+            ->join('players', 'players.id', '=', 'player_stats.player_id')
+            ->where('player_stats.last_played_at', '>=', $this->since)
+            ->where('player_stats.current_streak', '>', 0)
+            ->orderByDesc('player_stats.current_streak')
+            ->select('players.id', 'players.name', 'players.country_code', 'players.race', 'player_stats.current_streak as streak')
+            ->limit(5)
+            ->get();
     }
 
     #[Computed]
@@ -191,94 +171,48 @@ class Dashboard extends Component
     {
         if (!$this->showMore) return collect();
 
-        $rows = DB::table('rating_histories as rh1')
-            ->join('rating_histories as rh2', function ($join) {
-                $join->on('rh1.game_id', '=', 'rh2.game_id')
-                     ->where('rh1.result', '=', 'win')
-                     ->where('rh2.result', '=', 'loss');
-            })
-            ->join('players as p1', 'p1.id', '=', 'rh1.player_id')
-            ->join('players as p2', 'p2.id', '=', 'rh2.player_id')
-            ->selectRaw('
-                LEAST(rh1.player_id, rh2.player_id) as player_a_id,
-                GREATEST(rh1.player_id, rh2.player_id) as player_b_id,
-                count(*) as games_count,
-                sum(CASE WHEN rh1.player_id = LEAST(rh1.player_id, rh2.player_id) THEN 1 ELSE 0 END) as player_a_wins,
-                MAX(CASE WHEN rh1.player_id = LEAST(rh1.player_id, rh2.player_id) THEN p1.name ELSE p2.name END) as p1_name,
-                MAX(CASE WHEN rh1.player_id = LEAST(rh1.player_id, rh2.player_id) THEN p1.country_code ELSE p2.country_code END) as p1_country,
-                MAX(CASE WHEN rh1.player_id = LEAST(rh1.player_id, rh2.player_id) THEN p1.race ELSE p2.race END) as p1_race,
-                MAX(CASE WHEN rh1.player_id = GREATEST(rh1.player_id, rh2.player_id) THEN p1.name ELSE p2.name END) as p2_name,
-                MAX(CASE WHEN rh1.player_id = GREATEST(rh1.player_id, rh2.player_id) THEN p1.country_code ELSE p2.country_code END) as p2_country,
-                MAX(CASE WHEN rh1.player_id = GREATEST(rh1.player_id, rh2.player_id) THEN p1.race ELSE p2.race END) as p2_race
-            ')
-            ->groupByRaw('LEAST(rh1.player_id, rh2.player_id), GREATEST(rh1.player_id, rh2.player_id)')
+        // Uses pre-computed head_to_head table instead of self-JOIN on rating_histories
+        return HeadToHead::with('playerA', 'playerB')
             ->orderByDesc('games_count')
             ->limit(10)
-            ->get();
-
-        return $rows->map(fn($row) => [
-            'player_a_id'   => $row->player_a_id,
-            'player_b_id'   => $row->player_b_id,
-            'p1_name'       => $row->p1_name,
-            'p1_country'    => $row->p1_country,
-            'p1_race'       => $row->p1_race,
-            'p2_name'       => $row->p2_name,
-            'p2_country'    => $row->p2_country,
-            'p2_race'       => $row->p2_race,
-            'games_count'   => $row->games_count,
-            'player_a_wins' => $row->player_a_wins,
-            'player_b_wins' => $row->games_count - $row->player_a_wins,
-        ])->values();
+            ->get()
+            ->map(fn($h2h) => [
+                'player_a_id'   => $h2h->player_a_id,
+                'player_b_id'   => $h2h->player_b_id,
+                'p1_name'       => $h2h->playerA->name,
+                'p1_country'    => $h2h->playerA->country_code,
+                'p1_race'       => $h2h->playerA->race,
+                'p2_name'       => $h2h->playerB->name,
+                'p2_country'    => $h2h->playerB->country_code,
+                'p2_race'       => $h2h->playerB->race,
+                'games_count'   => $h2h->games_count,
+                'player_a_wins' => $h2h->player_a_wins,
+                'player_b_wins' => $h2h->games_count - $h2h->player_a_wins,
+            ]);
     }
 
     #[Computed]
     public function raceMatchups()
     {
-        return Cache::remember('dashboard.raceMatchups', 3600, function () {
-            return DB::table('rating_histories as rh1')
-                ->join('rating_histories as rh2', function ($join) {
-                    $join->on('rh1.game_id', '=', 'rh2.game_id')
-                         ->where('rh1.result', '=', 'win')
-                         ->where('rh2.result', '=', 'loss');
-                })
-                ->join('players as p1', 'p1.id', '=', 'rh1.player_id')
-                ->join('players as p2', 'p2.id', '=', 'rh2.player_id')
-                ->whereNotIn('p1.race', ['Random', 'Unknown'])
-                ->whereNotIn('p2.race', ['Random', 'Unknown'])
-                ->selectRaw('p1.race as winner_race, p2.race as loser_race, count(*) as games')
-                ->groupBy('p1.race', 'p2.race')
-                ->get();
-        });
+        // Pre-computed in system_stats by StatsService
+        return collect(SystemStat::get('race_matchups') ?? [])
+            ->map(fn($row) => (object) $row);
     }
 
     #[Computed]
     public function gamesPerYear()
     {
-        return Cache::remember('dashboard.gamesPerYear', 3600, function () {
-            return DB::table('games')
-                ->selectRaw('YEAR(date_time) as year, COUNT(*) as total')
-                ->groupByRaw('YEAR(date_time)')
-                ->orderBy('year')
-                ->get();
-        });
+        // Pre-computed in system_stats by StatsService
+        return collect(SystemStat::get('games_per_year') ?? [])
+            ->map(fn($row) => (object) $row);
     }
 
     #[Computed]
     public function activePlayersPerYear()
     {
-        return Cache::remember('dashboard.activePlayersPerYear', 3600, function () {
-            return DB::query()
-                ->fromSub(function ($query) {
-                    $query->selectRaw('YEAR(date_time) as year, winner_id as player_id')->from('games')
-                        ->unionAll(
-                            DB::table('games')->selectRaw('YEAR(date_time) as year, loser_id as player_id')
-                        );
-                }, 'all_players')
-                ->selectRaw('year, COUNT(DISTINCT player_id) as total')
-                ->groupBy('year')
-                ->orderBy('year')
-                ->get();
-        });
+        // Pre-computed in system_stats by StatsService
+        return collect(SystemStat::get('active_players_per_year') ?? [])
+            ->map(fn($row) => (object) $row);
     }
 
     #[Computed]
@@ -289,39 +223,6 @@ class Dashboard extends Component
             ->limit(5)
             ->get();
     }
-
-    // #[Computed]
-    // public function ratingTrends()
-    // {
-    //     return DB::table('rating_snapshots')
-    //         ->selectRaw('
-    //             snapshot_date,
-    //             MAX(rating) as max_rating,
-    //             ROUND(AVG(rating)) as avg_rating,
-    //             MIN(rating) as min_rating
-    //         ')
-    //         ->where('games_played', '>=', 15)
-    //         ->groupBy('snapshot_date')
-    //         ->orderBy('snapshot_date')
-    //         ->get();
-    // }
-
-   
-    // #[Computed]
-    // public function top10AvgTrend()
-    // {
-    //     return DB::query()
-    //         ->fromSub(function ($query) {
-    //             $query->from('rating_snapshots')
-    //                 ->selectRaw('snapshot_date, rating, ROW_NUMBER() OVER (PARTITION BY snapshot_date ORDER BY rating DESC) as rn')
-    //                 ->where('games_played', '>=', 15);
-    //         }, 'ranked')
-    //         ->where('rn', '<=', 10)
-    //         ->selectRaw('snapshot_date, ROUND(AVG(rating)) as avg_top10')
-    //         ->groupBy('snapshot_date')
-    //         ->orderBy('snapshot_date')
-    //         ->get();
-    // }
 
     public function render()
     {

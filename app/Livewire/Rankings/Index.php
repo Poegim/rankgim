@@ -3,7 +3,6 @@
 namespace App\Livewire\Rankings;
 
 use App\Models\PlayerRating;
-use App\Models\RatingHistory;
 use App\Models\RatingSnapshot;
 use Illuminate\Support\Carbon;
 use Livewire\Attributes\Computed;
@@ -63,32 +62,29 @@ class Index extends Component
     #[Computed]
     public function rankings()
     {
-        $lastGame = RatingHistory::max('played_at');
+        $lastGame = \App\Models\SystemStat::get('last_game_date');
         if (!$lastGame) return new \Illuminate\Pagination\LengthAwarePaginator([], 0, 20);
         $since = Carbon::parse($lastGame)->subYear();
 
-        $activePlayerIds = RatingHistory::where('played_at', '>=', $since)
-            ->distinct()->pluck('player_id');
-
         $rankings = PlayerRating::with('player')
-            ->whereIn('player_id', $activePlayerIds)
+            ->whereHas('playerStat', fn($q) => $q->where('last_played_at', '>=', $since))
             ->where('games_played', '>=', 15)
             ->when($this->filterCountryCode, fn($q) => $q->whereHas('player', fn($q) => $q->where('country_code', $this->filterCountryCode)))
             ->when($this->filterRace, fn($q) => $q->whereHas('player', fn($q) => $q->where('race', $this->filterRace)))
             ->when($this->filterRegion, function ($q) {
-                    $codes = collect(config('countries'))->where('region', $this->filterRegion)->pluck('code')->toArray();
-                    $q->whereHas('player', fn($q) => $q->whereIn('country_code', $codes));
-                })
+                $codes = collect(config('countries'))->where('region', $this->filterRegion)->pluck('code')->toArray();
+                $q->whereHas('player', fn($q) => $q->whereIn('country_code', $codes));
+            })
             ->orderBy($this->sortBy, $this->sortDirection)
             ->paginate(100);
 
-        $playerIds = $rankings->pluck('player_id');
-        $prevDate = RatingSnapshot::max('snapshot_date')
-            ? RatingSnapshot::where('snapshot_date', '<', RatingSnapshot::max('snapshot_date'))->max('snapshot_date')
-            : null;
+        $prevDate = \App\Models\SystemStat::get('previous_snapshot_date');
 
         $snapshots = $prevDate
-            ? RatingSnapshot::whereIn('player_id', $playerIds)->where('snapshot_date', $prevDate)->get()->keyBy('player_id')
+            ? RatingSnapshot::whereIn('player_id', $rankings->pluck('player_id'))
+                ->where('snapshot_date', $prevDate)
+                ->get()
+                ->keyBy('player_id')
             : collect();
 
         $rankings->getCollection()->transform(function ($row) use ($snapshots) {

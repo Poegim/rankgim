@@ -324,9 +324,9 @@
                 <div class="divide-y divide-zinc-200 dark:divide-zinc-700">
                     @foreach($this->longestStreaks as $row)
                     <div class="flex items-center gap-3 py-2.5">
-                        <img src="{{ asset('images/country_flags/' . strtolower($row['player']->country_code) . '.svg') }}" class="w-6 h-4 rounded-sm">
-                        <a href="{{ route('players.show', ['id' => $row['player']->id, 'slug' => Str::slug($row['player']->name)]) }}" class="hover:underline font-semibold text-zinc-800 dark:text-white flex-1">{{ $row['player']->name }}</a>
-                        <span class="text-orange-400 font-mono font-bold">{{ $row['streak'] }}W</span>
+                        <img src="{{ asset('images/country_flags/' . strtolower($row->country_code) . '.svg') }}" class="w-6 h-4 rounded-sm">
+                        <a href="{{ route('players.show', ['id' => $row->id, 'slug' => Str::slug($row->name)]) }}" class="hover:underline font-semibold text-zinc-800 dark:text-white flex-1">{{ $row->name }}</a>
+                        <span class="text-orange-400 font-mono font-bold">{{ $row->streak }}W</span>
                     </div>
                     @endforeach
                 </div>
