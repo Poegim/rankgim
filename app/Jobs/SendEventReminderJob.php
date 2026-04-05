@@ -20,8 +20,10 @@ class SendEventReminderJob implements ShouldQueue
 
     public function handle(): void
     {
-        User::whereNotNull('email')->each(function ($user) {
-            Mail::to($user->email)->send(new EventReminderMail($this->event));
+        User::whereNotNull('email')
+            ->where('event_reminders', true)
+            ->each(function ($user) {
+                Mail::to($user->email)->send(new EventReminderMail($this->event));
         });
 
         $this->event->update(['reminder_sent_at' => now()]);
