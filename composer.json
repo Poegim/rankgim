@@ -17,7 +17,8 @@
         "livewire/flux": "^2.9.0",
         "livewire/livewire": "^4.0",
         "symfony/http-client": "^7.4",
-        "symfony/mailgun-mailer": "^7.4"
+        "symfony/mailgun-mailer": "^7.4",
+        "fruitcake/laravel-debugbar": "^4.1",
     },
     "require-dev": {
         "fakerphp/faker": "^1.23",
