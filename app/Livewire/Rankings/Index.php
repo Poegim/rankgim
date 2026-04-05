@@ -99,39 +99,6 @@ class Index extends Component
         return $rankings;
     }
 
-    #[Computed]
-    public function playerTiers(): array
-    {
-        $lastGame = RatingHistory::max('played_at');
-        if (!$lastGame) return [];
-        $since = Carbon::parse($lastGame)->subYear();
-
-        $activePlayerIds = RatingHistory::where('played_at', '>=', $since)
-            ->distinct()->pluck('player_id');
-
-        $total = PlayerRating::whereIn('player_id', $activePlayerIds)
-            ->where('games_played', '>=', 15)
-            ->count();
-
-        if ($total == 0) return [];
-
-        $ranked = PlayerRating::whereIn('player_id', $activePlayerIds)
-            ->where('games_played', '>=', 15)
-            ->orderByDesc('rating')
-            ->pluck('player_id')
-            ->values();
-
-        $tiers = [];
-        foreach ($ranked as $index => $playerId) {
-            $pct = (($index + 1) / $total) * 100;
-            if ($pct <= 1) $tiers[$playerId] = 'S';
-            elseif ($pct <= 8) $tiers[$playerId] = 'A';
-            elseif ($pct <= 29) $tiers[$playerId] = 'B';
-        }
-
-        return $tiers;
-    }
-
     public function render()
     {
         return view('livewire.rankings.index');

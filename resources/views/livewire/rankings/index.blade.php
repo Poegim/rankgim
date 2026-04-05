@@ -30,12 +30,17 @@
             'Unknown' => '',
         ];
 
-        function getTier($tierLetter) {
-            return match($tierLetter) {
-                'S' => ['icon' => '👑', 'ratingColor' => 'text-amber-300', 'rowClass' => 'bg-gradient-to-r from-amber-500/10 to-transparent ring-1 ring-amber-500/20', 'nameClass' => 'text-amber-200'],
-                'A' => ['icon' => '💎', 'ratingColor' => 'text-red-400', 'rowClass' => 'bg-gradient-to-r from-red-500/8 to-transparent', 'nameClass' => ''],
-                'B' => ['icon' => '⭐', 'ratingColor' => 'text-purple-400', 'rowClass' => 'bg-gradient-to-r from-purple-500/6 to-transparent', 'nameClass' => ''],
-                default => ['icon' => '', 'ratingColor' => 'text-zinc-200', 'rowClass' => '', 'nameClass' => ''],
+        function getTierByRank($rank) {
+            return match(true) {
+                $rank === 1  => ['icon' => '&#x1F451;', 'ratingColor' => 'text-amber-300', 'rowClass' => 'bg-gradient-to-r from-amber-500/10 to-transparent ring-1 ring-amber-500/20', 'nameClass' => 'text-amber-200'],
+                $rank === 2  => ['icon' => '&#x1F948;', 'ratingColor' => 'text-zinc-300', 'rowClass' => 'bg-gradient-to-r from-zinc-500/8 to-transparent', 'nameClass' => ''],
+                $rank === 3  => ['icon' => '&#x1F949;', 'ratingColor' => 'text-orange-300', 'rowClass' => 'bg-gradient-to-r from-orange-500/6 to-transparent', 'nameClass' => ''],
+                $rank <= 10  => ['icon' => '&#x1F48E;', 'ratingColor' => 'text-red-400', 'rowClass' => 'bg-gradient-to-r from-red-500/8 to-transparent', 'nameClass' => ''],
+                $rank <= 30  => ['icon' => '&#x2B50;', 'ratingColor' => 'text-purple-400', 'rowClass' => 'bg-gradient-to-r from-purple-500/6 to-transparent', 'nameClass' => ''],
+                $rank <= 100 => ['icon' => '&#x1F539;', 'ratingColor' => 'text-blue-400', 'rowClass' => '', 'nameClass' => ''],
+                $rank <= 200 => ['icon' => '&#x1F538;', 'ratingColor' => 'text-zinc-300', 'rowClass' => '', 'nameClass' => ''],
+                $rank <= 300 => ['icon' => '&#x1F538;', 'ratingColor' => 'text-zinc-600', 'rowClass' => '', 'nameClass' => ''],
+                default      => ['icon' => '', 'ratingColor' => 'text-zinc-200', 'rowClass' => '', 'nameClass' => ''],
             };
         }
         
@@ -95,12 +100,13 @@
     @endif
 
     {{-- Rank tier legend --}}
-        <div class="flex flex-wrap items-center gap-4 mb-4 px-1">
-            <span class="text-xs text-zinc-500">Ranks:</span>
-            <span class="flex items-center gap-1 text-xs text-amber-300">👑 · Top 1%</span>
-            <span class="flex items-center gap-1 text-xs text-red-400">💎 · Top 8%</span>
-            <span class="flex items-center gap-1 text-xs text-purple-400">⭐ · Top 29%</span>
-        </div>
+    <div class="flex flex-wrap items-center gap-4 mb-4 px-1">
+        <span class="text-xs text-zinc-500">Ranks:</span>
+        <span class="text-xs text-amber-300">👑 · #1</span>
+        <span class="text-xs text-zinc-300">🥈🥉 · #2-3</span>
+        <span class="text-xs text-red-400">💎 · Top 10</span>
+        <span class="text-xs text-purple-400">⭐ · Top 30</span>
+    </div>
 
     {{-- Rankings --}}
     <div class="rounded-xl border border-zinc-200 dark:border-zinc-700 overflow-hidden">
@@ -132,8 +138,7 @@
             $rank = $this->rankings->firstItem() + $index;
             $winRatio = $row->games_played > 0 ? round(($row->wins / $row->games_played) * 100) : 0;
             $change = $row->prev_rating !== null ? $row->rating - $row->prev_rating : null;
-            $tierLetter = $this->playerTiers[$row->player_id] ?? null;
-            $tier = getTier($tierLetter);
+            $tier = getTierByRank($rank);
         @endphp
         <div
             wire:key="ranking-{{ $row->id }}"
@@ -157,7 +162,7 @@ style="border-left: 4px solid {{ match($row->player->race) { 'Terran' => '#3b82f
                     >
                     <div class="min-w-0 flex items-center gap-1.5">
                         @if($tier['icon'])
-                            <span class="text-sm hidden sm:inline">{{ $tier['icon'] }}</span>
+                            <span class="text-sm hidden sm:inline">{!! $tier['icon'] !!}</span>
                         @endif
                         <a href="{{ route('players.show', ['id' => $row->player->id, 'slug' => Str::slug($row->player->name)]) }}"
                            class="hover:underline font-semibold {{ $tier['nameClass'] ?: 'text-zinc-800 dark:text-white' }} block truncate">
