@@ -30,8 +30,32 @@
                     <flux:sidebar.item icon="users" :href="route('players.index')" :current="request()->routeIs('players.index')" wire:navigate>
                         {{ __('Players') }}
                     </flux:sidebar.item>
+                    
+                    @php
+                        $upcomingEvents = \App\Models\Event::where('starts_at', '>=', now())
+                            ->orderBy('starts_at')
+                            ->get();
+                        $nextEvent = $upcomingEvents->first();
+                        $badgeColor = null;
+                        if ($nextEvent) {
+                            $minutesLeft = now()->diffInMinutes($nextEvent->starts_at, false);
+                            $badgeColor = match(true) {
+                                $minutesLeft <= 60   => 'bg-red-500 text-white',
+                                $minutesLeft <= 1440 => 'bg-amber-400 text-black',
+                                default              => 'bg-zinc-600 text-zinc-300',
+                            };
+                        }
+                    @endphp
+
                     <flux:sidebar.item icon="calendar-days" :href="route('events.index')" :current="request()->routeIs('events.*')" wire:navigate>
-                        Events
+                        <div class="flex items-center justify-between w-full">
+                            <span>Events</span>
+                            @if($nextEvent && $badgeColor)
+                            <span class="text-xs font-bold px-1.5 py-0.5 rounded-full {{ $badgeColor }}">
+                                {{ $upcomingEvents->count() }}
+                            </span>
+                            @endif
+                        </div>
                     </flux:sidebar.item>
 
                 </flux:sidebar.group>
