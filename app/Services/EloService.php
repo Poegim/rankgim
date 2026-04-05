@@ -104,156 +104,156 @@ class EloService
      * Recalculate all ratings from scratch, ordered by date.
      * Use this when importing historical data or adding games with older dates.
      */
-public function recalculateAll(): void
-{
-    // Krok 1: Wyczyść tabele i remap aliasów w transakcji
-    DB::transaction(function () {
-        echo "Truncating tables...\n";
-        RatingHistory::query()->delete();
-        PlayerRating::query()->delete();
-        RatingSnapshot::query()->delete();
+    public function recalculateAll(): void
+    {
+        // Krok 1: Wyczyść tabele i remap aliasów w transakcji
+        DB::transaction(function () {
+            echo "Truncating tables...\n";
+            RatingHistory::query()->delete();
+            PlayerRating::query()->delete();
+            RatingSnapshot::query()->delete();
 
-        echo "Remapping alias players in games...\n";
-        $aliasMap = DB::table('players')
-            ->whereNotNull('player_id')
-            ->pluck('player_id', 'id');
+            echo "Remapping alias players in games...\n";
+            $aliasMap = DB::table('players')
+                ->whereNotNull('player_id')
+                ->pluck('player_id', 'id');
 
-        if ($aliasMap->isNotEmpty()) {
-            DB::table('games')
-                ->whereIn('winner_id', $aliasMap->keys())
-                ->update(['winner_id' => DB::raw('(SELECT player_id FROM players WHERE id = games.winner_id AND player_id IS NOT NULL)')]);
-            DB::table('games')
-                ->whereIn('loser_id', $aliasMap->keys())
-                ->update(['loser_id' => DB::raw('(SELECT player_id FROM players WHERE id = games.loser_id AND player_id IS NOT NULL)')]);
-            echo "Remapped " . $aliasMap->count() . " aliases.\n";
+            if ($aliasMap->isNotEmpty()) {
+                DB::table('games')
+                    ->whereIn('winner_id', $aliasMap->keys())
+                    ->update(['winner_id' => DB::raw('(SELECT player_id FROM players WHERE id = games.winner_id AND player_id IS NOT NULL)')]);
+                DB::table('games')
+                    ->whereIn('loser_id', $aliasMap->keys())
+                    ->update(['loser_id' => DB::raw('(SELECT player_id FROM players WHERE id = games.loser_id AND player_id IS NOT NULL)')]);
+                echo "Remapped " . $aliasMap->count() . " aliases.\n";
+            }
+        });
+
+        // Krok 2: Przelicz in-memory (bez DB)
+        $total = Game::count();
+        echo "Processing {$total} games...\n";
+
+        $ratings = [];
+        $stats = [];
+        $historyBatch = [];
+        $lastProcessedMonth = null;
+        $snapshots = [];
+        $processed = 0;
+
+        Game::orderBy('date_time')->orderBy('id')->cursor()->each(
+            function (Game $game) use (
+                &$ratings, &$stats, &$historyBatch,
+                &$lastProcessedMonth, &$snapshots, &$processed, $total
+            ) {
+                $winnerId = $game->winner_id;
+                $loserId  = $game->loser_id;
+
+                if (!isset($ratings[$winnerId])) {
+                    $ratings[$winnerId] = self::DEFAULT_RATING;
+                    $stats[$winnerId]   = ['games_played' => 0, 'wins' => 0, 'losses' => 0, 'draws' => 0];
+                }
+                if (!isset($ratings[$loserId])) {
+                    $ratings[$loserId] = self::DEFAULT_RATING;
+                    $stats[$loserId]   = ['games_played' => 0, 'wins' => 0, 'losses' => 0, 'draws' => 0];
+                }
+
+                $r1 = $ratings[$winnerId];
+                $r2 = $ratings[$loserId];
+
+                $kWinner = ($stats[$winnerId]['games_played'] < 15) ? 60 : self::K_FACTOR;
+                $kLoser  = ($stats[$winnerId]['games_played'] < 15) ? 10 : self::K_FACTOR;
+
+                $result = $this->calculate($r1, $r2, $game->result, $kWinner, $kLoser);
+
+                $now = now();
+                $historyBatch[] = [
+                    'player_id'     => $winnerId,
+                    'game_id'       => $game->id,
+                    'rating_before' => $r1,
+                    'rating_after'  => $result['r1_new'],
+                    'rating_change' => $result['r1_change'],
+                    'result'        => 'win',
+                    'played_at'     => $game->date_time,
+                    'created_at'    => $now,
+                    'updated_at'    => $now,
+                ];
+                $historyBatch[] = [
+                    'player_id'     => $loserId,
+                    'game_id'       => $game->id,
+                    'rating_before' => $r2,
+                    'rating_after'  => $result['r2_new'],
+                    'rating_change' => $result['r2_change'],
+                    'result'        => 'loss',
+                    'played_at'     => $game->date_time,
+                    'created_at'    => $now,
+                    'updated_at'    => $now,
+                ];
+
+                $ratings[$winnerId] = $result['r1_new'];
+                $ratings[$loserId]  = $result['r2_new'];
+                $stats[$winnerId]['games_played']++;
+                $stats[$winnerId]['wins']++;
+                $stats[$loserId]['games_played']++;
+                $stats[$loserId]['losses']++;
+
+                $gameMonth = \Carbon\Carbon::parse($game->date_time)->format('Y-m');
+                if ($lastProcessedMonth !== null && $gameMonth !== $lastProcessedMonth) {
+                    $snapshots = array_merge($snapshots, $this->buildSnapshot($ratings, $stats, $lastProcessedMonth));
+                    echo "Snapshot queued for {$lastProcessedMonth}\n";
+                }
+                $lastProcessedMonth = $gameMonth;
+
+                $processed++;
+                if ($processed % 1000 === 0) {
+                    echo "Processed {$processed}/{$total} games...\n";
+                }
+            }
+        );
+
+        if ($lastProcessedMonth) {
+            $snapshots = array_merge($snapshots, $this->buildSnapshot($ratings, $stats, $lastProcessedMonth));
+            echo "Snapshot queued for {$lastProcessedMonth}\n";
         }
-    });
 
-    // Krok 2: Przelicz in-memory (bez DB)
-    $total = Game::count();
-    echo "Processing {$total} games...\n";
-
-    $ratings = [];
-    $stats = [];
-    $historyBatch = [];
-    $lastProcessedMonth = null;
-    $snapshots = [];
-    $processed = 0;
-
-    Game::orderBy('date_time')->orderBy('id')->cursor()->each(
-        function (Game $game) use (
-            &$ratings, &$stats, &$historyBatch,
-            &$lastProcessedMonth, &$snapshots, &$processed, $total
-        ) {
-            $winnerId = $game->winner_id;
-            $loserId  = $game->loser_id;
-
-            if (!isset($ratings[$winnerId])) {
-                $ratings[$winnerId] = self::DEFAULT_RATING;
-                $stats[$winnerId]   = ['games_played' => 0, 'wins' => 0, 'losses' => 0, 'draws' => 0];
-            }
-            if (!isset($ratings[$loserId])) {
-                $ratings[$loserId] = self::DEFAULT_RATING;
-                $stats[$loserId]   = ['games_played' => 0, 'wins' => 0, 'losses' => 0, 'draws' => 0];
-            }
-
-            $r1 = $ratings[$winnerId];
-            $r2 = $ratings[$loserId];
-
-            $kWinner = ($stats[$winnerId]['games_played'] < 15) ? 60 : self::K_FACTOR;
-            $kLoser  = ($stats[$winnerId]['games_played'] < 15) ? 10 : self::K_FACTOR;
-
-            $result = $this->calculate($r1, $r2, $game->result, $kWinner, $kLoser);
-
-            $now = now();
-            $historyBatch[] = [
-                'player_id'     => $winnerId,
-                'game_id'       => $game->id,
-                'rating_before' => $r1,
-                'rating_after'  => $result['r1_new'],
-                'rating_change' => $result['r1_change'],
-                'result'        => 'win',
-                'played_at'     => $game->date_time,
-                'created_at'    => $now,
-                'updated_at'    => $now,
+        $now = now();
+        $ratingsBatch = [];
+        foreach ($ratings as $playerId => $rating) {
+            $ratingsBatch[] = [
+                'player_id'    => $playerId,
+                'rating'       => $rating,
+                'games_played' => $stats[$playerId]['games_played'],
+                'wins'         => $stats[$playerId]['wins'],
+                'losses'       => $stats[$playerId]['losses'],
+                'draws'        => $stats[$playerId]['draws'],
+                'created_at'   => $now,
+                'updated_at'   => $now,
             ];
-            $historyBatch[] = [
-                'player_id'     => $loserId,
-                'game_id'       => $game->id,
-                'rating_before' => $r2,
-                'rating_after'  => $result['r2_new'],
-                'rating_change' => $result['r2_change'],
-                'result'        => 'loss',
-                'played_at'     => $game->date_time,
-                'created_at'    => $now,
-                'updated_at'    => $now,
-            ];
-
-            $ratings[$winnerId] = $result['r1_new'];
-            $ratings[$loserId]  = $result['r2_new'];
-            $stats[$winnerId]['games_played']++;
-            $stats[$winnerId]['wins']++;
-            $stats[$loserId]['games_played']++;
-            $stats[$loserId]['losses']++;
-
-            $gameMonth = \Carbon\Carbon::parse($game->date_time)->format('Y-m');
-            if ($lastProcessedMonth !== null && $gameMonth !== $lastProcessedMonth) {
-                $snapshots = array_merge($snapshots, $this->buildSnapshot($ratings, $stats, $lastProcessedMonth));
-                echo "Snapshot queued for {$lastProcessedMonth}\n";
-            }
-            $lastProcessedMonth = $gameMonth;
-
-            $processed++;
-            if ($processed % 1000 === 0) {
-                echo "Processed {$processed}/{$total} games...\n";
-            }
         }
-    );
 
-    if ($lastProcessedMonth) {
-        $snapshots = array_merge($snapshots, $this->buildSnapshot($ratings, $stats, $lastProcessedMonth));
-        echo "Snapshot queued for {$lastProcessedMonth}\n";
+        // Krok 3: Inserty poza transakcją z wyłączonymi checkami
+        DB::statement('SET unique_checks=0');
+        DB::statement('SET foreign_key_checks=0');
+
+        echo "Saving " . count($historyBatch) . " history records...\n";
+        foreach (array_chunk($historyBatch, 1000) as $i => $chunk) {
+            DB::table('rating_histories')->insert($chunk);
+            echo "History chunk " . ($i + 1) . " saved...\n";
+        }
+
+        echo "Saving " . count($ratingsBatch) . " player ratings...\n";
+        DB::table('player_ratings')->insert($ratingsBatch);
+
+        echo "Saving " . count($snapshots) . " snapshots...\n";
+        foreach (array_chunk($snapshots, 1000) as $i => $chunk) {
+            DB::table('rating_snapshots')->insert($chunk);
+            echo "Snapshot chunk " . ($i + 1) . " saved...\n";
+        }
+
+        DB::statement('SET unique_checks=1');
+        DB::statement('SET foreign_key_checks=1');
+
+        echo "Done!\n";
     }
-
-    $now = now();
-    $ratingsBatch = [];
-    foreach ($ratings as $playerId => $rating) {
-        $ratingsBatch[] = [
-            'player_id'    => $playerId,
-            'rating'       => $rating,
-            'games_played' => $stats[$playerId]['games_played'],
-            'wins'         => $stats[$playerId]['wins'],
-            'losses'       => $stats[$playerId]['losses'],
-            'draws'        => $stats[$playerId]['draws'],
-            'created_at'   => $now,
-            'updated_at'   => $now,
-        ];
-    }
-
-    // Krok 3: Inserty poza transakcją z wyłączonymi checkami
-    DB::statement('SET unique_checks=0');
-    DB::statement('SET foreign_key_checks=0');
-
-    echo "Saving " . count($historyBatch) . " history records...\n";
-    foreach (array_chunk($historyBatch, 1000) as $i => $chunk) {
-        DB::table('rating_histories')->insert($chunk);
-        echo "History chunk " . ($i + 1) . " saved...\n";
-    }
-
-    echo "Saving " . count($ratingsBatch) . " player ratings...\n";
-    DB::table('player_ratings')->insert($ratingsBatch);
-
-    echo "Saving " . count($snapshots) . " snapshots...\n";
-    foreach (array_chunk($snapshots, 1000) as $i => $chunk) {
-        DB::table('rating_snapshots')->insert($chunk);
-        echo "Snapshot chunk " . ($i + 1) . " saved...\n";
-    }
-
-    DB::statement('SET unique_checks=1');
-    DB::statement('SET foreign_key_checks=1');
-
-    echo "Done!\n";
-}
 
     private function buildSnapshot(array $ratings, array $stats, string $yearMonth): array
     {
