@@ -33,6 +33,7 @@
                     
                     @php
                         $upcomingEvents = \App\Models\Event::where('starts_at', '>=', now())
+                            ->where('starts_at', '<=', now()->addDays(7))
                             ->orderBy('starts_at')
                             ->get();
                         $nextEvent = $upcomingEvents->first();
