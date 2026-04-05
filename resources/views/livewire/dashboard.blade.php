@@ -121,6 +121,38 @@
         </div>
     </div>
 
+    {{-- Upcoming Events --}}
+    @if($this->upcomingEvents->isNotEmpty())
+    <div class="rounded-xl border border-zinc-200 dark:border-zinc-700 p-5">
+        <div class="flex items-center justify-between mb-4">
+            <h2 class="text-base font-bold text-zinc-500 dark:text-zinc-400">📅 Upcoming Events</h2>
+            <a href="{{ route('events.index') }}" class="text-sm text-zinc-400 hover:text-zinc-200 transition-colors" wire:navigate>
+                View all →
+            </a>
+        </div>
+        <div class="divide-y divide-zinc-200 dark:divide-zinc-700">
+            @foreach($this->upcomingEvents as $event)
+            <div class="flex items-center justify-between py-2.5 gap-4">
+                <div class="min-w-0">
+                    <p class="text-sm font-semibold text-zinc-800 dark:text-white truncate">{{ $event->name }}</p>
+                    @if($event->description)
+                    <p class="text-xs text-zinc-500 truncate mt-0.5">{{ $event->description }}</p>
+                    @endif
+                </div>
+                <div class="shrink-0 text-right">
+                    <p class="text-xs font-mono text-amber-400">
+                        {{ $event->startsAtCET()->format('d M, H:i') }} CET
+                    </p>
+                    <p class="text-xs text-zinc-500 mt-0.5">
+                        {{ $event->is_online ? 'Online' : ($event->location ?? '') }}
+                    </p>
+                </div>
+            </div>
+            @endforeach
+        </div>
+    </div>
+    @endif
+
     {{-- Race matchups --}}
     <div class="rounded-xl border border-zinc-200 dark:border-zinc-700 p-5">
         <h2 class="text-base font-bold text-zinc-500 dark:text-zinc-400 mb-5">⚔️ Global race matchups</h2>

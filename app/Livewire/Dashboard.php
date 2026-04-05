@@ -288,6 +288,15 @@ class Dashboard extends Component
             ->get();
     }
 
+    #[Computed]
+    public function upcomingEvents()
+    {
+        return \App\Models\Event::where('starts_at', '>=', now())
+            ->orderBy('starts_at')
+            ->limit(5)
+            ->get();
+    }
+
     // #[Computed]
     // public function ratingTrends()
     // {
