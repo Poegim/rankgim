@@ -53,6 +53,21 @@ class Show extends Component
         $rating = $this->rating;
         $ps     = \App\Models\PlayerStat::where('player_id', $this->playerId)->first();
 
+        // Calculate current live rank — count players with higher rating who meet the qualification criteria
+        $currentRank = null;
+        if ($rating && $rating->games_played >= 15) {
+            $lastGame = \App\Models\RatingHistory::max('played_at');
+            $since    = $lastGame ? \Carbon\Carbon::parse($lastGame)->subYear() : null;
+
+            $currentRank = \App\Models\PlayerRating::where('rating', '>', $rating->rating)
+                ->where('games_played', '>=', 15)
+                ->when($since, fn($q) => $q->whereHas(
+                    'playerStat',
+                    fn($q2) => $q2->where('last_played_at', '>=', $since)
+                ))
+                ->count() + 1;
+        }
+
         return [
             'win_ratio'          => $rating && $rating->games_played > 0
                                         ? round(($rating->wins / $rating->games_played) * 100)
@@ -61,6 +76,7 @@ class Show extends Component
             'longest_win_streak' => $ps?->longest_win_streak ?? 0,
             'current_streak'     => $ps?->current_streak ?? 0,
             'best_rank'          => $ps?->best_rank ?? '—',
+            'current_rank'       => $currentRank,
         ];
     }
 

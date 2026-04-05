@@ -237,7 +237,7 @@
                         <span class="font-semibold not-italic text-zinc-500 dark:text-zinc-300">StarCraft POL-1 @ Europe</span>,
                         <span class="font-semibold not-italic text-zinc-500 dark:text-zinc-300">Netwars.pl</span>,
                         teams
-                        <span class="font-semibold not-italic text-zinc-500 dark:text-zinc-300">aFF] · [MiB] · Spot-G · PzM · [WL]</span>
+                        <span class="font-semibold not-italic text-zinc-500 dark:text-zinc-300">aFF · T4 · [MiB] · PzM · [WL]</span>
                         — plus everyone I forgot, because I'm old and bad with names.
                         <br class="hidden sm:block">
                         If you see this and feel you should be here, don't hesitate to reach out.

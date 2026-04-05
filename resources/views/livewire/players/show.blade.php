@@ -25,110 +25,201 @@
 
     {{-- Stats --}}
     @if($this->rating)
-    <div class="grid grid-cols-2 md:grid-cols-6 gap-4">
-        <div class="rounded-xl border border-zinc-200 dark:border-zinc-700 p-4">
-            <p class="text-sm text-zinc-500 dark:text-zinc-400">Rating</p>
-            <p class="text-2xl font-bold text-zinc-800 dark:text-white">{{ $this->rating->rating }}</p>
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+
+        {{-- Current Rank --}}
+        @if($this->stats['current_rank'])
+        <div class="relative overflow-hidden rounded-xl border border-zinc-700/60 bg-zinc-800/40 p-4 group">
+            <div class="absolute inset-0 bg-gradient-to-br from-indigo-500/10 to-transparent pointer-events-none"></div>
+            <p class="text-xs font-medium text-zinc-500 uppercase tracking-widest mb-1">Current rank</p>
+            <p class="text-3xl font-black text-indigo-300 tabular-nums">#{{ $this->stats['current_rank'] }}</p>
+            <span class="absolute bottom-3 right-3 text-xl opacity-20">📍</span>
         </div>
-        <div class="rounded-xl border border-zinc-200 dark:border-zinc-700 p-4">
-            <p class="text-sm text-zinc-500 dark:text-zinc-400">Peak</p>
-            <p class="text-2xl font-bold text-zinc-800 dark:text-white">{{ $this->stats['peak_rating'] }}</p>
+        @endif
+
+        {{-- Rating --}}
+        <div class="relative overflow-hidden rounded-xl border border-zinc-700/60 bg-zinc-800/40 p-4">
+            <div class="absolute inset-0 bg-gradient-to-br from-amber-500/8 to-transparent pointer-events-none"></div>
+            <p class="text-xs font-medium text-zinc-500 uppercase tracking-widest mb-1">Rating</p>
+            <p class="text-3xl font-black text-amber-300 tabular-nums">{{ $this->rating->rating }}</p>
+            <span class="absolute bottom-3 right-3 text-xl opacity-20">⚡</span>
         </div>
-        <div class="rounded-xl border border-zinc-200 dark:border-zinc-700 p-4">
-            <p class="text-sm text-zinc-500 dark:text-zinc-400">Games</p>
-            <p class="text-2xl font-bold text-zinc-800 dark:text-white">{{ $this->rating->games_played }}</p>
+
+        {{-- Peak --}}
+        <div class="relative overflow-hidden rounded-xl border border-zinc-700/60 bg-zinc-800/40 p-4">
+            <div class="absolute inset-0 bg-gradient-to-br from-purple-500/8 to-transparent pointer-events-none"></div>
+            <p class="text-xs font-medium text-zinc-500 uppercase tracking-widest mb-1">Peak</p>
+            <p class="text-3xl font-black text-purple-300 tabular-nums">{{ $this->stats['peak_rating'] }}</p>
+            <span class="absolute bottom-3 right-3 text-xl opacity-20">🏆</span>
         </div>
-        <div class="rounded-xl border border-zinc-200 dark:border-zinc-700 p-4">
-            <p class="text-sm text-zinc-500 dark:text-zinc-400">Win%</p>
-            <p class="text-2xl font-bold {{ $this->stats['win_ratio'] >= 50 ? 'text-green-500' : 'text-red-500' }}">{{ $this->stats['win_ratio'] }}%</p>
+
+        {{-- Best rank --}}
+        <div class="relative overflow-hidden rounded-xl border border-zinc-700/60 bg-zinc-800/40 p-4">
+            <div class="absolute inset-0 bg-gradient-to-br from-yellow-500/8 to-transparent pointer-events-none"></div>
+            <p class="text-xs font-medium text-zinc-500 uppercase tracking-widest mb-1">Best rank</p>
+            <p class="text-3xl font-black text-yellow-300 tabular-nums">#{{ $this->stats['best_rank'] }}</p>
+            <span class="absolute bottom-3 right-3 text-xl opacity-20">👑</span>
         </div>
-        <div class="rounded-xl border border-zinc-200 dark:border-zinc-700 p-4">
-            <p class="text-sm text-zinc-500 dark:text-zinc-400">Best streak</p>
-            <p class="text-2xl font-bold text-zinc-800 dark:text-white">{{ $this->stats['longest_win_streak'] }}</p>
+
+        {{-- Games --}}
+        <div class="relative overflow-hidden rounded-xl border border-zinc-700/60 bg-zinc-800/40 p-4">
+            <p class="text-xs font-medium text-zinc-500 uppercase tracking-widest mb-1">Games</p>
+            <p class="text-3xl font-black text-white tabular-nums">{{ $this->rating->games_played }}</p>
+            <div class="mt-2 flex gap-1 text-xs text-zinc-500">
+                <span class="text-green-400">{{ $this->rating->wins }}W</span>
+                <span>/</span>
+                <span class="text-red-400">{{ $this->rating->losses }}L</span>
+            </div>
+            <span class="absolute bottom-3 right-3 text-xl opacity-20">🎮</span>
         </div>
-        <div class="rounded-xl border border-zinc-200 dark:border-zinc-700 p-4">
-            <p class="text-sm text-zinc-500 dark:text-zinc-400">Current streak</p>
-            <p class="text-2xl font-bold {{ $this->stats['current_streak'] >= 0 ? 'text-green-500' : 'text-red-500' }}">
+
+        {{-- Win% --}}
+        <div class="relative overflow-hidden rounded-xl border border-zinc-700/60 bg-zinc-800/40 p-4">
+            <div class="absolute inset-0 bg-gradient-to-br {{ $this->stats['win_ratio'] >= 50 ? 'from-green-500/8' : 'from-red-500/8' }} to-transparent pointer-events-none"></div>
+            <p class="text-xs font-medium text-zinc-500 uppercase tracking-widest mb-1">Win rate</p>
+            <p class="text-3xl font-black tabular-nums {{ $this->stats['win_ratio'] >= 50 ? 'text-green-400' : 'text-red-400' }}">
+                {{ $this->stats['win_ratio'] }}<span class="text-lg font-semibold">%</span>
+            </p>
+            {{-- Mini progress bar --}}
+            <div class="mt-2 h-1 rounded-full bg-zinc-700 overflow-hidden">
+                <div class="h-full rounded-full {{ $this->stats['win_ratio'] >= 50 ? 'bg-green-500' : 'bg-red-500' }}"
+                     style="width: {{ $this->stats['win_ratio'] }}%"></div>
+            </div>
+        </div>
+
+        {{-- Best streak --}}
+        <div class="relative overflow-hidden rounded-xl border border-zinc-700/60 bg-zinc-800/40 p-4">
+            <p class="text-xs font-medium text-zinc-500 uppercase tracking-widest mb-1">Best streak</p>
+            <p class="text-3xl font-black text-white tabular-nums">{{ $this->stats['longest_win_streak'] }}</p>
+            <p class="text-xs text-zinc-500 mt-1">wins in a row</p>
+            <span class="absolute bottom-3 right-3 text-xl opacity-20">🔥</span>
+        </div>
+
+        {{-- Current streak --}}
+        <div class="relative overflow-hidden rounded-xl border border-zinc-700/60 bg-zinc-800/40 p-4">
+            <div class="absolute inset-0 bg-gradient-to-br {{ $this->stats['current_streak'] >= 0 ? 'from-green-500/8' : 'from-red-500/8' }} to-transparent pointer-events-none"></div>
+            <p class="text-xs font-medium text-zinc-500 uppercase tracking-widest mb-1">Streak</p>
+            <p class="text-3xl font-black tabular-nums {{ $this->stats['current_streak'] > 0 ? 'text-green-400' : ($this->stats['current_streak'] < 0 ? 'text-red-400' : 'text-zinc-400') }}">
                 {{ $this->stats['current_streak'] > 0 ? '+' : '' }}{{ $this->stats['current_streak'] }}
             </p>
+            <p class="text-xs text-zinc-500 mt-1">{{ $this->stats['current_streak'] >= 0 ? 'win streak' : 'loss streak' }}</p>
         </div>
+
     </div>
 
     {{-- Race stats --}}
-    <div class="grid grid-cols-3 gap-4">
+    <div class="grid grid-cols-3 gap-3">
         @foreach($this->raceStats as $stat)
         @php
-            $raceColor = match($stat['race']) {
-                'Terran'  => 'border-blue-500 dark:border-blue-400',
-                'Zerg'    => 'border-purple-500 dark:border-purple-400',
-                'Protoss' => 'border-yellow-500 dark:border-yellow-400',
-                default   => 'border-zinc-200 dark:border-zinc-700',
+            $raceHex = match($stat['race']) {
+                'Terran'  => '#3b82f6',
+                'Zerg'    => '#a855f7',
+                'Protoss' => '#eab308',
+                default   => '#71717a',
             };
             $raceText = match($stat['race']) {
-                'Terran'  => 'text-blue-500 dark:text-blue-400',
-                'Zerg'    => 'text-purple-500 dark:text-purple-400',
-                'Protoss' => 'text-yellow-500 dark:text-yellow-400',
-                default   => 'text-zinc-500 dark:text-zinc-400',
+                'Terran'  => 'text-blue-400',
+                'Zerg'    => 'text-purple-400',
+                'Protoss' => 'text-yellow-400',
+                default   => 'text-zinc-400',
             };
         @endphp
-        <div class="rounded-xl border-2 {{ $raceColor }} p-4">
-            <p class="text-sm font-medium {{ $raceText }}">vs {{ $stat['race'] }}</p>
-            <p class="text-2xl font-bold {{ $stat['ratio'] >= 50 ? 'text-green-500' : 'text-red-500' }}">{{ $stat['ratio'] }}%</p>
-            <p class="text-sm text-zinc-500 dark:text-zinc-400">{{ $stat['wins'] }}W / {{ $stat['losses'] }}L</p>
+        <div class="relative overflow-hidden rounded-xl border border-zinc-700/60 bg-zinc-800/40 p-4">
+
+            {{-- Race accent line top --}}
+            <div class="absolute top-0 left-0 right-0 h-0.5 rounded-t-xl"
+                 style="background: {{ $raceHex }}"></div>
+
+            <p class="text-xs font-semibold uppercase tracking-widest {{ $raceText }} mb-2">vs {{ $stat['race'] }}</p>
+
+            <p class="text-3xl font-black tabular-nums {{ $stat['ratio'] >= 50 ? 'text-green-400' : 'text-red-400' }}">
+                {{ $stat['ratio'] }}<span class="text-base font-semibold">%</span>
+            </p>
+
+            <p class="text-xs text-zinc-500 mt-2">
+                <span class="text-green-400 font-medium">{{ $stat['wins'] }}W</span>
+                <span class="mx-1">/</span>
+                <span class="text-red-400 font-medium">{{ $stat['losses'] }}L</span>
+            </p>
         </div>
         @endforeach
     </div>
+{{-- Head to Head --}}
+<div class="rounded-xl border border-zinc-700/60 bg-zinc-800/40 p-4">
+    <p class="text-xs font-semibold uppercase tracking-widest text-zinc-500 mb-4">Head to Head</p>
 
-    {{-- Head to Head --}}
-    <div class="rounded-xl border border-zinc-200 dark:border-zinc-700 p-4">
-        <p class="text-sm text-zinc-500 dark:text-zinc-400 mb-4">Head to Head</p>
-        <flux:table>
-            <flux:table.columns>
-                <flux:table.column>Opponent</flux:table.column>
-                <flux:table.column>W</flux:table.column>
-                <flux:table.column>L</flux:table.column>
-                <flux:table.column>Games</flux:table.column>
-                <flux:table.column>Win%</flux:table.column>
-            </flux:table.columns>
-            <flux:table.rows>
-                @foreach($this->headToHead as $h2h)
-                <flux:table.row :key="$h2h['opponent']->id" class="[&>td]:py-2">
-                    <flux:table.cell>
-                        <div class="flex items-center gap-2">
-                            <img
-                                src="{{ asset('images/country_flags/' . strtolower($h2h['opponent']->country_code) . '.svg') }}"
-                                alt="{{ $h2h['opponent']->country }}"
-                                class="w-7 h-5 rounded-sm"
-                                title="{{ $h2h['opponent']->country }}"
-                            >
-                            <a href="{{ route('players.show', ['id' => $h2h['opponent']->id, 'slug' => Str::slug($h2h['opponent']->name)]) }}"
-                               class="hover:underline">
+    <div class="flex flex-col gap-2">
+        @foreach($this->headToHead as $h2h)
+        @php
+            $raceHex = match($h2h['opponent']->race) {
+                'Terran'  => '#3b82f6',
+                'Zerg'    => '#a855f7',
+                'Protoss' => '#eab308',
+                default   => '#71717a',
+            };
+            $raceText = match($h2h['opponent']->race) {
+                'Terran'  => 'text-blue-400',
+                'Zerg'    => 'text-purple-400',
+                'Protoss' => 'text-yellow-400',
+                default   => 'text-zinc-500',
+            };
+            $isWinning = $h2h['ratio'] >= 50;
+        @endphp
+
+        <a href="{{ route('players.show', ['id' => $h2h['opponent']->id, 'slug' => Str::slug($h2h['opponent']->name)]) }}"
+           class="group block rounded-xl overflow-hidden border border-zinc-700/40 hover:border-zinc-600/60 transition-all duration-200 hover:scale-[1.01]">
+
+            {{-- Win% fill bar as background --}}
+            <div class="relative">
+                <div class="absolute inset-0 {{ $isWinning ? 'bg-green-500/8' : 'bg-red-500/8' }} transition-all duration-300 group-hover:opacity-150"
+                     style="width: {{ $h2h['ratio'] }}%"></div>
+
+                <div class="relative flex items-center gap-4 px-4 py-3">
+
+                    {{-- Flag + name --}}
+                    <div class="flex items-center gap-2.5 flex-1 min-w-0">
+                        <img
+                            src="{{ asset('images/country_flags/' . strtolower($h2h['opponent']->country_code) . '.svg') }}"
+                            alt="{{ $h2h['opponent']->country }}"
+                            class="w-7 h-5 rounded-sm shrink-0 opacity-90"
+                            title="{{ $h2h['opponent']->country }}"
+                        >
+                        <div class="min-w-0">
+                            <p class="text-sm font-bold text-zinc-200 group-hover:text-white truncate transition-colors">
                                 {{ $h2h['opponent']->name }}
-                            </a>
-                            @php
-                                $raceText = match($h2h['opponent']->race) {
-                                    'Terran'  => 'text-blue-500 dark:text-blue-400',
-                                    'Zerg'    => 'text-purple-500 dark:text-purple-400',
-                                    'Protoss' => 'text-yellow-500 dark:text-yellow-400',
-                                    default   => 'text-zinc-400',
-                                };
-                            @endphp
-                            <span class="text-xs {{ $raceText }}">{{ $h2h['opponent']->race }}</span>
+                            </p>
+                            <p class="text-xs {{ $raceText }}">{{ $h2h['opponent']->race }}</p>
                         </div>
-                    </flux:table.cell>
-                    <flux:table.cell class="text-green-500">{{ $h2h['wins'] }}</flux:table.cell>
-                    <flux:table.cell class="text-red-500">{{ $h2h['losses'] }}</flux:table.cell>
-                    <flux:table.cell>{{ $h2h['total'] }}</flux:table.cell>
-                    <flux:table.cell>
-                        <span class="{{ $h2h['ratio'] >= 50 ? 'text-green-500' : 'text-red-500' }}">
-                            {{ $h2h['ratio'] }}%
+                    </div>
+
+                    {{-- W / L --}}
+                    <div class="flex items-center gap-1 text-sm font-mono shrink-0">
+                        <span class="text-green-400 font-bold">{{ $h2h['wins'] }}</span>
+                        <span class="text-zinc-600">–</span>
+                        <span class="text-red-400 font-bold">{{ $h2h['losses'] }}</span>
+                    </div>
+
+                    {{-- Win% badge --}}
+                    <div class="shrink-0 w-14 text-right">
+                        <span class="text-lg font-black tabular-nums {{ $isWinning ? 'text-green-400' : 'text-red-400' }}">
+                            {{ $h2h['ratio'] }}<span class="text-xs font-semibold">%</span>
                         </span>
-                    </flux:table.cell>
-                </flux:table.row>
-                @endforeach
-            </flux:table.rows>
-        </flux:table>
+                    </div>
+
+                    {{-- Arrow --}}
+                    <span class="text-zinc-700 group-hover:text-zinc-400 transition-colors text-xs">›</span>
+                </div>
+
+                {{-- Bottom progress line --}}
+                <div class="h-px bg-zinc-700/60">
+                    <div class="h-full {{ $isWinning ? 'bg-green-500/50' : 'bg-red-500/50' }} transition-all duration-500"
+                         style="width: {{ $h2h['ratio'] }}%"></div>
+                </div>
+            </div>
+        </a>
+        @endforeach
     </div>
+</div>
     @else
     {{-- No rating yet --}}
     <div class="rounded-xl border border-zinc-200 dark:border-zinc-700 p-6 text-center">
@@ -193,82 +284,117 @@
 
     {{-- Player Card Modal --}}
     <flux:modal name="player-card" class="w-96">
-        <div class="relative overflow-hidden rounded-2xl bg-zinc-900 text-white p-6 flex flex-col gap-4"
-             style="background: linear-gradient(135deg, #18181b 60%, #27272a 100%);">
-            {{-- Header --}}
-            <div class="flex items-center gap-3">
-                <img
-                    src="{{ asset('images/country_flags/' . strtolower($this->player->country_code) . '.svg') }}"
-                    class="w-8 h-6 rounded-sm"
-                >
-                <div>
-                    <p class="text-xl font-bold">{{ $this->player->name }}</p>
-                    <p class="text-sm text-zinc-400">{{ $this->player->race }} · {{ $this->player->country }}</p>
+        <div class="relative overflow-hidden rounded-2xl text-white"
+             style="background: linear-gradient(145deg, #18181b 0%, #1c1c22 60%, #1e1a2e 100%);">
+
+            {{-- Subtle top glow --}}
+            <div class="absolute top-0 left-1/2 -translate-x-1/2 w-48 h-24 rounded-full blur-3xl opacity-20"
+                 style="background: {{ match($this->player->race) { 'Terran' => '#3b82f6', 'Zerg' => '#a855f7', 'Protoss' => '#eab308', 'Random' => '#f97316', default => '#6366f1' } }};"></div>
+
+            {{-- Race accent bar --}}
+            <div class="h-1 w-full"
+                 style="background: linear-gradient(to right, {{ match($this->player->race) { 'Terran' => '#3b82f6', 'Zerg' => '#a855f7', 'Protoss' => '#eab308', 'Random' => '#f97316', default => '#6366f1' } }}, transparent);"></div>
+
+            <div class="p-6 flex flex-col gap-5">
+
+                {{-- Header --}}
+                <div class="flex items-center gap-4">
+                    <div class="relative">
+                        <img
+                            src="{{ asset('images/country_flags/' . strtolower($this->player->country_code) . '.svg') }}"
+                            class="w-10 h-7 rounded-sm shadow-lg"
+                        >
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <p class="text-xl font-black tracking-tight truncate">{{ $this->player->name }}</p>
+                        <div class="flex items-center gap-2 mt-0.5">
+                            <span class="text-xs font-semibold px-2 py-0.5 rounded-full border"
+                                  style="color: {{ match($this->player->race) { 'Terran' => '#93c5fd', 'Zerg' => '#d8b4fe', 'Protoss' => '#fde047', 'Random' => '#fdba74', default => '#a1a1aa' } }}; border-color: {{ match($this->player->race) { 'Terran' => '#3b82f620', 'Zerg' => '#a855f720', 'Protoss' => '#eab30820', 'Random' => '#f9731620', default => '#52525b' } }}; background: {{ match($this->player->race) { 'Terran' => '#3b82f610', 'Zerg' => '#a855f710', 'Protoss' => '#eab30810', 'Random' => '#f9731610', default => '#3f3f46' } }}">
+                                {{ $this->player->race }}
+                            </span>
+                            <span class="text-xs text-zinc-500">{{ $this->player->country }}</span>
+                        </div>
+                    </div>
+                    @if($this->stats['current_rank'])
+                    <div class="text-right shrink-0">
+                        <p class="text-2xl font-black text-indigo-300">#{{ $this->stats['current_rank'] }}</p>
+                        <p class="text-xs text-zinc-500">rank</p>
+                    </div>
+                    @endif
                 </div>
+
+                @if($this->rating)
+
+                {{-- Main stats row --}}
+                <div class="grid grid-cols-3 gap-2">
+                    <div class="rounded-xl bg-zinc-800/60 border border-zinc-700/40 p-3 text-center">
+                        <p class="text-xl font-black text-amber-300">{{ $this->rating->rating }}</p>
+                        <p class="text-xs text-zinc-500 mt-0.5">Rating</p>
+                    </div>
+                    <div class="rounded-xl bg-zinc-800/60 border border-zinc-700/40 p-3 text-center">
+                        <p class="text-xl font-black text-purple-300">{{ $this->stats['peak_rating'] }}</p>
+                        <p class="text-xs text-zinc-500 mt-0.5">Peak</p>
+                    </div>
+                    <div class="rounded-xl bg-zinc-800/60 border border-zinc-700/40 p-3 text-center">
+                        <p class="text-xl font-black text-yellow-300">#{{ $this->stats['best_rank'] }}</p>
+                        <p class="text-xs text-zinc-500 mt-0.5">Best rank</p>
+                    </div>
+                </div>
+
+                {{-- W/L bar --}}
+                <div class="rounded-xl bg-zinc-800/60 border border-zinc-700/40 p-3">
+                    <div class="flex justify-between text-xs text-zinc-400 mb-2">
+                        <span class="font-semibold text-green-400">{{ $this->rating->wins }}W</span>
+                        <span class="font-semibold
+                            {{ $this->stats['win_ratio'] >= 50 ? 'text-green-400' : 'text-red-400' }}">
+                            {{ $this->stats['win_ratio'] }}%
+                        </span>
+                        <span class="font-semibold text-red-400">{{ $this->rating->losses }}L</span>
+                    </div>
+                    <div class="h-2 rounded-full bg-zinc-700 overflow-hidden flex">
+                        <div class="h-full bg-gradient-to-r from-green-500 to-green-400 transition-all"
+                             style="width: {{ $this->stats['win_ratio'] }}%"></div>
+                        <div class="h-full bg-gradient-to-r from-red-500 to-red-400 flex-1"></div>
+                    </div>
+                    <div class="flex justify-between text-xs text-zinc-600 mt-1.5">
+                        <span>{{ $this->rating->games_played }} games total</span>
+                        <span>streak: <span class="{{ $this->stats['current_streak'] >= 0 ? 'text-green-400' : 'text-red-400' }}">{{ $this->stats['current_streak'] > 0 ? '+' : '' }}{{ $this->stats['current_streak'] }}</span></span>
+                    </div>
+                </div>
+
+                {{-- Race matchups --}}
+                @if($this->raceStats->isNotEmpty())
+                <div>
+                    <p class="text-xs text-zinc-600 uppercase tracking-widest mb-2">vs race</p>
+                    <div class="flex flex-col gap-1.5">
+                        @foreach($this->raceStats as $stat)
+                        @php
+                            $raceHex = match($stat['race']) {
+                                'Terran'  => '#3b82f6',
+                                'Zerg'    => '#a855f7',
+                                'Protoss' => '#eab308',
+                                default   => '#71717a',
+                            };
+                        @endphp
+                        <div class="flex items-center gap-3">
+                            <span class="text-xs w-14 font-medium" style="color: {{ $raceHex }}">{{ $stat['race'] }}</span>
+                            <div class="flex-1 h-1.5 rounded-full bg-zinc-700 overflow-hidden">
+                                <div class="h-full rounded-full transition-all"
+                                     style="width: {{ $stat['ratio'] }}%; background: {{ $raceHex }}; opacity: 0.7;"></div>
+                            </div>
+                            <span class="text-xs font-bold w-9 text-right {{ $stat['ratio'] >= 50 ? 'text-green-400' : 'text-red-400' }}">{{ $stat['ratio'] }}%</span>
+                            <span class="text-xs text-zinc-600 w-16 text-right">{{ $stat['wins'] }}W/{{ $stat['losses'] }}L</span>
+                        </div>
+                        @endforeach
+                    </div>
+                </div>
+                @endif
+
+                @else
+                <p class="text-zinc-500 text-sm text-center py-4">No rating data yet.</p>
+                @endif
+
             </div>
-            <hr class="border-zinc-700">
-            @if($this->rating)
-            {{-- Stats grid --}}
-            <div class="grid grid-cols-4 gap-3 text-center">
-                <div>
-                    <p class="text-2xl font-bold text-yellow-400">#{{ $this->stats['best_rank'] }}</p>
-                    <p class="text-xs text-zinc-400">Best rank</p>
-                </div>
-                <div>
-                    <p class="text-2xl font-bold">{{ $this->rating->rating }}</p>
-                    <p class="text-xs text-zinc-400">Rating</p>
-                </div>
-                <div>
-                    <p class="text-2xl font-bold">{{ $this->stats['peak_rating'] }}</p>
-                    <p class="text-xs text-zinc-400">Peak</p>
-                </div>
-                <div>
-                    <p class="text-2xl font-bold {{ $this->stats['win_ratio'] >= 50 ? 'text-green-400' : 'text-red-400' }}">
-                        {{ $this->stats['win_ratio'] }}%
-                    </p>
-                    <p class="text-xs text-zinc-400">Win%</p>
-                </div>
-                <div>
-                    <p class="text-2xl font-bold text-green-400">{{ $this->rating->wins }}</p>
-                    <p class="text-xs text-zinc-400">Wins</p>
-                </div>
-                <div>
-                    <p class="text-2xl font-bold text-red-400">{{ $this->rating->losses }}</p>
-                    <p class="text-xs text-zinc-400">Losses</p>
-                </div>
-                <div>
-                    <p class="text-2xl font-bold">{{ $this->rating->games_played }}</p>
-                    <p class="text-xs text-zinc-400">Games</p>
-                </div>
-                <div>
-                    <p class="text-2xl font-bold {{ $this->stats['current_streak'] >= 0 ? 'text-green-400' : 'text-red-400' }}">
-                        {{ $this->stats['current_streak'] > 0 ? '+' : '' }}{{ $this->stats['current_streak'] }}
-                    </p>
-                    <p class="text-xs text-zinc-400">Streak</p>
-                </div>
-            </div>
-            <hr class="border-zinc-700">
-            {{-- Race stats --}}
-            <div class="grid grid-cols-3 gap-2 text-center">
-                @foreach($this->raceStats as $stat)
-                @php
-                    $raceColor = match($stat['race']) {
-                        'Terran'  => 'text-blue-400',
-                        'Zerg'    => 'text-purple-400',
-                        'Protoss' => 'text-yellow-400',
-                        default   => 'text-zinc-400',
-                    };
-                @endphp
-                <div>
-                    <p class="text-xs {{ $raceColor }} font-medium">vs {{ $stat['race'] }}</p>
-                    <p class="font-bold {{ $stat['ratio'] >= 50 ? 'text-green-400' : 'text-red-400' }}">{{ $stat['ratio'] }}%</p>
-                    <p class="text-xs text-zinc-500">{{ $stat['wins'] }}W / {{ $stat['losses'] }}L</p>
-                </div>
-                @endforeach
-            </div>
-            @else
-            <p class="text-zinc-400 text-sm text-center">No rating data yet.</p>
-            @endif
         </div>
     </flux:modal>
 </div>
