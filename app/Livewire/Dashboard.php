@@ -1,5 +1,7 @@
 <?php
 namespace App\Livewire;
+
+use Illuminate\Support\Facades\Cache;
 use Livewire\Component;
 use Livewire\Attributes\Computed;
 use App\Models\Player;
@@ -60,21 +62,6 @@ class Dashboard extends Component
             $row->prev_rating = $snapshots->get($row->player_id)?->rating;
             return $row;
         });
-    }
-
-    #[Computed]
-    public function highestPeaks()
-    {
-        return RatingHistory::selectRaw('player_id, MAX(rating_after) as peak_rating')
-            ->when($this->peaksRegion, function ($query) {
-                $codes = collect(config('countries'))->where('region', $this->peaksRegion)->pluck('code')->toArray();
-                $query->whereHas('player', fn($q) => $q->whereIn('country_code', $codes));
-            })
-            ->groupBy('player_id')
-            ->orderByDesc('peak_rating')
-            ->with('player')
-            ->limit(10)
-            ->get();
     }
 
     #[Computed]
@@ -247,45 +234,51 @@ class Dashboard extends Component
     #[Computed]
     public function raceMatchups()
     {
-        return DB::table('rating_histories as rh1')
-            ->join('rating_histories as rh2', function ($join) {
-                $join->on('rh1.game_id', '=', 'rh2.game_id')
-                     ->where('rh1.result', '=', 'win')
-                     ->where('rh2.result', '=', 'loss');
-            })
-            ->join('players as p1', 'p1.id', '=', 'rh1.player_id')
-            ->join('players as p2', 'p2.id', '=', 'rh2.player_id')
-            ->whereNotIn('p1.race', ['Random', 'Unknown'])
-            ->whereNotIn('p2.race', ['Random', 'Unknown'])
-            ->selectRaw('p1.race as winner_race, p2.race as loser_race, count(*) as games')
-            ->groupBy('p1.race', 'p2.race')
-            ->get();
+        return Cache::remember('dashboard.raceMatchups', 3600, function () {
+            return DB::table('rating_histories as rh1')
+                ->join('rating_histories as rh2', function ($join) {
+                    $join->on('rh1.game_id', '=', 'rh2.game_id')
+                         ->where('rh1.result', '=', 'win')
+                         ->where('rh2.result', '=', 'loss');
+                })
+                ->join('players as p1', 'p1.id', '=', 'rh1.player_id')
+                ->join('players as p2', 'p2.id', '=', 'rh2.player_id')
+                ->whereNotIn('p1.race', ['Random', 'Unknown'])
+                ->whereNotIn('p2.race', ['Random', 'Unknown'])
+                ->selectRaw('p1.race as winner_race, p2.race as loser_race, count(*) as games')
+                ->groupBy('p1.race', 'p2.race')
+                ->get();
+        });
     }
 
     #[Computed]
     public function gamesPerYear()
     {
-        return DB::table('games')
-            ->selectRaw('YEAR(date_time) as year, COUNT(*) as total')
-            ->groupByRaw('YEAR(date_time)')
-            ->orderBy('year')
-            ->get();
+        return Cache::remember('dashboard.gamesPerYear', 3600, function () {
+            return DB::table('games')
+                ->selectRaw('YEAR(date_time) as year, COUNT(*) as total')
+                ->groupByRaw('YEAR(date_time)')
+                ->orderBy('year')
+                ->get();
+        });
     }
 
     #[Computed]
     public function activePlayersPerYear()
     {
-        return DB::query()
-            ->fromSub(function ($query) {
-                $query->selectRaw('YEAR(date_time) as year, winner_id as player_id')->from('games')
-                    ->unionAll(
-                        DB::table('games')->selectRaw('YEAR(date_time) as year, loser_id as player_id')
-                    );
-            }, 'all_players')
-            ->selectRaw('year, COUNT(DISTINCT player_id) as total')
-            ->groupBy('year')
-            ->orderBy('year')
-            ->get();
+        return Cache::remember('dashboard.activePlayersPerYear', 3600, function () {
+            return DB::query()
+                ->fromSub(function ($query) {
+                    $query->selectRaw('YEAR(date_time) as year, winner_id as player_id')->from('games')
+                        ->unionAll(
+                            DB::table('games')->selectRaw('YEAR(date_time) as year, loser_id as player_id')
+                        );
+                }, 'all_players')
+                ->selectRaw('year, COUNT(DISTINCT player_id) as total')
+                ->groupBy('year')
+                ->orderBy('year')
+                ->get();
+        });
     }
 
     #[Computed]
