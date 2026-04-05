@@ -121,8 +121,8 @@ class EloService
                 $r2 = $ratings[$loserId];
 
                 // Shield system: reduce K-factor impact when playing against unplaced players (<15 games)
-                $kWinner = ($stats[$loserId]['games_played'] < 15) ? 20 : self::K_FACTOR;
-                $kLoser  = ($stats[$winnerId]['games_played'] < 15) ? 20 : self::K_FACTOR;
+                $kWinner = ($stats[$winnerId]['games_played'] < 15) ? 60 : self::K_FACTOR;
+                $kLoser  = ($stats[$winnerId]['games_played'] < 15) ? 10 : self::K_FACTOR;
 
                 $result = $this->calculate($r1, $r2, $game->result, $kWinner, $kLoser);
 
