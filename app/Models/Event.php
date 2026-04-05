@@ -17,10 +17,12 @@ class Event extends Model
         'links',
         'is_online',
         'location',
+        'reminder_sent_at',
     ];
 
     protected $casts = [
         'starts_at' => 'datetime',
+        'reminder_sent_at' => 'datetime',
         'links' => 'array',
         'is_online' => 'boolean',
     ];

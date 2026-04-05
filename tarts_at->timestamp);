@@ -1,0 +1,15 @@
+[90m= [39m[34;4mApp\Models\Event[39;24m {#6540
+    [34mid[39m: [35m4[39m,
+    [34mname[39m: "[32mqweqweqwe[39m",
+    [34mdescription[39m: "[32mqweqeqweqwe[39m",
+    [34mstarts_at[39m: "[32m2026-04-05 07:50:00[39m",
+    [34mreminder_sent_at[39m: [36mnull[39m,
+    [34mtimezone[39m: "[32mEurope/Warsaw[39m",
+    [34mcreated_by[39m: [35m1[39m,
+    [34mlinks[39m: [36mnull[39m,
+    [34mis_online[39m: [35m1[39m,
+    [34mlocation[39m: [36mnull[39m,
+    [34mcreated_at[39m: "[32m2026-04-05 07:22:30[39m",
+    [34mupdated_at[39m: "[32m2026-04-05 07:22:30[39m",
+  }
+

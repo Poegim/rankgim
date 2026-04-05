@@ -66,7 +66,7 @@
         {{-- Events in this month --}}
         @foreach($events as $event)
         @php $isPast = $event->isPast(); @endphp
-        <div class="relative sm:pl-14 mb-3">
+        <div class="relative sm:pl-14 mb-3" wire:key="event-{{ $event->id }}">
             {{-- Timeline dot --}}
             <div class="absolute left-[15px] top-5 w-[9px] h-[9px] rounded-full hidden sm:block
                             {{ $isPast ? 'bg-zinc-600' : 'bg-amber-400' }}">

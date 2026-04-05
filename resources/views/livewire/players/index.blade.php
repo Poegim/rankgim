@@ -63,10 +63,38 @@
         @endauth
     </div>
 
-    <livewire:players.compare-search />
+    {{-- Compare players --}}
+    <div x-data="{ open: false }">
+        <flux:button @click="open = true" variant="primary" icon="scale" size="sm" class="w-full">
+            Compare Players
+        </flux:button>
+
+        <template x-teleport="body">
+            <div
+                x-show="open"
+                x-transition.opacity
+                @keydown.escape.window="open = false"
+                class="fixed inset-0 z-50 flex items-center justify-center bg-black/60"
+                x-cloak
+            >
+                
+                <div class="absolute inset-0" @click="open = false"></div>
+
+                
+                <div class="relative z-10 w-full max-w-xl mx-4 rounded-xl bg-zinc-900 border border-zinc-700 p-6 shadow-2xl">
+                    <div class="flex items-center justify-between mb-4">
+                        <p class="text-sm font-medium text-zinc-400">🆚 Compare players</p>
+                        <button @click="open = false" class="text-zinc-500 hover:text-white text-lg leading-none">✕</button>
+                    </div>
+
+                    <livewire:players.compare-search />
+                </div>
+            </div>
+        </template>
+    </div>
 
     {{-- Search --}}
-    <div class="mb-4 flex items-center gap-2 mt-6">
+    <div class="mb-4 flex items-center gap-2 mt-4">
         <div class="flex-1">
             <flux:input 
                 type="text" 
@@ -93,9 +121,26 @@
     {{-- Players Table --}}
     <flux:table :paginate="$players">
         <flux:table.columns>
-            <flux:table.column>Player</flux:table.column>
+            <flux:table.column
+                wire:click="sort('name')"
+                class="cursor-pointer select-none"
+            >
+                Player
+                @if($sortBy === 'name')
+                    {{ $sortDir === 'asc' ? '↑' : '↓' }}
+                @endif
+            </flux:table.column>
             <flux:table.column>Country</flux:table.column>
             <flux:table.column>Race</flux:table.column>
+            <flux:table.column
+                wire:click="sort('games')"
+                class="cursor-pointer select-none"
+            >
+                Games
+                @if($sortBy === 'games')
+                    {{ $sortDir === 'asc' ? '↑' : '↓' }}
+                @endif
+            </flux:table.column>
             @auth
                 @if(auth()->user()->canManageGames())
                     <flux:table.column></flux:table.column>
@@ -121,6 +166,11 @@
         <flux:table.cell>
             <span class="text-sm font-bold {{ $raceColors[$player->race] ?? 'text-zinc-400' }}">
                 {{ $player->race }}
+            </span>
+        </flux:table.cell>
+        <flux:table.cell>
+            <span class="text-sm font-mono text-zinc-500 dark:text-zinc-400">
+                {{ $player->games_played ?? '—' }}
             </span>
         </flux:table.cell>
         <flux:table.cell></flux:table.cell>

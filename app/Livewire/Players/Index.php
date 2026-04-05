@@ -37,6 +37,10 @@ class Index extends Component
 
     public array $countriesList = [];
 
+    // Sorting
+    public string $sortBy = 'name';
+    public string $sortDir = 'asc';
+
     public function mount(): void
     {
         $this->countriesList = collect(config('countries'))->values()->all();
@@ -185,29 +189,44 @@ class Index extends Component
         $this->dispatch('player-deleted');
     }
 
+    public function sort(string $column): void
+    {
+        if ($this->sortBy === $column) {
+            $this->sortDir = $this->sortDir === 'asc' ? 'desc' : 'asc';
+        } else {
+            $this->sortBy = $column;
+            $this->sortDir = 'desc';
+        }
+        $this->resetPage();
+    }
+
+    public function updatedSearch(): void
+    {
+        $this->resetPage();
+    }
+
     public function render()
     {
-        
         $search = $this->search;
 
         $players = Player::query()
-            ->select('players.*')
+            ->select('players.*', 'player_ratings.games_played')
+            ->leftJoin('player_ratings', 'player_ratings.player_id', '=', 'players.id')
             ->whereNull('players.player_id')
-                ->when($search, function ($query) use ($search) {
-                    $playerIds = \App\Models\PlayerName::where('name', 'like', '%' . $search . '%')
-                        ->pluck('player_id');
-
-                    $query->whereIn('players.id', $playerIds);
-                })
+            ->when($search, function ($query) use ($search) {
+                $playerIds = \App\Models\PlayerName::where('name', 'like', '%' . $search . '%')
+                    ->pluck('player_id');
+                $query->whereIn('players.id', $playerIds);
+            })
             ->with(['aliases', 'aka'])
-            ->orderBy('players.name')
-            ->paginate(20);
+            ->orderBy(
+                $this->sortBy === 'games' ? 'player_ratings.games_played' : 'players.name',
+                $this->sortDir
+            )
+            ->paginate(10);
 
-         $canManage = auth()->check() && auth()->user()->canManageGames();
+        $canManage = auth()->check() && auth()->user()->canManageGames();
 
-        return view('livewire.players.index', compact([
-            'players',
-            'canManage',
-        ]));
+        return view('livewire.players.index', compact('players', 'canManage'));
     }
 }
