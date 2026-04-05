@@ -79,22 +79,22 @@
 
                 <div class="p-4">
                     <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-2">
-<div class="flex flex-col sm:flex-row justify-between gap-3 w-full min-w-0">
-    {{-- Left: name / description / links --}}
-    <div class="grid gap-2 min-w-0">
-        <div class="flex items-center gap-2 min-w-0">
-            <h3 class="font-semibold text-white truncate">{{ $event->name }}</h3>
-            @if($event->is_online)
-            <span class="text-xs text-zinc-500 shrink-0">Online</span>
-            @else
-            <span class="text-xs text-zinc-500 shrink-0">📍 {{ $event->location }}</span>
-            @endif
-        </div>
-        <div>
-            @if($event->description)
-            <p class="mt-2 text-sm text-zinc-400 line-clamp-2">{{ $event->description }}</p>
-            @endif
-        </div>
+                        <div class="flex flex-col sm:flex-row justify-between gap-3 w-full min-w-0">
+                            {{-- Left: name / description / links --}}
+                            <div class="grid gap-2 min-w-0">
+                                <div class="flex items-center gap-2 min-w-0">
+                                    <h3 class="font-semibold text-white truncate">{{ $event->name }}</h3>
+                                    @if($event->is_online)
+                                    <span class="text-xs text-zinc-500 shrink-0">Online</span>
+                                    @else
+                                    <span class="text-xs text-zinc-500 shrink-0">📍 {{ $event->location }}</span>
+                                    @endif
+                                </div>
+                                <div>
+                                    @if($event->description)
+                                    <p class="mt-2 text-sm text-zinc-400 line-clamp-2">{{ $event->description }}</p>
+                                    @endif
+                                </div>
                                 {{-- External links --}}
                                 @if($event->hasLinks())
                                 <div class="flex flex-wrap gap-1.5 sm:flex-nowrap">
@@ -142,40 +142,40 @@
                                     @endforeach
                                 </div>
                                 @endif
+                            </div>
+
+{{-- Right: dates + countdown --}}
+<div class="flex flex-col gap-1 shrink-0 items-end">
+    {{-- Countdown - big and visible --}}
+    @if(!$isPast)
+    <div class="text-xl font-mono font-bold text-amber-400 tabular-nums"
+        x-data="{
+            target: {{ $event->starts_at->timestamp }},
+            d: 0, h: 0, m: 0, s: 0,
+            init() { this.tick(); setInterval(() => this.tick(), 1000); },
+            tick() {
+                const diff = this.target - Math.floor(Date.now() / 1000);
+                if (diff <= 0) { this.d = this.h = this.m = this.s = 0; return; }
+                this.d = Math.floor(diff / 86400);
+                this.h = Math.floor((diff % 86400) / 3600);
+                this.m = Math.floor((diff % 3600) / 60);
+                this.s = diff % 60;
+            }
+        }">
+        <span x-show="d > 0" x-text="d + 'd '"></span><span x-text="String(h).padStart(2,'0') + 'h ' + String(m).padStart(2,'0') + 'm ' + String(s).padStart(2,'0') + 's'"></span>
     </div>
+    @endif
 
-    {{-- Right: dates + countdown --}}
-    <div class="flex flex-col gap-1 shrink-0">
-        <div class="flex flex-col gap-1 text-sm font-mono">
-            @foreach($event->displayDates() as $dt)
-            <div class="text-zinc-500 whitespace-nowrap">
-                {{ $dt['datetime'] }} {{ $dt['label'] }}
-            </div>
-            @endforeach
+    {{-- Dates --}}
+    <div class="flex flex-col gap-1 text-sm font-mono mt-1">
+        @foreach($event->displayDates() as $dt)
+        <div class="text-zinc-500 whitespace-nowrap text-right">
+            {{ $dt['datetime'] }} {{ $dt['label'] }}
         </div>
-
-        @if(!$isPast)
-        <div
-            class="text-xs font-mono text-amber-400/80 mt-1"
-            x-data="{
-                target: {{ $event->starts_at->timestamp }},
-                d: 0, h: 0, m: 0, s: 0,
-                init() { this.tick(); setInterval(() => this.tick(), 1000); },
-                tick() {
-                    const diff = this.target - Math.floor(Date.now() / 1000);
-                    if (diff <= 0) { this.d = this.h = this.m = this.s = 0; return; }
-                    this.d = Math.floor(diff / 86400);
-                    this.h = Math.floor((diff % 86400) / 3600);
-                    this.m = Math.floor((diff % 3600) / 60);
-                    this.s = diff % 60;
-                }
-            }"
-        >
-            <span x-show="d > 0" x-text="d + 'd '"></span><span x-text="String(h).padStart(2,'0') + 'h ' + String(m).padStart(2,'0') + 'm ' + String(s).padStart(2,'0') + 's'"></span>
-        </div>
-        @endif
+        @endforeach
     </div>
 </div>
+                        </div>
 
 
                     </div>
