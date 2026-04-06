@@ -3,25 +3,64 @@
     {{-- Player header --}}
     <div class="flex items-center justify-between">
         <div class="flex items-center gap-4">
-            <img
-                src="{{ asset('images/country_flags/' . strtolower($this->player->country_code) . '.svg') }}"
-                alt="{{ $this->player->country }}"
-                class="w-10 h-7 rounded-sm"
-                title="{{ $this->player->country }}"
-            >
+            {{-- Flag — links to rankings filtered by country --}}
+            <a href="{{ route('rankings.index', ['filterCountryCode' => $this->player->country_code]) }}"
+               title="View all {{ $this->player->country }} players"
+               class="hover:opacity-80 transition-opacity">
+                <img
+                    src="{{ asset('images/country_flags/' . strtolower($this->player->country_code) . '.svg') }}"
+                    alt="{{ $this->player->country }}"
+                    class="w-10 h-7 rounded-sm"
+                >
+            </a>
             <div>
                 <h1 class="text-2xl font-bold text-zinc-800 dark:text-white">{{ $this->player->name }}</h1>
-                <p class="text-zinc-500 dark:text-zinc-400">{{ $this->player->race }} · {{ $this->player->country }}</p>
+                {{-- Race — links to rankings filtered by race --}}
+                <p class="text-zinc-500 dark:text-zinc-400">
+                    <a href="{{ route('rankings.index', ['filterRace' => $this->player->race]) }}"
+                       class="hover:underline transition-colors
+                           {{ match($this->player->race) {
+                               'Terran'  => 'text-blue-400 hover:text-blue-300',
+                               'Zerg'    => 'text-purple-400 hover:text-purple-300',
+                               'Protoss' => 'text-yellow-400 hover:text-yellow-300',
+                               'Random'  => 'text-orange-400 hover:text-orange-300',
+                               default   => 'text-zinc-400 hover:text-zinc-200',
+                           } }}">{{ $this->player->race }}</a>
+                    · 
+                    <a href="{{ route('rankings.index', ['filterCountryCode' => $this->player->country_code]) }}"
+                       class="hover:underline hover:text-zinc-200 transition-colors">{{ $this->player->country }}</a>
+                </p>
             </div>
         </div>
-        <flux:button
-            variant="primary"
-            icon="identification"
-            x-on:click="$flux.modal('player-card').show()"
-        >
-            Player Card
-        </flux:button>
-    </div>
+            <flux:button
+                variant="primary"
+                icon="identification"
+                x-on:click="$flux.modal('player-card').show()"
+            >
+                Player Card
+            </flux:button>
+        </div>
+
+        {{-- Inactive / unranked status banner --}}
+        @if($this->stats['too_few_games'])
+        <div class="flex items-center gap-3 rounded-xl border border-zinc-700/60 bg-zinc-800/40 px-4 py-3 text-sm text-zinc-400">
+            <span class="text-base">🎮</span>
+            <span>
+                This player has only <span class="font-semibold text-zinc-200">{{ $this->stats['games_played'] }} / 15</span> ranked games and does not appear in the ranking yet.
+            </span>
+        </div>
+        @elseif($this->stats['is_inactive'])
+        <div class="flex items-center gap-3 rounded-xl border border-amber-700/40 bg-amber-900/20 px-4 py-3 text-sm text-amber-400">
+            <span class="text-base">💤</span>
+            <span>
+                Inactive — last game played on
+                <span class="font-semibold text-amber-200">
+                    {{ \Carbon\Carbon::parse($this->stats['last_played_at'])->format('d M Y') }}
+                </span>.
+                Not currently ranked.
+            </span>
+        </div>
+        @endif
 
     {{-- Stats --}}
     @if($this->rating)
@@ -322,6 +361,8 @@
                     </div>
                     @endif
                 </div>
+
+
 
                 @if($this->rating)
 

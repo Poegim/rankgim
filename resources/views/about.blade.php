@@ -162,7 +162,7 @@
                 <div class="flex flex-col items-center gap-6">
                     <div class="flex flex-col items-center gap-6">
                         <p class="text-zinc-500 dark:text-zinc-400 text-center max-w-lg leading-relaxed">
-                            For the hours we spent playing together, the conversations that lasted longer than the games, and all the emotions in between. Those were some of the best years of my life and I miss you guys.
+                            For the hours we spent playing together, the conversations that outlasted our games, and everything in between — those were some of the best years of my life. It was a great honour, and I miss you all.
                         </p>
                         <div class="w-12 border-t border-zinc-300 dark:border-zinc-600"></div>
 
@@ -246,25 +246,21 @@
             </div>
         </div>
 
-{{-- Author --}}
-<div class="flex flex-col gap-3">
-    <h2 class="text-sm font-semibold text-zinc-400 uppercase tracking-widest">Author</h2>
-    <div class="flex flex-col gap-2">
-<p class="text-zinc-600 dark:text-zinc-300 leading-relaxed">
-    Built by <span class="font-semibold text-zinc-800 dark:text-white">poegim</span> — somewhere between StarCraft and real life since 1999. Also known as
-</p>
-        <p class="text-sm font-mono text-zinc-500 dark:text-zinc-400 leading-relaxed">
-            Krakow · aFF]ZuluNation · PzM.Zimbabwe · Poezja[T4] · iloveania · zulu[WL]Nation
-        </p>
+        {{-- Author --}}
+        <div class="flex flex-col gap-3">
+            <h2 class="text-sm font-semibold text-zinc-400 uppercase tracking-widest">Author</h2>
+            <div class="flex flex-col gap-2">
         <p class="text-zinc-600 dark:text-zinc-300 leading-relaxed">
-            To get in touch, find me as <span class="font-semibold text-zinc-800 dark:text-white">poegim</span> on Netwars, TeamLiquid or Battle.net.
+            Built by <span class="font-semibold text-zinc-800 dark:text-white">poegim</span> — somewhere between StarCraft and real life since 1999. Also known as
         </p>
-    </div>
-</div>
-
-
-
-
+                <p class="text-sm font-mono text-zinc-500 dark:text-zinc-400 leading-relaxed">
+                    Krakow · aFF]ZuluNation · PzM.Zimbabwe · Poezja[T4] · iloveania · zulu[WL]Nation
+                </p>
+                <p class="text-zinc-600 dark:text-zinc-300 leading-relaxed">
+                    To get in touch, find me as <span class="font-semibold text-zinc-800 dark:text-white">poegim</span> on Netwars, TeamLiquid or Battle.net.
+                </p>
+            </div>
+        </div>
 
         {{-- Divider --}}
         <div class="border-t border-zinc-200 dark:border-zinc-700"></div>

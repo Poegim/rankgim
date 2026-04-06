@@ -107,6 +107,38 @@ class Dashboard extends Component
     }
 
     #[Computed]
+    public function spreadTrend()
+    {
+        // Single query: per snapshot_date compute top-15 avg and bottom-15 avg.
+        // Bottom 15 = players whose rank is within 15 of the max rank for that date.
+        // Snapshots only contain qualified players so no extra filtering needed.
+        $rows = DB::table('rating_snapshots as s')
+            ->joinSub(
+                DB::table('rating_snapshots')
+                    ->selectRaw('snapshot_date, MAX(`rank`) as max_rank')
+                    ->groupBy('snapshot_date'),
+                'mx',
+                'mx.snapshot_date', '=', 's.snapshot_date'
+            )
+            ->selectRaw("
+                s.snapshot_date,
+                AVG(CASE WHEN s.rank <= 15 THEN s.rating END) as top_avg,
+                AVG(CASE WHEN s.rank > mx.max_rank - 15 THEN s.rating END) as bot_avg
+            ")
+            ->groupBy('s.snapshot_date')
+            ->orderBy('s.snapshot_date')
+            ->get();
+
+        return $rows->filter(fn($r) => $r->top_avg && $r->bot_avg)
+            ->map(fn($r) => [
+                'date'    => $r->snapshot_date,
+                'top_avg' => round($r->top_avg),
+                'bot_avg' => round($r->bot_avg),
+                'spread'  => round($r->top_avg - $r->bot_avg),
+            ]);
+    }
+
+    #[Computed]
     public function longestStreaks()
     {
         if (!$this->showMore || !$this->since) return collect();

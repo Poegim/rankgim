@@ -334,6 +334,13 @@
 
         </div>
 
+        <div class="rounded-xl border border-zinc-200 dark:border-zinc-700 p-5">
+            <h2 class="text-base font-bold text-zinc-500 dark:text-zinc-400 mb-4">
+                📊 Top 15 vs Bottom 15 spread over time
+            </h2>
+            <div id="chart-spread-trend" class="h-56"></div>
+        </div>
+
         {{-- Row 3: Most active + Biggest upsets + Most dominant --}}
         <div x-show="showMore" x-cloak class="grid grid-cols-1 md:grid-cols-3 gap-6">
 
@@ -461,6 +468,33 @@ document.addEventListener('DOMContentLoaded', function () {
         series: [{ name: 'Players', data: @json($this->activePlayersPerYear->pluck('total')) }],
         xaxis: { ...baseOptions.xaxis, categories: @json($this->activePlayersPerYear->pluck('year')) },
         colors: ['#8b5cf6'],
+    }).render();
+
+    new ApexCharts(document.querySelector('#chart-spread-trend'), {
+        ...baseOptions,
+        chart: { ...baseOptions.chart, type: 'line', height: 224 },
+        stroke: { curve: 'smooth', width: [2, 2, 2] },
+        series: [
+            {
+                name: 'Top 15 avg',
+                data: @json($this->spreadTrend->pluck('top_avg'))
+            },
+            {
+                name: 'Bot 15 avg',
+                data: @json($this->spreadTrend->pluck('bot_avg'))
+            },
+        ],
+        xaxis: {
+            ...baseOptions.xaxis,
+            categories: @json($this->spreadTrend->pluck('date')),
+            labels: {
+                ...baseOptions.xaxis.labels,
+                // Show only year-month for readability
+                formatter: (val) => val ? val.substring(0, 7) : val,
+            },
+        },
+        colors: ['#22c55e', '#ef4444', '#6366f1'],
+        legend: { labels: { colors: textColor } },
     }).render();
 
 

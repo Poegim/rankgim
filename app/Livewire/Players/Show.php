@@ -53,12 +53,17 @@ class Show extends Component
         $rating = $this->rating;
         $ps     = \App\Models\PlayerStat::where('player_id', $this->playerId)->first();
 
-        // Calculate current live rank — count players with higher rating who meet the qualification criteria
-        $currentRank = null;
-        if ($rating && $rating->games_played >= 15) {
-            $lastGame = \App\Models\RatingHistory::max('played_at');
-            $since    = $lastGame ? \Carbon\Carbon::parse($lastGame)->subYear() : null;
+        $lastGame = \App\Models\RatingHistory::max('played_at');
+        $since    = $lastGame ? \Carbon\Carbon::parse($lastGame)->subYear() : null;
 
+        // Determine player status for the profile banner
+        $tooFewGames  = !$rating || $rating->games_played < 15;
+        $isInactive   = $since && $ps && $ps->last_played_at < $since->toDateString();
+        $lastPlayedAt = $ps?->last_played_at;
+
+        // Calculate current live rank — only if the player qualifies for the ranking
+        $currentRank = null;
+        if (!$tooFewGames && !$isInactive) {
             $currentRank = \App\Models\PlayerRating::where('rating', '>', $rating->rating)
                 ->where('games_played', '>=', 15)
                 ->when($since, fn($q) => $q->whereHas(
@@ -77,6 +82,10 @@ class Show extends Component
             'current_streak'     => $ps?->current_streak ?? 0,
             'best_rank'          => $ps?->best_rank ?? '—',
             'current_rank'       => $currentRank,
+            'too_few_games'      => $tooFewGames,
+            'is_inactive'        => $isInactive,
+            'last_played_at'     => $lastPlayedAt,
+            'games_played'       => $rating?->games_played ?? 0,
         ];
     }
 
