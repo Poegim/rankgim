@@ -1,8 +1,9 @@
 <?php
 
+use App\Http\Controllers\HistoryController;
+use App\Livewire\Countries\Compare as CountriesCompare;
 use App\Livewire\Countries\Index;
 use App\Livewire\Players\Compare;
-use App\Livewire\Countries\Compare as CountriesCompare;
 use Illuminate\Support\Facades\Route;
 
 // Dashboard route
@@ -40,32 +41,9 @@ Route::middleware(['auth', 'verified',  App\Http\Middleware\EnsureUserCanManageG
 Route::get('/countries', Index::class)->name('countries.index');
 Route::get('/countries/{code1}-vs-{code2}', CountriesCompare::class)->name('countries.compare');
 
-Route::get('/test-countries2', function () {
-    $component = new \App\Livewire\Countries\Index();
-    return [
-        'qualified' => $component->qualifiedCountries,
-        'topCountries' => $component->topCountries,
-    ];
-});
 
-Route::get('/test-countries', function () {
-    $lastGame = \App\Models\RatingHistory::max('played_at');
-    $since = \Carbon\Carbon::parse($lastGame)->subYear();
-    
-    $result = DB::table('players')
-        ->join('player_ratings', 'player_ratings.player_id', '=', 'players.id')
-        ->join('rating_histories', 'rating_histories.player_id', '=', 'players.id')
-        ->where('player_ratings.games_played', '>=', 15)
-        ->where('rating_histories.played_at', '>=', $since)
-        ->whereNotIn('players.country_code', ['XX'])
-        ->selectRaw('players.country_code, count(distinct players.id) as player_count')
-        ->groupBy('players.country_code')
-        ->having('player_count', '>=', 15)
-        ->orderByDesc('player_count')
-        ->get();
-    
-    return $result;
-});
+// History route
+Route::get('/history', [HistoryController::class, 'index'])->name('history.index');
 
 // Games route
 Route::get('/games', fn() => view('games.index'))->name('games.index');
@@ -87,5 +65,7 @@ Route::get('/events', App\Livewire\Events\Index::class)->name('events.index');
 Route::middleware(['auth', 'verified',  App\Http\Middleware\EnsureUserIsAdmin::class])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/', fn() => view('admin.index'))->name('index');
 });
+
+
 
 require __DIR__.'/settings.php';

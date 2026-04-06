@@ -266,6 +266,84 @@
     </div>
     @endif
 
+    {{-- Rank History Chart --}}
+    @if($this->rankHistory->isNotEmpty())
+    <div class="rounded-xl border border-zinc-200 dark:border-zinc-700 p-4">
+        <p class="text-sm text-zinc-500 dark:text-zinc-400 mb-4">📊 Ranking position history</p>
+
+        <script>
+            window._rankHistoryData = {!! json_encode(
+                $this->rankHistory->map(fn($s) => [
+                    'x'      => $s->snapshot_date,
+                    'y'      => $s->rank,
+                    'rating' => $s->rating,
+                ])
+            ) !!};
+        </script>
+
+        <div x-data="{
+                init() {
+                    new ApexCharts(this.$refs.chart, {
+                        chart: {
+                            type: 'line',
+                            height: 300,
+                            background: 'transparent',
+                            toolbar: { show: false },
+                            animations: { enabled: false },
+                        },
+                        theme: {
+                            mode: document.documentElement.classList.contains('dark') ? 'dark' : 'light',
+                        },
+                        series: [{
+                            name: 'Rank',
+                            data: window._rankHistoryData.map(d => ({
+                                x: d.x ? new Date(d.x).getTime() : null,
+                                y: d.y,
+                                rating: d.rating,
+                            }))
+                        }],
+                        colors: ['#a78bfa'],
+                        xaxis: {
+                            type: 'datetime',
+                            labels: { style: { fontSize: '11px' } },
+                        },
+                        yaxis: {
+                            reversed: true,
+                            min: Math.max(1, Math.min(...window._rankHistoryData.map(d => d.y)) - 5),
+                            max: Math.max(...window._rankHistoryData.map(d => d.y)) + 5,
+                            forceNiceScale: false,
+                            labels: {
+                                formatter: v => '#' + Math.round(v),
+                                style: { fontSize: '11px' },
+                            },
+                        },
+                        stroke: {
+                            width: 2,
+                            curve: 'stepline',
+                        },
+                        markers: { size: 0 },
+                        tooltip: {
+                            custom({ seriesIndex, dataPointIndex, w }) {
+                                const point = w.config.series[seriesIndex].data[dataPointIndex];
+                                const color = w.globals.colors[seriesIndex];
+                                return '<div style=\'padding:8px 12px;font-size:12px;\'>'
+                                    + '<span style=\'color:' + color + ';font-weight:700;\'>Rank</span><br>'
+                                    + 'Position: <b>#' + point.y + '</b><br>'
+                                    + 'Rating: <b>' + point.rating + '</b>'
+                                    + '</div>';
+                            }
+                        },
+                        grid: {
+                            borderColor: '#3f3f46',
+                        },
+                    }).render();
+                }
+            }">
+            <div x-ref="chart"></div>
+        </div>
+    </div>
+    @endif
+
     {{-- ELO Chart --}}
     @if($this->history->isNotEmpty())
     <div class="rounded-xl border border-zinc-200 dark:border-zinc-700 p-4">

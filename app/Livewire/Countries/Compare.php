@@ -21,7 +21,7 @@ class Compare extends Component
     #[Computed]
     public function since(): ?\Carbon\Carbon
     {
-        return $this->lastGameDate ? \Carbon\Carbon::parse($this->lastGameDate)->subYear() : null;
+        return $this->lastGameDate ? \Carbon\Carbon::parse($this->lastGameDate)->subMonths(config('rankgim.inactive_months')) : null;
     }
 
     #[Computed]

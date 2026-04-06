@@ -50,9 +50,9 @@
     <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
         @foreach([
             'Europe' => '🌍',
-            'Asia' => '🌏',
             'North America' => '🌎',
             'South America' => '🌎',
+            'Asia' => '🌏',
         ] as $region => $emoji)
             <button
                 wire:click="filterByRegion('{{ $region }}')"

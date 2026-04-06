@@ -54,7 +54,7 @@ class Show extends Component
         $ps     = \App\Models\PlayerStat::where('player_id', $this->playerId)->first();
 
         $lastGame = \App\Models\RatingHistory::max('played_at');
-        $since    = $lastGame ? \Carbon\Carbon::parse($lastGame)->subYear() : null;
+        $since    = $lastGame ? \Carbon\Carbon::parse($lastGame)->subMonths(config('rankgim.inactive_months')) : null;
 
         // Determine player status for the profile banner
         $tooFewGames  = !$rating || $rating->games_played < 15;
@@ -116,6 +116,46 @@ class Show extends Component
             ->values();
 
         return $results;
+    }
+    
+    #[Computed]
+    public function rankHistory()
+    {
+        $snapshots = RatingSnapshot::where('player_id', $this->playerId)
+            ->orderBy('snapshot_date')
+            ->get(['snapshot_date', 'rank', 'rating']);
+
+        if ($snapshots->count() < 2) return $snapshots;
+
+        $result = collect();
+        foreach ($snapshots as $i => $current) {
+            if ($i === 0) {
+                $result->push($current);
+                continue;
+            }
+
+            $prev = $snapshots[$i - 1];
+            $monthsGap = \Carbon\Carbon::parse($prev->snapshot_date)
+                ->diffInMonths($current->snapshot_date);
+
+            // Insert a null-y point with a valid date to break the line on long gaps
+            if ($monthsGap > 3) {
+                $midDate = \Carbon\Carbon::parse($prev->snapshot_date)
+                    ->addMonths((int) ($monthsGap / 2))
+                    ->endOfMonth()
+                    ->toDateString();
+
+                $result->push((object)[
+                    'snapshot_date' => $midDate,
+                    'rank'          => null,
+                    'rating'        => null,
+                ]);
+            }
+
+            $result->push($current);
+        }
+
+        return $result;
     }
 
     #[Computed]

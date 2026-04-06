@@ -64,7 +64,7 @@ class Index extends Component
     {
         $lastGame = \App\Models\SystemStat::get('last_game_date');
         if (!$lastGame) return new \Illuminate\Pagination\LengthAwarePaginator([], 0, 20);
-        $since = Carbon::parse($lastGame)->subYear();
+        $since = Carbon::parse($lastGame)->subMonths(config('rankgim.inactive_months'));
 
         $rankings = PlayerRating::with('player')
             ->whereHas('playerStat', fn($q) => $q->where('last_played_at', '>=', $since))

@@ -102,9 +102,9 @@
                     <div class="flex flex-col gap-2">
                         <div class="flex items-center gap-2">
                             <span class="text-lg">📅</span>
-                            <span class="font-semibold text-[0.9375rem] text-zinc-800 dark:text-white text-sm">Active in last 12 months</span>
+                            <span class="font-semibold text-[0.9375rem] text-zinc-800 dark:text-white text-sm">Active in last {{ config('rankgim.inactive_months') }} months</span>
                         </div>
-                        <p class="text-sm text-zinc-500">Only players who have played at least one game in the last 12 months (from the date of the most recent game) are shown in the ranking.</p>
+                        <p class="text-sm text-zinc-500">Only players who have played at least one game in the last {{ config('rankgim.inactive_months') }} months (from the date of the most recent game) are shown in the ranking.</p>
                     </div>
                     <div class="flex flex-col gap-2">
                         <div class="flex items-center gap-2">

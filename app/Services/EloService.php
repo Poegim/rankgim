@@ -243,7 +243,7 @@ class EloService
     private function buildSnapshot(array $ratings, array $stats, string $yearMonth): array
     {
         $snapshotDate = \Carbon\Carbon::parse($yearMonth)->endOfMonth()->toDateString();
-        $cutoff       = \Carbon\Carbon::parse($snapshotDate)->subYear()->toDateString();
+        $cutoff       = \Carbon\Carbon::parse($snapshotDate)->subMonths(config('rankgim.inactive_months'))->toDateString();
         $now          = now();
 
         // Filter: 15+ games AND active in last 12 months from snapshot date

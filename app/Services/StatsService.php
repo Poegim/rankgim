@@ -52,7 +52,7 @@ class StatsService
 
         $lastGame = DB::table('rating_histories')->max('played_at');
         if (!$lastGame) return;
-        $since = Carbon::parse($lastGame)->subYear();
+        $since = Carbon::parse($lastGame)->subMonths(config('rankgim.inactive_months'));
 
         $rows = DB::table('rating_histories as rh1')
             ->join('rating_histories as rh2', function ($join) {
@@ -277,7 +277,7 @@ class StatsService
             return;
         }
 
-        $since = Carbon::parse($lastGame)->subYear();
+        $since = Carbon::parse($lastGame)->subMonths(config('rankgim.inactive_months'));
 
         // Get active qualified players with their country and current rating
         $players = DB::table('players')

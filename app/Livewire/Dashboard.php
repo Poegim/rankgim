@@ -4,7 +4,6 @@ namespace App\Livewire;
 
 use App\Models\HeadToHead;
 use App\Models\PlayerRating;
-use App\Models\PlayerStat;
 use App\Models\RatingHistory;
 use App\Models\RatingSnapshot;
 use App\Models\SystemStat;
@@ -26,7 +25,7 @@ class Dashboard extends Component
     #[Computed]
     public function since(): ?Carbon
     {
-        return $this->lastGameDate ? Carbon::parse($this->lastGameDate)->subYear() : null;
+        return $this->lastGameDate ? Carbon::parse($this->lastGameDate)->subMonths(config('rankgim.inactive_months')) : null;
     }
 
     #[Computed]
