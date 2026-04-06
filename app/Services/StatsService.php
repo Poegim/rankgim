@@ -37,6 +37,9 @@ class StatsService
         echo "Building system_stats...\n";
         $this->buildSystemStats();
 
+        echo "Building achievements...\n";
+        app(\App\Services\Achievements\AchievementService::class)->rebuild($stats, $ratings);
+
         echo "Flushing cache...\n";
         Cache::flush();
 

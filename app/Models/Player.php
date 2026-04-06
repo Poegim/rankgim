@@ -27,6 +27,11 @@ class Player extends Model
         return $this->hasMany(Player::class, 'player_id');
     }
 
+    public function achievements(): HasMany
+    {
+        return $this->hasMany(PlayerAchievement::class)->orderBy('unlocked_at');
+    }
+
     public function rating(): HasOne
     {
         return $this->hasOne(PlayerRating::class);
