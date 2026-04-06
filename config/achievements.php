@@ -13,6 +13,8 @@ return [
     | tier        — d, c, b, a, s (D = easiest, S = hardest)
     | category    — used for grouping on profile page
     | secret      — if true, name/description hidden until unlocked
+    | group       — progressive achievements in same group show only highest tier
+    |               null = always show (standalone achievement)
     |
     | Tier colors (StarCraft League Ranks):
     |   D — green   #44BB44
@@ -32,6 +34,7 @@ return [
         'tier'        => 'd',
         'category'    => 'games',
         'secret'      => false,
+        'group'       => 'games_played',
     ],
     'apprentice' => [
         'name'        => 'Apprentice',
@@ -39,6 +42,7 @@ return [
         'tier'        => 'd',
         'category'    => 'games',
         'secret'      => false,
+        'group'       => 'games_played',
     ],
     'veteran' => [
         'name'        => 'Veteran',
@@ -46,6 +50,7 @@ return [
         'tier'        => 'c',
         'category'    => 'games',
         'secret'      => false,
+        'group'       => 'games_played',
     ],
     'gladiator' => [
         'name'        => 'Gladiator',
@@ -53,6 +58,7 @@ return [
         'tier'        => 'b',
         'category'    => 'games',
         'secret'      => false,
+        'group'       => 'games_played',
     ],
     'warlord' => [
         'name'        => 'Warlord',
@@ -60,6 +66,7 @@ return [
         'tier'        => 'a',
         'category'    => 'games',
         'secret'      => false,
+        'group'       => 'games_played',
     ],
 
     // -------------------------------------------------------------------------
@@ -71,6 +78,7 @@ return [
         'tier'        => 'd',
         'category'    => 'activity',
         'secret'      => false,
+        'group'       => 'activity_total',
     ],
     'dedicated' => [
         'name'        => 'Dedicated',
@@ -78,6 +86,7 @@ return [
         'tier'        => 'c',
         'category'    => 'activity',
         'secret'      => false,
+        'group'       => 'activity_total',
     ],
     'committed' => [
         'name'        => 'Committed',
@@ -85,6 +94,7 @@ return [
         'tier'        => 'b',
         'category'    => 'activity',
         'secret'      => false,
+        'group'       => 'activity_total',
     ],
     'obsessed' => [
         'name'        => 'Obsessed',
@@ -92,6 +102,7 @@ return [
         'tier'        => 'a',
         'category'    => 'activity',
         'secret'      => false,
+        'group'       => 'activity_total',
     ],
     'immortal' => [
         'name'        => 'Immortal',
@@ -99,6 +110,7 @@ return [
         'tier'        => 's',
         'category'    => 'activity',
         'secret'      => false,
+        'group'       => 'activity_total',
     ],
 
     // -------------------------------------------------------------------------
@@ -110,6 +122,7 @@ return [
         'tier'        => 'd',
         'category'    => 'activity',
         'secret'      => false,
+        'group'       => 'activity_streak',
     ],
     'consistent' => [
         'name'        => 'Consistent',
@@ -117,6 +130,7 @@ return [
         'tier'        => 'c',
         'category'    => 'activity',
         'secret'      => false,
+        'group'       => 'activity_streak',
     ],
     'unstoppable_activity' => [
         'name'        => 'Unstoppable',
@@ -124,6 +138,7 @@ return [
         'tier'        => 'b',
         'category'    => 'activity',
         'secret'      => false,
+        'group'       => 'activity_streak',
     ],
     'machine' => [
         'name'        => 'Machine',
@@ -131,6 +146,7 @@ return [
         'tier'        => 's',
         'category'    => 'activity',
         'secret'      => false,
+        'group'       => 'activity_streak',
     ],
 
     // -------------------------------------------------------------------------
@@ -142,6 +158,7 @@ return [
         'tier'        => 'd',
         'category'    => 'ranking',
         'secret'      => false,
+        'group'       => 'top_rank',
     ],
     'top_100' => [
         'name'        => 'Top 100',
@@ -149,6 +166,7 @@ return [
         'tier'        => 'd',
         'category'    => 'ranking',
         'secret'      => false,
+        'group'       => 'top_rank',
     ],
     'top_50' => [
         'name'        => 'Top 50',
@@ -156,6 +174,7 @@ return [
         'tier'        => 'c',
         'category'    => 'ranking',
         'secret'      => false,
+        'group'       => 'top_rank',
     ],
     'top_25' => [
         'name'        => 'Top 25',
@@ -163,6 +182,7 @@ return [
         'tier'        => 'c',
         'category'    => 'ranking',
         'secret'      => false,
+        'group'       => 'top_rank',
     ],
     'elite' => [
         'name'        => 'Elite',
@@ -170,6 +190,7 @@ return [
         'tier'        => 'b',
         'category'    => 'ranking',
         'secret'      => false,
+        'group'       => 'top_rank',
     ],
     'podium' => [
         'name'        => 'Podium',
@@ -177,6 +198,7 @@ return [
         'tier'        => 'a',
         'category'    => 'ranking',
         'secret'      => false,
+        'group'       => 'top_rank',
     ],
     'the_best' => [
         'name'        => 'The Best',
@@ -184,10 +206,11 @@ return [
         'tier'        => 's',
         'category'    => 'ranking',
         'secret'      => false,
+        'group'       => 'top_rank',
     ],
 
     // -------------------------------------------------------------------------
-    // Ranking — time in top 10 (total months, not consecutive)
+    // Ranking — time in top 10
     // -------------------------------------------------------------------------
     'fixture' => [
         'name'        => 'Fixture',
@@ -195,6 +218,7 @@ return [
         'tier'        => 'c',
         'category'    => 'ranking',
         'secret'      => false,
+        'group'       => 'top10_time',
     ],
     'pillar' => [
         'name'        => 'Pillar',
@@ -202,6 +226,7 @@ return [
         'tier'        => 'b',
         'category'    => 'ranking',
         'secret'      => false,
+        'group'       => 'top10_time',
     ],
     'institution' => [
         'name'        => 'Institution',
@@ -209,6 +234,7 @@ return [
         'tier'        => 'a',
         'category'    => 'ranking',
         'secret'      => false,
+        'group'       => 'top10_time',
     ],
     'monument' => [
         'name'        => 'Monument',
@@ -216,6 +242,7 @@ return [
         'tier'        => 's',
         'category'    => 'ranking',
         'secret'      => false,
+        'group'       => 'top10_time',
     ],
 
     // -------------------------------------------------------------------------
@@ -227,6 +254,7 @@ return [
         'tier'        => 'b',
         'category'    => 'ranking',
         'secret'      => false,
+        'group'       => 'kings_return',
     ],
     'legends_return' => [
         'name'        => "Legend's Return",
@@ -234,6 +262,7 @@ return [
         'tier'        => 'a',
         'category'    => 'ranking',
         'secret'      => false,
+        'group'       => 'kings_return',
     ],
     'ghosts_return' => [
         'name'        => "Ghost's Return",
@@ -241,31 +270,123 @@ return [
         'tier'        => 's',
         'category'    => 'ranking',
         'secret'      => false,
+        'group'       => 'kings_return',
     ],
 
     // -------------------------------------------------------------------------
     // Rating milestones
     // -------------------------------------------------------------------------
-    'rising'       => ['name' => 'Rising',      'description' => 'Reach 1100 rating', 'tier' => 'd', 'category' => 'rating', 'secret' => false],
-    'solid'        => ['name' => 'Solid',        'description' => 'Reach 1200 rating', 'tier' => 'd', 'category' => 'rating', 'secret' => false],
-    'strong'       => ['name' => 'Strong',       'description' => 'Reach 1300 rating', 'tier' => 'c', 'category' => 'rating', 'secret' => false],
-    'dangerous'    => ['name' => 'Dangerous',    'description' => 'Reach 1400 rating', 'tier' => 'c', 'category' => 'rating', 'secret' => false],
-    'fearsome'     => ['name' => 'Fearsome',     'description' => 'Reach 1500 rating', 'tier' => 'b', 'category' => 'rating', 'secret' => false],
-    'dominant'     => ['name' => 'Dominant',     'description' => 'Reach 1600 rating', 'tier' => 'b', 'category' => 'rating', 'secret' => false],
-    'elite_rating' => ['name' => 'Elite',        'description' => 'Reach 1700 rating', 'tier' => 'a', 'category' => 'rating', 'secret' => false],
-    'terrifying'   => ['name' => 'Terrifying',   'description' => 'Reach 1800 rating', 'tier' => 'a', 'category' => 'rating', 'secret' => false],
-    'legendary'    => ['name' => 'Legendary',    'description' => 'Reach 1900 rating', 'tier' => 's', 'category' => 'rating', 'secret' => false],
-    'mythical'     => ['name' => 'Mythical',     'description' => 'Reach 2000 rating', 'tier' => 's', 'category' => 'rating', 'secret' => false],
-    'transcendent' => ['name' => 'Transcendent', 'description' => 'Reach 2100 rating', 'tier' => 's', 'category' => 'rating', 'secret' => false],
-    'otherworldly' => ['name' => 'Otherworldly', 'description' => 'Reach 2200 rating', 'tier' => 's', 'category' => 'rating', 'secret' => false],
-    'god_tier'     => ['name' => 'God-tier',     'description' => 'Reach 2300+ rating','tier' => 's', 'category' => 'rating', 'secret' => false],
-
+    'rising' => [
+        'name'        => 'Rising',
+        'description' => 'Reach 1100 rating',
+        'tier'        => 'd',
+        'category'    => 'rating',
+        'secret'      => false,
+        'group'       => 'rating_milestone',
+    ],
+    'solid' => [
+        'name'        => 'Solid',
+        'description' => 'Reach 1200 rating',
+        'tier'        => 'd',
+        'category'    => 'rating',
+        'secret'      => false,
+        'group'       => 'rating_milestone',
+    ],
+    'strong' => [
+        'name'        => 'Strong',
+        'description' => 'Reach 1300 rating',
+        'tier'        => 'c',
+        'category'    => 'rating',
+        'secret'      => false,
+        'group'       => 'rating_milestone',
+    ],
+    'dangerous' => [
+        'name'        => 'Dangerous',
+        'description' => 'Reach 1400 rating',
+        'tier'        => 'c',
+        'category'    => 'rating',
+        'secret'      => false,
+        'group'       => 'rating_milestone',
+    ],
+    'fearsome' => [
+        'name'        => 'Fearsome',
+        'description' => 'Reach 1500 rating',
+        'tier'        => 'b',
+        'category'    => 'rating',
+        'secret'      => false,
+        'group'       => 'rating_milestone',
+    ],
+    'dominant' => [
+        'name'        => 'Dominant',
+        'description' => 'Reach 1600 rating',
+        'tier'        => 'b',
+        'category'    => 'rating',
+        'secret'      => false,
+        'group'       => 'rating_milestone',
+    ],
+    'elite_rating' => [
+        'name'        => 'Elite',
+        'description' => 'Reach 1700 rating',
+        'tier'        => 'a',
+        'category'    => 'rating',
+        'secret'      => false,
+        'group'       => 'rating_milestone',
+    ],
+    'terrifying' => [
+        'name'        => 'Terrifying',
+        'description' => 'Reach 1800 rating',
+        'tier'        => 'a',
+        'category'    => 'rating',
+        'secret'      => false,
+        'group'       => 'rating_milestone',
+    ],
+    'legendary' => [
+        'name'        => 'Legendary',
+        'description' => 'Reach 1900 rating',
+        'tier'        => 's',
+        'category'    => 'rating',
+        'secret'      => false,
+        'group'       => 'rating_milestone',
+    ],
+    'mythical' => [
+        'name'        => 'Mythical',
+        'description' => 'Reach 2000 rating',
+        'tier'        => 's',
+        'category'    => 'rating',
+        'secret'      => false,
+        'group'       => 'rating_milestone',
+    ],
+    'transcendent' => [
+        'name'        => 'Transcendent',
+        'description' => 'Reach 2100 rating',
+        'tier'        => 's',
+        'category'    => 'rating',
+        'secret'      => false,
+        'group'       => 'rating_milestone',
+    ],
+    'otherworldly' => [
+        'name'        => 'Otherworldly',
+        'description' => 'Reach 2200 rating',
+        'tier'        => 's',
+        'category'    => 'rating',
+        'secret'      => false,
+        'group'       => 'rating_milestone',
+    ],
+    'god_tier' => [
+        'name'        => 'God-tier',
+        'description' => 'Reach 2300+ rating',
+        'tier'        => 's',
+        'category'    => 'rating',
+        'secret'      => false,
+        'group'       => 'rating_milestone',
+    ],
     'giant_slayer' => [
         'name'        => 'Giant Slayer',
         'description' => 'Beat a player rated 200+ higher than you',
         'tier'        => 'c',
         'category'    => 'rating',
         'secret'      => false,
+        'group'       => 'giant_slayer',
     ],
     'david_vs_goliath' => [
         'name'        => 'David vs Goliath',
@@ -273,6 +394,7 @@ return [
         'tier'        => 'b',
         'category'    => 'rating',
         'secret'      => false,
+        'group'       => 'giant_slayer',
     ],
     'rocket' => [
         'name'        => 'Rocket',
@@ -280,6 +402,7 @@ return [
         'tier'        => 'b',
         'category'    => 'rating',
         'secret'      => false,
+        'group'       => null,
     ],
 
     // -------------------------------------------------------------------------
@@ -291,6 +414,7 @@ return [
         'tier'        => 'd',
         'category'    => 'streaks',
         'secret'      => false,
+        'group'       => 'win_streak',
     ],
     'hot_streak' => [
         'name'        => 'Hot Streak',
@@ -298,6 +422,7 @@ return [
         'tier'        => 'd',
         'category'    => 'streaks',
         'secret'      => false,
+        'group'       => 'win_streak',
     ],
     'rampage' => [
         'name'        => 'Rampage',
@@ -305,6 +430,7 @@ return [
         'tier'        => 'c',
         'category'    => 'streaks',
         'secret'      => false,
+        'group'       => 'win_streak',
     ],
     'unstoppable_streak' => [
         'name'        => 'Unstoppable',
@@ -312,6 +438,7 @@ return [
         'tier'        => 'b',
         'category'    => 'streaks',
         'secret'      => false,
+        'group'       => 'win_streak',
     ],
     'juggernaut' => [
         'name'        => 'Juggernaut',
@@ -319,6 +446,7 @@ return [
         'tier'        => 'a',
         'category'    => 'streaks',
         'secret'      => false,
+        'group'       => 'win_streak',
     ],
     'terminator' => [
         'name'        => 'Terminator',
@@ -326,6 +454,7 @@ return [
         'tier'        => 's',
         'category'    => 'streaks',
         'secret'      => false,
+        'group'       => 'win_streak',
     ],
     'phoenix' => [
         'name'        => 'Phoenix',
@@ -333,6 +462,7 @@ return [
         'tier'        => 'c',
         'category'    => 'streaks',
         'secret'      => false,
+        'group'       => null,
     ],
 
     // -------------------------------------------------------------------------
@@ -344,6 +474,7 @@ return [
         'tier'        => 'd',
         'category'    => 'rivalry',
         'secret'      => false,
+        'group'       => 'rivalry_losses',
     ],
     'cursed' => [
         'name'        => 'Cursed',
@@ -351,6 +482,7 @@ return [
         'tier'        => 'c',
         'category'    => 'rivalry',
         'secret'      => false,
+        'group'       => 'rivalry_losses',
     ],
     'bully' => [
         'name'        => 'Bully',
@@ -358,6 +490,7 @@ return [
         'tier'        => 'c',
         'category'    => 'rivalry',
         'secret'      => false,
+        'group'       => 'rivalry_wins',
     ],
     'executioner' => [
         'name'        => 'Executioner',
@@ -365,6 +498,7 @@ return [
         'tier'        => 'b',
         'category'    => 'rivalry',
         'secret'      => false,
+        'group'       => 'rivalry_wins',
     ],
     'the_rematch' => [
         'name'        => 'The Rematch',
@@ -372,6 +506,7 @@ return [
         'tier'        => 'c',
         'category'    => 'rivalry',
         'secret'      => false,
+        'group'       => 'rivalry_total',
     ],
     'the_rivalry' => [
         'name'        => 'The Rivalry',
@@ -379,6 +514,7 @@ return [
         'tier'        => 'b',
         'category'    => 'rivalry',
         'secret'      => false,
+        'group'       => 'rivalry_total',
     ],
 
     // -------------------------------------------------------------------------
@@ -390,6 +526,7 @@ return [
         'tier'        => 'd',
         'category'    => 'community',
         'secret'      => false,
+        'group'       => 'countries',
     ],
     'explorer' => [
         'name'        => 'Explorer',
@@ -397,6 +534,7 @@ return [
         'tier'        => 'c',
         'category'    => 'community',
         'secret'      => false,
+        'group'       => 'countries',
     ],
     'globetrotter' => [
         'name'        => 'Globetrotter',
@@ -404,13 +542,7 @@ return [
         'tier'        => 'b',
         'category'    => 'community',
         'secret'      => false,
-    ],
-    'tournament_debut' => [
-        'name'        => 'Tournament Debut',
-        'description' => 'Play in your first tournament',
-        'tier'        => 'd',
-        'category'    => 'community',
-        'secret'      => false,
+        'group'       => 'countries',
     ],
     'circuit_player' => [
         'name'        => 'Circuit Player',
@@ -418,6 +550,7 @@ return [
         'tier'        => 'c',
         'category'    => 'community',
         'secret'      => false,
+        'group'       => 'tournaments',
     ],
     'road_warrior' => [
         'name'        => 'Road Warrior',
@@ -425,6 +558,7 @@ return [
         'tier'        => 'b',
         'category'    => 'community',
         'secret'      => false,
+        'group'       => 'tournaments',
     ],
     'legend_of_the_circuit' => [
         'name'        => 'Legend of the Circuit',
@@ -432,6 +566,7 @@ return [
         'tier'        => 'a',
         'category'    => 'community',
         'secret'      => false,
+        'group'       => 'tournaments',
     ],
 
     // -------------------------------------------------------------------------
@@ -443,6 +578,7 @@ return [
         'tier'        => 'c',
         'category'    => 'history',
         'secret'      => false,
+        'group'       => null,
     ],
     'founding_father' => [
         'name'        => 'Founding Father',
@@ -450,6 +586,7 @@ return [
         'tier'        => 'b',
         'category'    => 'history',
         'secret'      => false,
+        'group'       => null,
     ],
     'time_traveler' => [
         'name'        => 'Time Traveler',
@@ -457,6 +594,7 @@ return [
         'tier'        => 'd',
         'category'    => 'history',
         'secret'      => false,
+        'group'       => null,
     ],
     'dinosaur' => [
         'name'        => 'Dinosaur',
@@ -464,6 +602,7 @@ return [
         'tier'        => 'a',
         'category'    => 'history',
         'secret'      => false,
+        'group'       => null,
     ],
 
     // -------------------------------------------------------------------------
@@ -475,6 +614,7 @@ return [
         'tier'        => 'c',
         'category'    => 'drama',
         'secret'      => false,
+        'group'       => null,
     ],
     'rollercoaster' => [
         'name'        => 'Rollercoaster',
@@ -482,6 +622,7 @@ return [
         'tier'        => 'b',
         'category'    => 'drama',
         'secret'      => false,
+        'group'       => null,
     ],
     'against_all_odds' => [
         'name'        => 'Against All Odds',
@@ -489,6 +630,7 @@ return [
         'tier'        => 'a',
         'category'    => 'drama',
         'secret'      => false,
+        'group'       => null,
     ],
     'upset_king' => [
         'name'        => 'Upset King',
@@ -496,6 +638,7 @@ return [
         'tier'        => 'a',
         'category'    => 'drama',
         'secret'      => false,
+        'group'       => null,
     ],
 
     // -------------------------------------------------------------------------
@@ -507,6 +650,7 @@ return [
         'tier'        => 'c',
         'category'    => 'calendar',
         'secret'      => false,
+        'group'       => null,
     ],
     'workaholic' => [
         'name'        => 'Workaholic',
@@ -514,6 +658,7 @@ return [
         'tier'        => 'b',
         'category'    => 'calendar',
         'secret'      => false,
+        'group'       => null,
     ],
     'weekend_warrior' => [
         'name'        => 'Weekend Warrior',
@@ -521,38 +666,7 @@ return [
         'tier'        => 'd',
         'category'    => 'calendar',
         'secret'      => false,
-    ],
-    'hat_trick_month' => [
-        'name'        => 'Hat Trick Month',
-        'description' => 'Play at least 1 game every day for 30 days in a row',
-        'tier'        => 'a',
-        'category'    => 'calendar',
-        'secret'      => false,
-    ],
-
-    // -------------------------------------------------------------------------
-    // Peak hunting
-    // -------------------------------------------------------------------------
-    'peak_chaser' => [
-        'name'        => 'Peak Chaser',
-        'description' => 'Beat your personal rating record for the first time',
-        'tier'        => 'd',
-        'category'    => 'peak',
-        'secret'      => false,
-    ],
-    'new_heights' => [
-        'name'        => 'New Heights',
-        'description' => 'Beat your personal rating record 3 times',
-        'tier'        => 'c',
-        'category'    => 'peak',
-        'secret'      => false,
-    ],
-    'ceiling_breaker' => [
-        'name'        => 'Ceiling Breaker',
-        'description' => 'Beat your personal rating record 5 times',
-        'tier'        => 'b',
-        'category'    => 'peak',
-        'secret'      => false,
+        'group'       => null,
     ],
 
     // -------------------------------------------------------------------------
@@ -564,6 +678,7 @@ return [
         'tier'        => 'b',
         'category'    => 'precision',
         'secret'      => false,
+        'group'       => null,
     ],
     'consistent_killer' => [
         'name'        => 'Consistent Killer',
@@ -571,6 +686,7 @@ return [
         'tier'        => 'b',
         'category'    => 'precision',
         'secret'      => false,
+        'group'       => null,
     ],
 
     // -------------------------------------------------------------------------
@@ -582,6 +698,7 @@ return [
         'tier'        => 's',
         'category'    => 'prestige',
         'secret'      => false,
+        'group'       => null,
     ],
     'perfect_start' => [
         'name'        => 'Perfect Start',
@@ -589,6 +706,7 @@ return [
         'tier'        => 'b',
         'category'    => 'prestige',
         'secret'      => false,
+        'group'       => null,
     ],
 
     // -------------------------------------------------------------------------
@@ -600,6 +718,7 @@ return [
         'tier'        => 'd',
         'category'    => 'secret',
         'secret'      => true,
+        'group'       => null,
     ],
     'valentines' => [
         'name'        => "Valentine's",
@@ -607,6 +726,7 @@ return [
         'tier'        => 'd',
         'category'    => 'secret',
         'secret'      => true,
+        'group'       => null,
     ],
     'christmas' => [
         'name'        => 'Christmas',
@@ -614,6 +734,7 @@ return [
         'tier'        => 'd',
         'category'    => 'secret',
         'secret'      => true,
+        'group'       => null,
     ],
     'halloween' => [
         'name'        => 'Halloween',
@@ -621,6 +742,7 @@ return [
         'tier'        => 'd',
         'category'    => 'secret',
         'secret'      => true,
+        'group'       => null,
     ],
     'mirror_match' => [
         'name'        => 'Mirror Match',
@@ -628,6 +750,7 @@ return [
         'tier'        => 'd',
         'category'    => 'secret',
         'secret'      => true,
+        'group'       => null,
     ],
     'beast_mode' => [
         'name'        => 'Beast Mode',
@@ -635,6 +758,7 @@ return [
         'tier'        => 'd',
         'category'    => 'secret',
         'secret'      => true,
+        'group'       => null,
     ],
     'millennium' => [
         'name'        => 'Millennium',
@@ -642,6 +766,7 @@ return [
         'tier'        => 'b',
         'category'    => 'secret',
         'secret'      => true,
+        'group'       => null,
     ],
     'initials' => [
         'name'        => 'Initials',
@@ -649,6 +774,7 @@ return [
         'tier'        => 'd',
         'category'    => 'secret',
         'secret'      => true,
+        'group'       => null,
     ],
     'world_tour' => [
         'name'        => 'World Tour',
@@ -656,6 +782,7 @@ return [
         'tier'        => 'c',
         'category'    => 'secret',
         'secret'      => true,
+        'group'       => null,
     ],
     'back_to_square_one' => [
         'name'        => 'Back to Square One',
@@ -663,6 +790,7 @@ return [
         'tier'        => 'c',
         'category'    => 'secret',
         'secret'      => true,
+        'group'       => null,
     ],
     'fifty_fifty' => [
         'name'        => 'Fifty Fifty',
@@ -670,15 +798,15 @@ return [
         'tier'        => 'c',
         'category'    => 'secret',
         'secret'      => true,
+        'group'       => null,
     ],
-
-    // Ironic secrets
     'bad_day' => [
         'name'        => "It's Just a Bad Day",
         'description' => 'Lose 10 games in a row',
         'tier'        => 'd',
         'category'    => 'secret',
         'secret'      => true,
+        'group'       => 'loss_streak',
     ],
     'different_game' => [
         'name'        => 'Maybe Try a Different Game?',
@@ -686,6 +814,7 @@ return [
         'tier'        => 'c',
         'category'    => 'secret',
         'secret'      => true,
+        'group'       => 'loss_streak',
     ],
     'dedicated_to_the_cause' => [
         'name'        => 'Dedicated to the Cause',
@@ -693,6 +822,7 @@ return [
         'tier'        => 'b',
         'category'    => 'secret',
         'secret'      => true,
+        'group'       => 'loss_streak',
     ],
     'how' => [
         'name'        => 'How?!',
@@ -700,6 +830,7 @@ return [
         'tier'        => 'd',
         'category'    => 'secret',
         'secret'      => true,
+        'group'       => null,
     ],
     'rookie_mistake' => [
         'name'        => 'Rookie Mistake',
@@ -707,6 +838,7 @@ return [
         'tier'        => 'd',
         'category'    => 'secret',
         'secret'      => true,
+        'group'       => null,
     ],
 
 ];

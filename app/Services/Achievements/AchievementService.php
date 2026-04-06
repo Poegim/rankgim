@@ -72,6 +72,20 @@ class AchievementService
             DB::table('player_achievements')->insertOrIgnore($chunk);
         }
 
+        // Update owners_count for each achievement key
+        $counts = DB::table('player_achievements')
+            ->selectRaw('`key`, COUNT(*) as cnt')
+            ->groupBy('key')
+            ->pluck('cnt', 'key');
+
+        foreach ($counts as $key => $cnt) {
+            DB::table('player_achievements')
+                ->where('key', $key)
+                ->update(['owners_count' => $cnt]);
+        }
+
+        echo "Achievements: owners_count updated.\n";
+
         echo "Achievements: " . count($batch) . " unlocked across all players.\n";
     }
 

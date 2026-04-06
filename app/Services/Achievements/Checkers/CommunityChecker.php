@@ -93,7 +93,6 @@ class CommunityChecker
 
                 $tournamentCount = count($seenTournaments);
 
-                if ($tournamentCount >= 1  && $tournamentMilestones[1])  $batch[] = $this->row($playerId, 'tournament_debut',      'd', $tournamentCount, $tournamentMilestones[1]);
                 if ($tournamentCount >= 5  && $tournamentMilestones[5])  $batch[] = $this->row($playerId, 'circuit_player',        'c', $tournamentCount, $tournamentMilestones[5]);
                 if ($tournamentCount >= 10 && $tournamentMilestones[10]) $batch[] = $this->row($playerId, 'road_warrior',          'b', $tournamentCount, $tournamentMilestones[10]);
                 if ($tournamentCount >= 25 && $tournamentMilestones[25]) $batch[] = $this->row($playerId, 'legend_of_the_circuit', 'a', $tournamentCount, $tournamentMilestones[25]);
