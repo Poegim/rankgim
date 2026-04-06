@@ -10,7 +10,11 @@
 
         {{-- Klocki --}}
         <livewire:history.podium />
+        
+        <livewire:history.top10-time />
+
         <livewire:history.ranking-chart />
+        
         <livewire:highest-peaks />
 
     </div>
