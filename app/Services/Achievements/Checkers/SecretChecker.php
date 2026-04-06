@@ -6,32 +6,12 @@ use Carbon\Carbon;
 
 class SecretChecker
 {
-    /**
-     * Check secret and ironic achievements.
-     * - Seasonal: new_year, valentines, christmas, halloween
-     * - Mirror Match: played opponent with exact same rating
-     * - Beast Mode: 666th game
-     * - Millennium: 1000th game
-     * - Initials: name starts with same letter as country
-     * - World Tour: played opponents from EU, NA, SA and Asia
-     * - Back to Square One: ended a game with exactly 1000 rating
-     * - Fifty Fifty: exactly 50% win rate after exactly 100 games
-     * - Ironic: bad_day, different_game, dedicated_to_the_cause, how, rookie_mistake
-     *
-     * @param array $stats      [player_id => [...]]
-     * @param array $ratings    [player_id => current_rating]
-     * @param array $sharedData Pre-loaded shared data from AchievementService
-     * @return array            Rows ready for bulk insert into player_achievements
-     */
     public function check(array $stats, array $ratings, array $sharedData): array
     {
-        $batch = [];
-        $now   = $sharedData['now'];
-
-        // Pre-load regions per country for world_tour check
+        $batch          = [];
         $countryRegions = collect(config('countries'))->pluck('region', 'code');
 
-        // Pre-load opponent countries per game for world_tour
+        // Pre-load opponent countries per game with dates — one query for all players
         $opponentCountriesByPlayer = \DB::table('rating_histories as rh1')
             ->join('rating_histories as rh2', function ($join) {
                 $join->on('rh1.game_id', '=', 'rh2.game_id')
@@ -39,174 +19,197 @@ class SecretChecker
             })
             ->join('players', 'players.id', '=', 'rh2.player_id')
             ->whereNull('players.player_id')
-            ->selectRaw('rh1.player_id, players.country_code')
-            ->distinct()
+            ->select('rh1.player_id', 'players.country_code', 'rh1.played_at')
+            ->orderBy('rh1.played_at')
+            ->get()
+            ->groupBy('player_id');
+
+        // Pre-load mirror matches for all players — one query
+        $mirrorMatches = \DB::table('rating_histories as rh1')
+            ->join('rating_histories as rh2', function ($join) {
+                $join->on('rh1.game_id', '=', 'rh2.game_id')
+                     ->whereColumn('rh1.player_id', '!=', 'rh2.player_id');
+            })
+            ->whereColumn('rh1.rating_before', 'rh2.rating_before')
+            ->select('rh1.player_id', 'rh1.played_at')
+            ->orderBy('rh1.played_at')
             ->get()
             ->groupBy('player_id')
-            ->map(fn($rows) => $rows->pluck('country_code')->unique());
+            ->map(fn($rows) => $rows->first());
+
+        // Pre-load "how" losses for all players — one query
+        $howLosses = \DB::table('rating_histories as rh1')
+            ->join('rating_histories as rh2', function ($join) {
+                $join->on('rh1.game_id', '=', 'rh2.game_id')
+                     ->where('rh1.result', '=', 'loss')
+                     ->where('rh2.result', '=', 'win');
+            })
+            ->whereRaw('rh1.rating_before - rh2.rating_before >= 500')
+            ->select('rh1.player_id', 'rh1.played_at')
+            ->orderBy('rh1.played_at')
+            ->get()
+            ->groupBy('player_id')
+            ->map(fn($rows) => $rows->first());
 
         foreach ($stats as $playerId => $s) {
             $history = $sharedData['histories']->get($playerId);
             if (!$history || $history->isEmpty()) continue;
 
-            $games      = $s['games_played'] ?? 0;
-            $wins       = $s['wins'] ?? 0;
-            $playerName = $sharedData['player_names'][$playerId] ?? '';
+            $games       = $s['games_played'] ?? 0;
+            $wins        = $s['wins'] ?? 0;
+            $playerName  = $sharedData['player_names'][$playerId] ?? '';
             $countryCode = $sharedData['player_countries'][$playerId] ?? '';
 
             // ------------------------------------------------------------------
             // Seasonal — played a game on a specific date
+            // unlocked_at = that date
             // ------------------------------------------------------------------
-            $dates = $history->map(fn($h) => Carbon::parse($h->played_at));
+            $addedSeasonals = [];
 
-            foreach ($dates as $date) {
-                $md = $date->format('m-d');
+            foreach ($history as $h) {
+                $md = Carbon::parse($h->played_at)->format('m-d');
 
-                if ($md === '01-01') $batch[] = $this->row($playerId, 'new_year',   'd', null, $now);
-                if ($md === '02-14') $batch[] = $this->row($playerId, 'valentines', 'd', null, $now);
-                if ($md === '12-25') $batch[] = $this->row($playerId, 'christmas',  'd', null, $now);
-                if ($md === '10-31') $batch[] = $this->row($playerId, 'halloween',  'd', null, $now);
+                $seasonals = [
+                    '01-01' => 'new_year',
+                    '02-14' => 'valentines',
+                    '12-25' => 'christmas',
+                    '10-31' => 'halloween',
+                ];
+
+                foreach ($seasonals as $trigger => $key) {
+                    if ($md === $trigger && !isset($addedSeasonals[$key])) {
+                        $batch[]              = $this->row($playerId, $key, 'd', null, $h->played_at);
+                        $addedSeasonals[$key] = true;
+                    }
+                }
             }
-
-            // Deduplicate seasonal — collect keys added so far and skip duplicates
-            // (handled by unique constraint in DB, but avoid flooding batch)
 
             // ------------------------------------------------------------------
             // Mirror Match — played opponent with exact same rating_before
+            // unlocked_at = date of that game
             // ------------------------------------------------------------------
-            $hasMirror = \DB::table('rating_histories as rh1')
-                ->join('rating_histories as rh2', function ($join) {
-                    $join->on('rh1.game_id', '=', 'rh2.game_id')
-                         ->whereColumn('rh1.player_id', '!=', 'rh2.player_id');
-                })
-                ->where('rh1.player_id', $playerId)
-                ->whereColumn('rh1.rating_before', 'rh2.rating_before')
-                ->exists();
-
-            if ($hasMirror) {
-                $batch[] = $this->row($playerId, 'mirror_match', 'd', null, $now);
+            $mirror = $mirrorMatches->get($playerId);
+            if ($mirror) {
+                $batch[] = $this->row($playerId, 'mirror_match', 'd', null, $mirror->played_at);
             }
 
             // ------------------------------------------------------------------
             // Beast Mode — 666th game
+            // unlocked_at = date of the 666th game
             // ------------------------------------------------------------------
             if ($games >= 666) {
-                $batch[] = $this->row($playerId, 'beast_mode', 'd', 666, $now);
+                $date = $history->values()->get(665)->played_at ?? now()->toDateString();
+                $batch[] = $this->row($playerId, 'beast_mode', 'd', 666, $date);
             }
 
             // ------------------------------------------------------------------
             // Millennium — 1000th game
+            // unlocked_at = date of the 1000th game
             // ------------------------------------------------------------------
             if ($games >= 1000) {
-                $batch[] = $this->row($playerId, 'millennium', 'b', 1000, $now);
+                $date = $history->values()->get(999)->played_at ?? now()->toDateString();
+                $batch[] = $this->row($playerId, 'millennium', 'b', 1000, $date);
             }
 
             // ------------------------------------------------------------------
             // Initials — name starts with same letter as country code
+            // unlocked_at = date of first game
             // ------------------------------------------------------------------
             if (
                 $playerName &&
                 $countryCode &&
                 strtoupper(substr($playerName, 0, 1)) === strtoupper(substr($countryCode, 0, 1))
             ) {
-                $batch[] = $this->row($playerId, 'initials', 'd', null, $now);
+                $batch[] = $this->row($playerId, 'initials', 'd', null, $history->first()->played_at);
             }
 
             // ------------------------------------------------------------------
             // World Tour — played opponents from EU, NA, SA and Asia
+            // unlocked_at = date when last required region was reached
             // ------------------------------------------------------------------
-            $opponentCountries = $opponentCountriesByPlayer->get($playerId, collect());
-            $regions = $opponentCountries
-                ->map(fn($code) => $countryRegions[$code] ?? null)
-                ->filter()
-                ->unique();
-
+            $playerGames     = $opponentCountriesByPlayer->get($playerId, collect());
             $requiredRegions = ['Europe', 'North America', 'South America', 'Asia'];
-            $hasAllRegions   = collect($requiredRegions)->every(fn($r) => $regions->contains($r));
+            $seenRegions     = [];
 
-            if ($hasAllRegions) {
-                $batch[] = $this->row($playerId, 'world_tour', 'c', null, $now);
+            foreach ($playerGames as $game) {
+                $region = $countryRegions[$game->country_code] ?? null;
+                if ($region && in_array($region, $requiredRegions) && !isset($seenRegions[$region])) {
+                    $seenRegions[$region] = $game->played_at;
+
+                    if (count($seenRegions) === count($requiredRegions)) {
+                        $date = max(array_values($seenRegions));
+                        $batch[] = $this->row($playerId, 'world_tour', 'c', null, $date);
+                        break;
+                    }
+                }
             }
 
             // ------------------------------------------------------------------
-            // Back to Square One — ended a game with exactly 1000 rating
+            // Back to Square One — ended a game with exactly 1000 rating (not first game)
+            // unlocked_at = date of that game
             // ------------------------------------------------------------------
-            $backToSquareOne = $history
-                ->skip(1) // Skip first game — everyone starts at 1000
-                ->contains(fn($h) => $h->rating_after === 1000);
-
+            $backToSquareOne = $history->skip(1)->first(fn($h) => $h->rating_after === 1000);
             if ($backToSquareOne) {
-                $batch[] = $this->row($playerId, 'back_to_square_one', 'c', null, $now);
+                $batch[] = $this->row($playerId, 'back_to_square_one', 'c', null, $backToSquareOne->played_at);
             }
 
             // ------------------------------------------------------------------
             // Fifty Fifty — exactly 50% win rate after exactly 100 games
+            // unlocked_at = date of the 100th game
             // ------------------------------------------------------------------
             if ($games === 100 && $wins === 50) {
-                $batch[] = $this->row($playerId, 'fifty_fifty', 'c', null, $now);
+                $date = $history->values()->get(99)->played_at ?? now()->toDateString();
+                $batch[] = $this->row($playerId, 'fifty_fifty', 'c', null, $date);
             }
 
             // ------------------------------------------------------------------
             // Ironic — loss streaks
+            // unlocked_at = date of the Nth consecutive loss
             // ------------------------------------------------------------------
-            $results        = $history->pluck('result')->toArray();
-            $maxLossStreak  = 0;
             $currentStreak  = 0;
+            $lossMilestones = [10 => null, 20 => null, 30 => null];
 
-            foreach ($results as $result) {
-                if ($result !== 'win') {
+            foreach ($history as $h) {
+                if ($h->result !== 'win') {
                     $currentStreak++;
-                    $maxLossStreak = max($maxLossStreak, $currentStreak);
+                    foreach ($lossMilestones as $threshold => $date) {
+                        if ($date === null && $currentStreak >= $threshold) {
+                            $lossMilestones[$threshold] = $h->played_at;
+                        }
+                    }
                 } else {
                     $currentStreak = 0;
                 }
             }
 
-            if ($maxLossStreak >= 10) $batch[] = $this->row($playerId, 'bad_day',              'd', $maxLossStreak, $now);
-            if ($maxLossStreak >= 20) $batch[] = $this->row($playerId, 'different_game',        'c', $maxLossStreak, $now);
-            if ($maxLossStreak >= 30) $batch[] = $this->row($playerId, 'dedicated_to_the_cause','b', $maxLossStreak, $now);
+            if ($lossMilestones[10]) $batch[] = $this->row($playerId, 'bad_day',               'd', null, $lossMilestones[10]);
+            if ($lossMilestones[20]) $batch[] = $this->row($playerId, 'different_game',         'c', null, $lossMilestones[20]);
+            if ($lossMilestones[30]) $batch[] = $this->row($playerId, 'dedicated_to_the_cause', 'b', null, $lossMilestones[30]);
 
+            // ------------------------------------------------------------------
             // How?! — lost to a player rated 500+ lower
-            $howExists = \DB::table('rating_histories as rh1')
-                ->join('rating_histories as rh2', function ($join) {
-                    $join->on('rh1.game_id', '=', 'rh2.game_id')
-                         ->where('rh1.result', '=', 'loss')
-                         ->where('rh2.result', '=', 'win');
-                })
-                ->where('rh1.player_id', $playerId)
-                ->whereRaw('rh1.rating_before - rh2.rating_before >= 500')
-                ->exists();
-
-            if ($howExists) {
-                $batch[] = $this->row($playerId, 'how', 'd', null, $now);
+            // unlocked_at = date of that game
+            // ------------------------------------------------------------------
+            $how = $howLosses->get($playerId);
+            if ($how) {
+                $batch[] = $this->row($playerId, 'how', 'd', null, $how->played_at);
             }
-
-            // rookie_mistake is handled in GamesChecker — skip here
         }
-
-        // Deduplicate batch — seasonal achievements can be added multiple times
-        // if player played on the same date in multiple years
-        $seen  = [];
-        $batch = array_filter($batch, function ($row) use (&$seen) {
-            $key = $row['player_id'] . '_' . $row['key'];
-            if (isset($seen[$key])) return false;
-            $seen[$key] = true;
-            return true;
-        });
 
         echo "SecretChecker: " . count($batch) . " achievements.\n";
 
-        return array_values($batch);
+        return $batch;
     }
 
-    private function row(int $playerId, string $key, string $tier, ?int $value, $now): array
+    private function row(int $playerId, string $key, string $tier, ?int $value, string $unlockedAt): array
     {
+        $now = now();
         return [
             'player_id'   => $playerId,
             'key'         => $key,
             'tier'        => $tier,
             'value'       => $value,
-            'unlocked_at' => $now->toDateString(),
+            'unlocked_at' => $unlockedAt,
             'created_at'  => $now,
             'updated_at'  => $now,
         ];

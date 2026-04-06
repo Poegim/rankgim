@@ -65,7 +65,7 @@ class AchievementService
         $batch = array_merge($batch, $this->calendar->check($stats, $sharedData));
         $batch = array_merge($batch, $this->precision->check($stats, $sharedData));
         $batch = array_merge($batch, $this->prestige->check($stats, $sharedData));
-        // $batch = array_merge($batch, $this->secret->check($stats, $ratings, $sharedData));
+        $batch = array_merge($batch, $this->secret->check($stats, $ratings, $sharedData));
 
         // Bulk insert in chunks
         foreach (array_chunk($batch, 500) as $chunk) {
