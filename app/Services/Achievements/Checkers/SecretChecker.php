@@ -82,9 +82,9 @@ class SecretChecker
                     '02-14' => ['valentines', 'a'],
                     '12-25' => ['christmas',  'a'],
                     '10-31' => ['halloween',  'a'],
-                    '03-31' => ['sc_birthday','s'],
-                    '11-30' => ['bw_birthday', 's'],
-                    '08-14' => ['remastered_birthday','s'],
+                    '03-31' => ['sc_birthday','a'],
+                    '11-30' => ['bw_birthday', 'a'],
+                    '08-14' => ['remastered_birthday','a'],
                 ];
 
                 foreach ($seasonals as $trigger => [$key, $tier]) {
@@ -110,7 +110,7 @@ class SecretChecker
             // ------------------------------------------------------------------
             if ($games >= 666) {
                 $date = $history->values()->get(665)->played_at ?? now()->toDateString();
-                $batch[] = $this->row($playerId, 'beast_mode', 'd', 666, $date);
+                $batch[] = $this->row($playerId, 'beast_mode', 'b', 666, $date);
             }
 
             // ------------------------------------------------------------------
@@ -119,7 +119,7 @@ class SecretChecker
             // ------------------------------------------------------------------
             if ($games >= 1000) {
                 $date = $history->values()->get(999)->played_at ?? now()->toDateString();
-                $batch[] = $this->row($playerId, 'millennium', 'b', 1000, $date);
+                $batch[] = $this->row($playerId, 'millennium', 'a', 1000, $date);
             }
 
             // ------------------------------------------------------------------
@@ -129,15 +129,6 @@ class SecretChecker
             $backToSquareOne = $history->skip(1)->first(fn($h) => $h->rating_after === 1000);
             if ($backToSquareOne) {
                 $batch[] = $this->row($playerId, 'back_to_square_one', 'c', null, $backToSquareOne->played_at);
-            }
-
-            // ------------------------------------------------------------------
-            // Fifty Fifty — exactly 50% win rate after exactly 100 games
-            // unlocked_at = date of the 100th game
-            // ------------------------------------------------------------------
-            if ($games === 100 && $wins === 50) {
-                $date = $history->values()->get(99)->played_at ?? now()->toDateString();
-                $batch[] = $this->row($playerId, 'fifty_fifty', 's', null, $date);
             }
 
             // ------------------------------------------------------------------

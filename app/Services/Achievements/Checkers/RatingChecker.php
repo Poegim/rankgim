@@ -91,7 +91,7 @@ class RatingChecker
             // David vs Goliath — first game where diff >= 300
             $first300 = $playerUpsets->first(fn($u) => $u->diff >= 300);
             if ($first300) {
-                $batch[] = $this->row($playerId, 'david_vs_goliath', 'b', $first300->diff, $first300->played_at);
+                $batch[] = $this->row($playerId, 'david_vs_goliath', 'a', $first300->diff, $first300->played_at);
             }
         }
 

@@ -25,8 +25,8 @@ class RankingChecker
             $peakMilestones = [
                 100 => ['top_100', 'd'],
                 50  => ['top_50',  'c'],
-                25  => ['top_25',  'c'],
-                10  => ['elite',   'b'],
+                25  => ['top_25',  'b'],
+                10  => ['elite',   'a'],
                 3   => ['podium',  'a'],
                 1   => ['the_best','s'],
             ];

@@ -187,7 +187,7 @@ return [
     'top_25' => [
         'name'        => 'Top 25',
         'description' => 'Reach top 25',
-        'tier'        => 'c',
+        'tier'        => 'b',
         'category'    => 'ranking',
         'secret'      => false,
         'group'       => 'top_rank',
@@ -195,7 +195,7 @@ return [
     'elite' => [
         'name'        => 'Elite',
         'description' => 'Reach top 10',
-        'tier'        => 'b',
+        'tier'        => 'a',
         'category'    => 'ranking',
         'secret'      => false,
         'group'       => 'top_rank',
@@ -399,7 +399,7 @@ return [
     'david_vs_goliath' => [
         'name'        => 'David vs Goliath',
         'description' => 'Beat a player rated 300+ higher than you (both players must have 30+ games)',
-        'tier'        => 's',
+        'tier'        => 'a',
         'category'    => 'rating',
         'secret'      => false,
         'group'       => 'giant_slayer',
@@ -511,7 +511,7 @@ return [
     'the_rematch' => [
         'name'        => 'The Rematch',
         'description' => 'Play the same player 30+ times',
-        'tier'        => 'c',
+        'tier'        => 'b',
         'category'    => 'rivalry',
         'secret'      => false,
         'group'       => 'rivalry_total',
@@ -519,11 +519,20 @@ return [
     'the_rivalry' => [
         'name'        => 'The Rivalry',
         'description' => 'Play the same player 50+ times',
-        'tier'        => 'b',
+        'tier'        => 'a',
         'category'    => 'rivalry',
         'secret'      => false,
         'group'       => 'rivalry_total',
     ],
+    'the_feud' => [
+        'name'        => 'The Feud',
+        'description' => 'Play the same player 100+ times',
+        'tier'        => 's',
+        'category'    => 'rivalry',
+        'secret'      => false,
+        'group'       => 'rivalry_total',
+    ],
+
 
     // -------------------------------------------------------------------------
     // Community
@@ -624,7 +633,7 @@ return [
     'founding_father' => [
         'name'        => 'Founding Father',
         'description' => 'One of the first 50 players in the database',
-        'tier'        => 's',
+        'tier'        => 'a',
         'category'    => 'history',
         'secret'      => false,
         'group'       => 'founding',
@@ -750,7 +759,7 @@ return [
     ],
         'early_pressure' => [
         'name'        => 'Early Pressure',
-        'description' => 'Deny the expansion.',
+        'description' => 'Deny the expansion. Win your first 3 games in a row.',
         'tier'        => 'b',
         'category'    => 'prestige',
         'secret'      => false,
@@ -758,7 +767,7 @@ return [
     ],
     'all_in' => [
         'name'        => 'All In',
-        'description' => 'No going back.',
+        'description' => 'No going back. Win your first 5 games in a row.',
         'tier'        => 'a',
         'category'    => 'prestige',
         'secret'      => false,
@@ -766,7 +775,7 @@ return [
     ],
     'perfect_start' => [
         'name'        => 'Perfect Start',
-        'description' => 'Flawless execution.',
+        'description' => 'Flawless execution. Win your first 10 games in a row.',
         'tier'        => 's',
         'category'    => 'prestige',
         'secret'      => false,
@@ -811,7 +820,7 @@ return [
     'sc_birthday' => [
         'name'        => 'StarCraft Birthday',
         'description' => 'Play a game on March 31st — StarCraft\'s anniversary',
-        'tier'        => 's',
+        'tier'        => 'a',
         'category'    => 'secret',
         'secret'      => true,
         'group'       => null,
@@ -819,7 +828,7 @@ return [
         'bw_birthday' => [
         'name'        => 'Brood War Birthday',
         'description' => 'Play a game on November 30th — Brood War\'s anniversary',
-        'tier'        => 's',
+        'tier'        => 'a',
         'category'    => 'secret',
         'secret'      => true,
         'group'       => null,
@@ -827,7 +836,7 @@ return [
     'remastered_birthday' => [
         'name'        => 'Remastered Birthday',
         'description' => 'Play a game on August 14th — StarCraft Remastered\'s anniversary',
-        'tier'        => 's',
+        'tier'        => 'a',
         'category'    => 'secret',
         'secret'      => true,
         'group'       => null,
@@ -843,7 +852,7 @@ return [
     'beast_mode' => [
         'name'        => 'Beast Mode',
         'description' => 'Play your 666th game',
-        'tier'        => 'd',
+        'tier'        => 'b',
         'category'    => 'secret',
         'secret'      => true,
         'group'       => null,
@@ -851,7 +860,7 @@ return [
     'millennium' => [
         'name'        => 'Millennium',
         'description' => 'Play your 1000th game',
-        'tier'        => 'b',
+        'tier'        => 'a',
         'category'    => 'secret',
         'secret'      => true,
         'group'       => null,
@@ -860,14 +869,6 @@ return [
         'name'        => 'Back to Square One',
         'description' => 'End a game with exactly 1000 rating',
         'tier'        => 'c',
-        'category'    => 'secret',
-        'secret'      => true,
-        'group'       => null,
-    ],
-    'fifty_fifty' => [
-        'name'        => 'Fifty Fifty',
-        'description' => 'Have exactly 50% win rate after exactly 100 games',
-        'tier'        => 's',
         'category'    => 'secret',
         'secret'      => true,
         'group'       => null,

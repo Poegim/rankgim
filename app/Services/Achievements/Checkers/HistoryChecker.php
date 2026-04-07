@@ -31,7 +31,7 @@ class HistoryChecker
             // Founding Father — one of the first 50 players
             // unlocked_at = date of their first game
             if (isset($first50[$playerId])) {
-                $batch[] = $this->row($playerId, 'founding_father', 'b', $first50[$playerId] + 1, $firstGameDate);
+                $batch[] = $this->row($playerId, 'founding_father', 'a', $first50[$playerId] + 1, $firstGameDate);
             }
 
             // Time Traveler — games from 3+ different years

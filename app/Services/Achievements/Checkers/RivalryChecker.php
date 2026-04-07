@@ -88,8 +88,9 @@ class RivalryChecker
             if ($maxWins >= 20 && isset($winDates[20])) $batch[] = $this->row($playerId, 'executioner', 'b', $maxWins, $winDates[20]);
 
             // Total games against same player
-            if ($maxTotal >= 30 && isset($totalDates[30])) $batch[] = $this->row($playerId, 'the_rematch', 'c', $maxTotal, $totalDates[30]);
-            if ($maxTotal >= 50 && isset($totalDates[50])) $batch[] = $this->row($playerId, 'the_rivalry', 'b', $maxTotal, $totalDates[50]);
+            if ($maxTotal >= 30 && isset($totalDates[30])) $batch[] = $this->row($playerId, 'the_rematch', 'b', $maxTotal, $totalDates[30]);
+            if ($maxTotal >= 50 && isset($totalDates[50])) $batch[] = $this->row($playerId, 'the_rivalry', 'a', $maxTotal, $totalDates[50]);
+            if ($maxTotal >= 100 && isset($totalDates[100])) $batch[] = $this->row($playerId, 'the_feud', 's', $maxTotal, $totalDates[100]);
         }
 
         echo "RivalryChecker: " . count($batch) . " achievements.\n";
