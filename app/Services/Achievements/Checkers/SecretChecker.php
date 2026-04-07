@@ -31,6 +31,8 @@ class SecretChecker
                      ->whereColumn('rh1.player_id', '!=', 'rh2.player_id');
             })
             ->whereColumn('rh1.rating_before', 'rh2.rating_before')
+            ->where('rh1.rating_before', '!=', 1000)
+            ->where('rh2.rating_before', '!=', 1000)
             ->select('rh1.player_id', 'rh1.played_at')
             ->orderBy('rh1.played_at')
             ->get()

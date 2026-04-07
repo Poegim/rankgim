@@ -28,42 +28,42 @@ return [
     // -------------------------------------------------------------------------
     // Games played
     // -------------------------------------------------------------------------
-    'first_blood' => [
-        'name'        => 'First Blood',
-        'description' => 'Play 15 games',
+    'probe' => [
+        'name'        => 'Probe',
+        'description' => 'Just scouting...',
         'tier'        => 'd',
         'category'    => 'games',
         'secret'      => false,
         'group'       => 'games_played',
     ],
-    'apprentice' => [
-        'name'        => 'Apprentice',
-        'description' => 'Play 50 games',
-        'tier'        => 'd',
-        'category'    => 'games',
-        'secret'      => false,
-        'group'       => 'games_played',
-    ],
-    'veteran' => [
-        'name'        => 'Veteran',
-        'description' => 'Play 100 games',
+    'marine' => [
+        'name'        => 'Marine',
+        'description' => 'Still learning the hotkeys.',
         'tier'        => 'c',
         'category'    => 'games',
         'secret'      => false,
         'group'       => 'games_played',
     ],
-    'gladiator' => [
-        'name'        => 'Gladiator',
-        'description' => 'Play 250 games',
+    'dragoon' => [
+        'name'        => 'Dragoon',
+        'description' => 'Getting stuck since 1998.',
         'tier'        => 'b',
         'category'    => 'games',
         'secret'      => false,
         'group'       => 'games_played',
     ],
-    'warlord' => [
-        'name'        => 'Warlord',
-        'description' => 'Play 500 games',
+    'scout' => [
+        'name'        => 'Scout',
+        'description' => '500 games of pure reconnaissance.',
         'tier'        => 'a',
+        'category'    => 'games',
+        'secret'      => false,
+        'group'       => 'games_played',
+    ],
+    'overlord' => [
+        'name'        => 'Overlord',
+        'description' => 'Send help.',
+        'tier'        => 's',
         'category'    => 'games',
         'secret'      => false,
         'group'       => 'games_played',
@@ -136,6 +136,14 @@ return [
         'name'        => 'Unstoppable',
         'description' => 'Be active for 12 consecutive months',
         'tier'        => 'b',
+        'category'    => 'activity',
+        'secret'      => false,
+        'group'       => 'activity_streak',
+    ],
+        'iron_will' => [
+        'name'        => 'Iron Will',
+        'description' => 'Be active for 18 consecutive months',
+        'tier'        => 'a',
         'category'    => 'activity',
         'secret'      => false,
         'group'       => 'activity_streak',

@@ -35,8 +35,11 @@ class Achievements extends Component
                 ];
             })
             ->filter()
-            // Sort S→D first so highest tier wins when grouping
-            ->sortBy(fn($a) => array_search($a['tier'], ['s', 'a', 'b', 'c', 'd']))
+            ->sortBy(function($a) {
+                $tierOrder = array_search($a['tier'], ['s', 'a', 'b', 'c', 'd']);
+                // Within same tier, sort by value descending (higher value = higher milestone)
+                return [$tierOrder, -($a['value'] ?? 0)];
+            })
             // Group by group key — keep only highest tier per group
             ->groupBy(fn($a) => $a['group'] ?? $a['key'])
             ->map(fn($group) => $group->first())

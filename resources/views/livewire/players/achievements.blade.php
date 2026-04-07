@@ -103,6 +103,11 @@ $categoryLabels = [
         @endforeach
     </div>
 
+    @php
+$ratingGroup = $this->achievements->filter(fn($a) => $a['group'] === 'rating_milestone')->values();
+@endphp
+<pre style="font-size:10px">{{ json_encode($ratingGroup->map(fn($a) => ['key' => $a['key'], 'tier' => $a['tier']])) }}</pre>
+
     @if($this->achievements->isEmpty())
         <div class="rounded-xl border border-zinc-700/60 bg-zinc-800/40 p-6 text-center">
             <p class="text-zinc-500 text-sm">No achievements yet.</p>

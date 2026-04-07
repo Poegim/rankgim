@@ -45,7 +45,7 @@ class ActivityChecker
             $currentStreak = 1;
 
             // Track when each consecutive milestone was first reached
-            $streakMilestones = [3 => null, 6 => null, 12 => null, 24 => null];
+            $streakMilestones = [3 => null, 6 => null, 12 => null, 18 => null, 24 => null];
 
             for ($i = 1; $i < $activeMonths->count(); $i++) {
                 $prev = Carbon::parse($activeMonths[$i - 1] . '-01');
@@ -70,6 +70,7 @@ class ActivityChecker
                 3  => ['on_a_roll',           'd'],
                 6  => ['consistent',          'c'],
                 12 => ['unstoppable_activity', 'b'],
+                18 => ['iron_will', 'a'],
                 24 => ['machine',             's'],
             ];
 
