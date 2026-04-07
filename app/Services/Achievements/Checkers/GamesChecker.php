@@ -16,11 +16,11 @@ class GamesChecker
 
             // Games played milestones — unlocked_at = date of the Nth game
             $milestones = [
-                15   => ['probe',    'd'],
-                75   => ['marine',   'c'],
-                250  => ['dragoon',  'b'],
-                500  => ['scout',    'a'],
-                1000 => ['overlord', 's'],
+                15   => ['showing_up',       'd'],
+                75   => ['rocky',            'c'],
+                250  => ['inception',        'b'],
+                500  => ['there_is_no_spoon','a'],
+                1000 => ['tears_in_rain',    's'],
             ];
 
             foreach ($milestones as $threshold => $milestone) {

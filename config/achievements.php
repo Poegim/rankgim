@@ -28,41 +28,41 @@ return [
     // -------------------------------------------------------------------------
     // Games played
     // -------------------------------------------------------------------------
-    'probe' => [
-        'name'        => 'Probe',
-        'description' => 'Just scouting...',
+    'showing_up' => [
+        'name'        => 'Showing Up',
+        'description' => '15 games. You showed up. That\'s the hardest part.',
         'tier'        => 'd',
         'category'    => 'games',
         'secret'      => false,
         'group'       => 'games_played',
     ],
-    'marine' => [
-        'name'        => 'Marine',
-        'description' => 'Still learning the hotkeys.',
+    'rocky' => [
+        'name'        => 'Rocky',
+        'description' => '75 games. Nobody hits as hard as life.',
         'tier'        => 'c',
         'category'    => 'games',
         'secret'      => false,
         'group'       => 'games_played',
     ],
-    'dragoon' => [
-        'name'        => 'Dragoon',
-        'description' => 'Getting stuck since 1998.',
+    'inception' => [
+        'name'        => 'Inception',
+        'description' => '250 games. How deep does the rabbit hole go?',
         'tier'        => 'b',
         'category'    => 'games',
         'secret'      => false,
         'group'       => 'games_played',
     ],
-    'scout' => [
-        'name'        => 'Scout',
-        'description' => '500 games of pure reconnaissance.',
+    'there_is_no_spoon' => [
+        'name'        => 'There Is No Spoon',
+        'description' => '500 games. There is no free time either.',
         'tier'        => 'a',
         'category'    => 'games',
         'secret'      => false,
         'group'       => 'games_played',
     ],
-    'overlord' => [
-        'name'        => 'Overlord',
-        'description' => 'Send help.',
+    'tears_in_rain' => [
+        'name'        => 'Tears in Rain',
+        'description' => '1000 games. I\'ve seen things you people wouldn\'t believe. All those moments will be lost in time, like tears in rain.',
         'tier'        => 's',
         'category'    => 'games',
         'secret'      => false,

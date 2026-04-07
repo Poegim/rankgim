@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\HistoryController;
+use App\Livewire\AchievementsBrowser;
 use App\Livewire\Countries\Compare as CountriesCompare;
 use App\Livewire\Countries\Index;
 use App\Livewire\Players\Compare;
@@ -44,6 +45,9 @@ Route::get('/countries/{code1}-vs-{code2}', CountriesCompare::class)->name('coun
 
 // History route
 Route::get('/history', [HistoryController::class, 'index'])->name('history.index');
+
+// Achievements browser
+Route::get('/achievements', AchievementsBrowser::class)->name('achievements.index');
 
 // Games route
 Route::get('/games', fn() => view('games.index'))->name('games.index');
