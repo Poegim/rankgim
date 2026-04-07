@@ -18,15 +18,6 @@ class CalendarChecker
                 fn($h) => Carbon::parse($h->played_at)->toDateString()
             );
 
-            // Marathon — 10+ games in a single day
-            // unlocked_at = that day
-            foreach ($byDay as $date => $games) {
-                if ($games->count() >= 10) {
-                    $batch[] = $this->row($playerId, 'marathon', 'c', $games->count(), $date);
-                    break;
-                }
-            }
-
             // Workaholic — played on 20+ different days in a single month
             // unlocked_at = last day of that month when 20th day was reached
             $byMonth = $history->groupBy(
@@ -40,20 +31,19 @@ class CalendarChecker
                     ->sort()
                     ->values();
 
-                if ($uniqueDays->count() >= 20) {
-                    $date = $uniqueDays->get(19); // Date of the 20th unique day
-                    $batch[] = $this->row($playerId, 'workaholic', 'b', $uniqueDays->count(), $date);
-                    break;
-                }
-            }
+                $count = $uniqueDays->count();
+                $milestones = [
+                    20 => ['workaholic',  's'],
+                    10 => ['no_days_off', 'b'],
+                    5  => ['night_shift', 'c'],
+                ];
 
-            // Weekend Warrior — 5+ games on a single Saturday or Sunday
-            // unlocked_at = that day
-            foreach ($byDay as $date => $games) {
-                $dayOfWeek = Carbon::parse($date)->dayOfWeek;
-                if (($dayOfWeek === 0 || $dayOfWeek === 6) && $games->count() >= 5) {
-                    $batch[] = $this->row($playerId, 'weekend_warrior', 'd', $games->count(), $date);
-                    break;
+                foreach ($milestones as $threshold => [$key, $tier]) {
+                    if ($count >= $threshold) {
+                        $date = $uniqueDays->get($threshold - 1);
+                        $batch[] = $this->row($playerId, $key, $tier, $count, $date);
+                        break 2;
+                    }
                 }
             }
         }

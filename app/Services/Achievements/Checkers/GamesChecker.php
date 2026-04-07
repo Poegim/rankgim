@@ -16,19 +16,17 @@ class GamesChecker
 
             // Games played milestones — unlocked_at = date of the Nth game
             $milestones = [
-                $milestones = [
-                    15   => ['probe',    'd'],
-                    75   => ['marine',   'c'],
-                    250  => ['dragoon',  'b'],
-                    500  => ['scout',    'a'],
-                    1000 => ['overlord', 's'],
-                ],
+                15   => ['probe',    'd'],
+                75   => ['marine',   'c'],
+                250  => ['dragoon',  'b'],
+                500  => ['scout',    'a'],
+                1000 => ['overlord', 's'],
             ];
 
-            foreach ($milestones as $threshold => [$key, $tier]) {
+            foreach ($milestones as $threshold => $milestone) {
+                [$key, $tier] = $milestone;
                 if ($games >= $threshold) {
-                    // Date of the exact Nth game
-                    $date = $history->values()->get($threshold - 1)->played_at ?? $now->toDateString();
+                    $date    = $history->values()->get($threshold - 1)->played_at ?? $now->toDateString();
                     $batch[] = $this->row($playerId, $key, $tier, $threshold, $date);
                 }
             }
@@ -39,15 +37,23 @@ class GamesChecker
                 $batch[] = $this->row($playerId, 'rookie_mistake', 'd', null, $firstGame->played_at);
             }
 
-            // perfect_start — date of the 10th game
-            if ($history->count() >= 10) {
-                $firstTen = $history->take(10);
-                $allWins  = $firstTen->every(fn($h) => $h->result === 'win');
-                if ($allWins) {
-                    $date = $history->values()->get(9)->played_at ?? $now->toDateString();
-                    $batch[] = $this->row($playerId, 'perfect_start', 'b', null, $date);
+            // perfect_start series — unlocked_at = date of the Nth consecutive win from game 1
+            $startMilestones = [3 => null, 5 => null, 10 => null];
+
+            foreach ($history->take(10)->values() as $i => $h) {
+                if ($h->result !== 'win') break;
+
+                $gameNum = $i + 1;
+                foreach ($startMilestones as $threshold => $date) {
+                    if ($date === null && $gameNum >= $threshold) {
+                        $startMilestones[$threshold] = $h->played_at;
+                    }
                 }
             }
+
+            if ($startMilestones[3])  $batch[] = $this->row($playerId, 'early_pressure', 'b', null, $startMilestones[3]);
+            if ($startMilestones[5])  $batch[] = $this->row($playerId, 'all_in',         'a', null, $startMilestones[5]);
+            if ($startMilestones[10]) $batch[] = $this->row($playerId, 'perfect_start',  's', null, $startMilestones[10]);
         }
 
         echo "GamesChecker: " . count($batch) . " achievements.\n";

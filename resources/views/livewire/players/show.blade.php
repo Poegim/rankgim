@@ -183,7 +183,7 @@
         </div>
         @endforeach
     </div>
-
+    
     <livewire:players.achievements :playerId="$this->player->id" />
 
 {{-- Head to Head --}}

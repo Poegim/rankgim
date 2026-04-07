@@ -388,18 +388,18 @@ return [
         'secret'      => false,
         'group'       => 'rating_milestone',
     ],
-    'giant_slayer' => [
+        'giant_slayer' => [
         'name'        => 'Giant Slayer',
-        'description' => 'Beat a player rated 200+ higher than you',
-        'tier'        => 'c',
+        'description' => 'Beat a player rated 200+ higher than you (both players must have 30+ games)',
+        'tier'        => 'a',
         'category'    => 'rating',
         'secret'      => false,
         'group'       => 'giant_slayer',
     ],
     'david_vs_goliath' => [
         'name'        => 'David vs Goliath',
-        'description' => 'Beat a player rated 300+ higher than you',
-        'tier'        => 'b',
+        'description' => 'Beat a player rated 300+ higher than you (both players must have 30+ games)',
+        'tier'        => 's',
         'category'    => 'rating',
         'secret'      => false,
         'group'       => 'giant_slayer',
@@ -427,7 +427,7 @@ return [
     'hot_streak' => [
         'name'        => 'Hot Streak',
         'description' => 'Win 5 games in a row',
-        'tier'        => 'd',
+        'tier'        => 'c',
         'category'    => 'streaks',
         'secret'      => false,
         'group'       => 'win_streak',
@@ -435,7 +435,7 @@ return [
     'rampage' => [
         'name'        => 'Rampage',
         'description' => 'Win 10 games in a row',
-        'tier'        => 'c',
+        'tier'        => 'b',
         'category'    => 'streaks',
         'secret'      => false,
         'group'       => 'win_streak',
@@ -443,7 +443,7 @@ return [
     'unstoppable_streak' => [
         'name'        => 'Unstoppable',
         'description' => 'Win 15 games in a row',
-        'tier'        => 'b',
+        'tier'        => 'a',
         'category'    => 'streaks',
         'secret'      => false,
         'group'       => 'win_streak',
@@ -451,7 +451,7 @@ return [
     'juggernaut' => [
         'name'        => 'Juggernaut',
         'description' => 'Win 25 games in a row',
-        'tier'        => 'a',
+        'tier'        => 's',
         'category'    => 'streaks',
         'secret'      => false,
         'group'       => 'win_streak',
@@ -529,7 +529,7 @@ return [
     // Community
     // -------------------------------------------------------------------------
     'traveler' => [
-        'name'        => 'Traveler',
+        'name'        => 'First Contact',
         'description' => 'Play against players from 5 different countries',
         'tier'        => 'd',
         'category'    => 'community',
@@ -537,7 +537,7 @@ return [
         'group'       => 'countries',
     ],
     'explorer' => [
-        'name'        => 'Explorer',
+        'name'        => 'Deep Space',
         'description' => 'Play against players from 10 different countries',
         'tier'        => 'c',
         'category'    => 'community',
@@ -545,33 +545,66 @@ return [
         'group'       => 'countries',
     ],
     'globetrotter' => [
-        'name'        => 'Globetrotter',
+        'name'        => 'Sector Commander',
         'description' => 'Play against players from 20 different countries',
         'tier'        => 'b',
         'category'    => 'community',
         'secret'      => false,
         'group'       => 'countries',
     ],
+    'citizen_of_the_universe' => [
+        'name'        => 'Citizen of the Universe',
+        'description' => 'Play against players from 30 different countries',
+        'tier'        => 'a',
+        'category'    => 'community',
+        'secret'      => false,
+        'group'       => 'countries',
+    ],
+    'koprulu_cartographer' => [
+        'name'        => 'Koprulu Cartographer',
+        'description' => 'Play against players from 40 different countries',
+        'tier'        => 's',
+        'category'    => 'community',
+        'secret'      => false,
+        'group'       => 'countries',
+    ],
+    
     'circuit_player' => [
-        'name'        => 'Circuit Player',
-        'description' => 'Play in 5 tournaments',
-        'tier'        => 'c',
+        'name'        => 'Skirmish',
+        'description' => 'Five battles fought.',
+        'tier'        => 'd',
         'category'    => 'community',
         'secret'      => false,
         'group'       => 'tournaments',
     ],
     'road_warrior' => [
-        'name'        => 'Road Warrior',
-        'description' => 'Play in 10 tournaments',
-        'tier'        => 'b',
+        'name'        => 'Campaign',
+        'description' => 'Twenty-five battles fought.',
+        'tier'        => 'c',
         'category'    => 'community',
         'secret'      => false,
         'group'       => 'tournaments',
     ],
     'legend_of_the_circuit' => [
-        'name'        => 'Legend of the Circuit',
-        'description' => 'Play in 25 tournaments',
+        'name'        => 'Warlord',
+        'description' => 'A hundred battles fought.',
+        'tier'        => 'b',
+        'category'    => 'community',
+        'secret'      => false,
+        'group'       => 'tournaments',
+    ],
+    'conqueror' => [
+        'name'        => 'Conqueror',
+        'description' => 'Two hundred and fifty battles fought.',
         'tier'        => 'a',
+        'category'    => 'community',
+        'secret'      => false,
+        'group'       => 'tournaments',
+    ],
+    'war_boy' => [
+        'name'        => 'War Boy',
+        'description' => 'Five hundred battles fought. On the Fury Road.',
+        'tier'        => 's',
         'category'    => 'community',
         'secret'      => false,
         'group'       => 'tournaments',
@@ -583,18 +616,18 @@ return [
     'og' => [
         'name'        => 'OG',
         'description' => 'One of the first 500 players in the database',
-        'tier'        => 'c',
+        'tier'        => 'a',
         'category'    => 'history',
         'secret'      => false,
-        'group'       => null,
+        'group'       => 'founding',
     ],
     'founding_father' => [
         'name'        => 'Founding Father',
         'description' => 'One of the first 50 players in the database',
-        'tier'        => 'b',
+        'tier'        => 's',
         'category'    => 'history',
         'secret'      => false,
-        'group'       => null,
+        'group'       => 'founding',
     ],
     'time_traveler' => [
         'name'        => 'Time Traveler',
@@ -604,9 +637,33 @@ return [
         'secret'      => false,
         'group'       => null,
     ],
-    'dinosaur' => [
-        'name'        => 'Dinosaur',
-        'description' => 'In the database for 5+ years and still active',
+        'old_breed' => [
+        'name'        => 'Old Breed',
+        'description' => 'Play a game in 2017 or earlier.',
+        'tier'        => 'c',
+        'category'    => 'history',
+        'secret'      => false,
+        'group'       => null,
+    ],
+    'before_the_plague' => [
+        'name'        => 'Before the Plague',
+        'description' => 'Before the swarm arrived. Play a game before 2020.',
+        'tier'        => 'c',
+        'category'    => 'history',
+        'secret'      => false,
+        'group'       => null,
+    ],
+    'patient_zero' => [
+        'name'        => 'Patient Zero',
+        'description' => 'Playing through the plague. Play a game in 2020.',
+        'tier'        => 'c',
+        'category'    => 'history',
+        'secret'      => false,
+        'group'       => null,
+    ],
+    'plague_survivor' => [
+        'name'        => 'Plague Survivor',
+        'description' => 'The swarm could not stop you. Play a game before and after 2020.',
         'tier'        => 'a',
         'category'    => 'history',
         'secret'      => false,
@@ -624,21 +681,22 @@ return [
         'secret'      => false,
         'group'       => null,
     ],
-    'rollercoaster' => [
-        'name'        => 'Rollercoaster',
-        'description' => 'Lose 100+ rating points and recover them in the same month',
-        'tier'        => 'b',
-        'category'    => 'drama',
-        'secret'      => false,
-        'group'       => null,
-    ],
-    'against_all_odds' => [
-        'name'        => 'Against All Odds',
-        'description' => 'Beat a top 3 player while being outside top 50',
+
+    'against_all_odds_10' => [
+        'name'        => 'David',
+        'description' => 'Beat a top 10 player while being outside top 50 (both players must have 30+ games)',
         'tier'        => 'a',
         'category'    => 'drama',
         'secret'      => false,
-        'group'       => null,
+        'group'       => 'against_all_odds',
+    ],
+    'against_all_odds' => [
+        'name'        => 'Against All Odds',
+        'description' => 'Beat a top 3 player while being outside top 50 (both players must have 30+ games)',
+        'tier'        => 's',
+        'category'    => 'drama',
+        'secret'      => false,
+        'group'       => 'against_all_odds',
     ],
     'upset_king' => [
         'name'        => 'Upset King',
@@ -652,49 +710,31 @@ return [
     // -------------------------------------------------------------------------
     // Calendar
     // -------------------------------------------------------------------------
-    'marathon' => [
-        'name'        => 'Marathon',
-        'description' => 'Play 10+ games in a single day',
+    
+
+    'night_shift' => [
+        'name'        => 'Night Shift',
+        'description' => 'The grind begins. 5 active days in a month.',
         'tier'        => 'c',
         'category'    => 'calendar',
         'secret'      => false,
-        'group'       => null,
+        'group'       => 'active_days',
+    ],
+    'no_days_off' => [
+        'name'        => 'No Days Off',
+        'description' => 'Sleep is for the weak. 10 active days in a month.',
+        'tier'        => 'b',
+        'category'    => 'calendar',
+        'secret'      => false,
+        'group'       => 'active_days',
     ],
     'workaholic' => [
         'name'        => 'Workaholic',
-        'description' => 'Play on 20 different days in a single month',
-        'tier'        => 'b',
+        'description' => 'What is a weekend? 20 active days in a month.',
+        'tier'        => 's',
         'category'    => 'calendar',
         'secret'      => false,
-        'group'       => null,
-    ],
-    'weekend_warrior' => [
-        'name'        => 'Weekend Warrior',
-        'description' => 'Play 5+ games on a Saturday or Sunday',
-        'tier'        => 'd',
-        'category'    => 'calendar',
-        'secret'      => false,
-        'group'       => null,
-    ],
-
-    // -------------------------------------------------------------------------
-    // Precision
-    // -------------------------------------------------------------------------
-    'efficient' => [
-        'name'        => 'Efficient',
-        'description' => 'Maintain 70%+ win rate with at least 50 games',
-        'tier'        => 'b',
-        'category'    => 'precision',
-        'secret'      => false,
-        'group'       => null,
-    ],
-    'consistent_killer' => [
-        'name'        => 'Consistent Killer',
-        'description' => 'Maintain 60%+ win rate for 3 consecutive months',
-        'tier'        => 'b',
-        'category'    => 'precision',
-        'secret'      => false,
-        'group'       => null,
+        'group'       => 'active_days',
     ],
 
     // -------------------------------------------------------------------------
@@ -708,13 +748,29 @@ return [
         'secret'      => false,
         'group'       => null,
     ],
-    'perfect_start' => [
-        'name'        => 'Perfect Start',
-        'description' => 'Win your first 10 games in a row',
+        'early_pressure' => [
+        'name'        => 'Early Pressure',
+        'description' => 'Deny the expansion.',
         'tier'        => 'b',
         'category'    => 'prestige',
         'secret'      => false,
-        'group'       => null,
+        'group'       => 'perfect_start',
+    ],
+    'all_in' => [
+        'name'        => 'All In',
+        'description' => 'No going back.',
+        'tier'        => 'a',
+        'category'    => 'prestige',
+        'secret'      => false,
+        'group'       => 'perfect_start',
+    ],
+    'perfect_start' => [
+        'name'        => 'Perfect Start',
+        'description' => 'Flawless execution.',
+        'tier'        => 's',
+        'category'    => 'prestige',
+        'secret'      => false,
+        'group'       => 'perfect_start',
     ],
 
     // -------------------------------------------------------------------------
@@ -723,7 +779,7 @@ return [
     'new_year' => [
         'name'        => 'New Year',
         'description' => 'Play a game on January 1st',
-        'tier'        => 'd',
+        'tier'        => 'a',
         'category'    => 'secret',
         'secret'      => true,
         'group'       => null,
@@ -731,7 +787,7 @@ return [
     'valentines' => [
         'name'        => "Valentine's",
         'description' => 'Play a game on February 14th',
-        'tier'        => 'd',
+        'tier'        => 'a',
         'category'    => 'secret',
         'secret'      => true,
         'group'       => null,
@@ -739,7 +795,7 @@ return [
     'christmas' => [
         'name'        => 'Christmas',
         'description' => 'Play a game on December 25th',
-        'tier'        => 'd',
+        'tier'        => 'a',
         'category'    => 'secret',
         'secret'      => true,
         'group'       => null,
@@ -747,7 +803,31 @@ return [
     'halloween' => [
         'name'        => 'Halloween',
         'description' => 'Play a game on October 31st',
-        'tier'        => 'd',
+        'tier'        => 'a',
+        'category'    => 'secret',
+        'secret'      => true,
+        'group'       => null,
+    ],
+    'sc_birthday' => [
+        'name'        => 'StarCraft Birthday',
+        'description' => 'Play a game on March 31st — StarCraft\'s anniversary',
+        'tier'        => 's',
+        'category'    => 'secret',
+        'secret'      => true,
+        'group'       => null,
+    ],
+        'bw_birthday' => [
+        'name'        => 'Brood War Birthday',
+        'description' => 'Play a game on November 30th — Brood War\'s anniversary',
+        'tier'        => 's',
+        'category'    => 'secret',
+        'secret'      => true,
+        'group'       => null,
+    ],
+    'remastered_birthday' => [
+        'name'        => 'Remastered Birthday',
+        'description' => 'Play a game on August 14th — StarCraft Remastered\'s anniversary',
+        'tier'        => 's',
         'category'    => 'secret',
         'secret'      => true,
         'group'       => null,
@@ -776,22 +856,6 @@ return [
         'secret'      => true,
         'group'       => null,
     ],
-    'initials' => [
-        'name'        => 'Initials',
-        'description' => 'Your name starts with the same letter as your country',
-        'tier'        => 'd',
-        'category'    => 'secret',
-        'secret'      => true,
-        'group'       => null,
-    ],
-    'world_tour' => [
-        'name'        => 'World Tour',
-        'description' => 'Play against players from EU, NA, SA and Asia',
-        'tier'        => 'c',
-        'category'    => 'secret',
-        'secret'      => true,
-        'group'       => null,
-    ],
     'back_to_square_one' => [
         'name'        => 'Back to Square One',
         'description' => 'End a game with exactly 1000 rating',
@@ -803,7 +867,7 @@ return [
     'fifty_fifty' => [
         'name'        => 'Fifty Fifty',
         'description' => 'Have exactly 50% win rate after exactly 100 games',
-        'tier'        => 'c',
+        'tier'        => 's',
         'category'    => 'secret',
         'secret'      => true,
         'group'       => null,
@@ -827,14 +891,14 @@ return [
     'dedicated_to_the_cause' => [
         'name'        => 'Dedicated to the Cause',
         'description' => 'Lose 30 games in a row',
-        'tier'        => 'b',
+        'tier'        => 's',
         'category'    => 'secret',
         'secret'      => true,
         'group'       => 'loss_streak',
     ],
     'how' => [
         'name'        => 'How?!',
-        'description' => 'Lose to a player rated 500+ lower than you',
+        'description' => 'Lose to a player rated 500+ lower than you (both players must have 30+ games)',        
         'tier'        => 'd',
         'category'    => 'secret',
         'secret'      => true,

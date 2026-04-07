@@ -42,10 +42,10 @@ class StreakChecker
 
             $milestones = [
                 3  => ['hat_trick',          'd'],
-                5  => ['hot_streak',         'd'],
-                10 => ['rampage',            'c'],
-                15 => ['unstoppable_streak', 'b'],
-                25 => ['juggernaut',         'a'],
+                5  => ['hot_streak',         'c'],
+                10 => ['rampage',            'b'],
+                15 => ['unstoppable_streak', 'a'],
+                25 => ['juggernaut',         's'],
                 50 => ['terminator',         's'],
             ];
 

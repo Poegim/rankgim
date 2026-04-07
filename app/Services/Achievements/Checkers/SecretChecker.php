@@ -39,6 +39,8 @@ class SecretChecker
             ->groupBy('player_id')
             ->map(fn($rows) => $rows->first());
 
+        $gameNumbers = $sharedData['game_numbers'];
+
         // Pre-load "how" losses for all players — one query
         $howLosses = \DB::table('rating_histories as rh1')
             ->join('rating_histories as rh2', function ($join) {
@@ -47,9 +49,13 @@ class SecretChecker
                      ->where('rh2.result', '=', 'win');
             })
             ->whereRaw('rh1.rating_before - rh2.rating_before >= 500')
-            ->select('rh1.player_id', 'rh1.played_at')
+            ->select('rh1.player_id', 'rh1.game_id', 'rh1.played_at')
             ->orderBy('rh1.played_at')
             ->get()
+            ->filter(function ($row) use ($gameNumbers) {
+                $loserGameNumber  = $gameNumbers->get($row->player_id)?->get($row->game_id)['game_number'] ?? 0;
+                return $loserGameNumber >= 30;
+            })
             ->groupBy('player_id')
             ->map(fn($rows) => $rows->first());
 
@@ -72,15 +78,18 @@ class SecretChecker
                 $md = Carbon::parse($h->played_at)->format('m-d');
 
                 $seasonals = [
-                    '01-01' => 'new_year',
-                    '02-14' => 'valentines',
-                    '12-25' => 'christmas',
-                    '10-31' => 'halloween',
+                    '01-01' => ['new_year',   'a'],
+                    '02-14' => ['valentines', 'a'],
+                    '12-25' => ['christmas',  'a'],
+                    '10-31' => ['halloween',  'a'],
+                    '03-31' => ['sc_birthday','s'],
+                    '11-30' => ['bw_birthday', 's'],
+                    '08-14' => ['remastered_birthday','s'],
                 ];
 
-                foreach ($seasonals as $trigger => $key) {
+                foreach ($seasonals as $trigger => [$key, $tier]) {
                     if ($md === $trigger && !isset($addedSeasonals[$key])) {
-                        $batch[]              = $this->row($playerId, $key, 'd', null, $h->played_at);
+                        $batch[]              = $this->row($playerId, $key, $tier, null, $h->played_at);
                         $addedSeasonals[$key] = true;
                     }
                 }
@@ -114,39 +123,6 @@ class SecretChecker
             }
 
             // ------------------------------------------------------------------
-            // Initials — name starts with same letter as country code
-            // unlocked_at = date of first game
-            // ------------------------------------------------------------------
-            if (
-                $playerName &&
-                $countryCode &&
-                strtoupper(substr($playerName, 0, 1)) === strtoupper(substr($countryCode, 0, 1))
-            ) {
-                $batch[] = $this->row($playerId, 'initials', 'd', null, $history->first()->played_at);
-            }
-
-            // ------------------------------------------------------------------
-            // World Tour — played opponents from EU, NA, SA and Asia
-            // unlocked_at = date when last required region was reached
-            // ------------------------------------------------------------------
-            $playerGames     = $opponentCountriesByPlayer->get($playerId, collect());
-            $requiredRegions = ['Europe', 'North America', 'South America', 'Asia'];
-            $seenRegions     = [];
-
-            foreach ($playerGames as $game) {
-                $region = $countryRegions[$game->country_code] ?? null;
-                if ($region && in_array($region, $requiredRegions) && !isset($seenRegions[$region])) {
-                    $seenRegions[$region] = $game->played_at;
-
-                    if (count($seenRegions) === count($requiredRegions)) {
-                        $date = max(array_values($seenRegions));
-                        $batch[] = $this->row($playerId, 'world_tour', 'c', null, $date);
-                        break;
-                    }
-                }
-            }
-
-            // ------------------------------------------------------------------
             // Back to Square One — ended a game with exactly 1000 rating (not first game)
             // unlocked_at = date of that game
             // ------------------------------------------------------------------
@@ -161,7 +137,7 @@ class SecretChecker
             // ------------------------------------------------------------------
             if ($games === 100 && $wins === 50) {
                 $date = $history->values()->get(99)->played_at ?? now()->toDateString();
-                $batch[] = $this->row($playerId, 'fifty_fifty', 'c', null, $date);
+                $batch[] = $this->row($playerId, 'fifty_fifty', 's', null, $date);
             }
 
             // ------------------------------------------------------------------
@@ -186,7 +162,7 @@ class SecretChecker
 
             if ($lossMilestones[10]) $batch[] = $this->row($playerId, 'bad_day',               'd', null, $lossMilestones[10]);
             if ($lossMilestones[20]) $batch[] = $this->row($playerId, 'different_game',         'c', null, $lossMilestones[20]);
-            if ($lossMilestones[30]) $batch[] = $this->row($playerId, 'dedicated_to_the_cause', 'b', null, $lossMilestones[30]);
+            if ($lossMilestones[30]) $batch[] = $this->row($playerId, 'dedicated_to_the_cause', 's', null, $lossMilestones[30]);
 
             // ------------------------------------------------------------------
             // How?! — lost to a player rated 500+ lower

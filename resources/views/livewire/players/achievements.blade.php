@@ -103,11 +103,6 @@ $categoryLabels = [
         @endforeach
     </div>
 
-    @php
-$ratingGroup = $this->achievements->filter(fn($a) => $a['group'] === 'rating_milestone')->values();
-@endphp
-<pre style="font-size:10px">{{ json_encode($ratingGroup->map(fn($a) => ['key' => $a['key'], 'tier' => $a['tier']])) }}</pre>
-
     @if($this->achievements->isEmpty())
         <div class="rounded-xl border border-zinc-700/60 bg-zinc-800/40 p-6 text-center">
             <p class="text-zinc-500 text-sm">No achievements yet.</p>
@@ -117,14 +112,15 @@ $ratingGroup = $this->achievements->filter(fn($a) => $a['group'] === 'rating_mil
     {{-- Grid sorted S→D --}}
     <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2">
 
-        @foreach($this->achievements as $a)
-        @php
-            $t      = $tierStyles[$a['tier']] ?? $tierStyles['d'];
-            $border = $categoryBorders[$a['category']] ?? '#52525b';
-            $pct    = $this->totalPlayers > 0
-                ? round(($a['owners_count'] / $this->totalPlayers) * 100)
-                : 0;
-        @endphp
+@foreach($this->achievements as $a)
+@php
+    $t      = $tierStyles[$a['tier']] ?? $tierStyles['d'];
+    $border = $categoryBorders[$a['category']] ?? '#52525b';
+    $pct    = $this->totalPlayers > 0
+        ? ($a['owners_count'] / $this->totalPlayers) * 100
+        : 0;
+    $pctDisplay = number_format($pct, 2) . '%';
+@endphp
 
         <div class="rounded-xl p-3 flex flex-col gap-1.5 relative overflow-hidden"
              style="{{ $t['card'] }} border: 1.5px solid {{ $border }};">
@@ -163,7 +159,7 @@ $ratingGroup = $this->achievements->filter(fn($a) => $a['group'] === 'rating_mil
             {{-- Owners --}}
             <p class="text-xs mt-auto pt-1.5 border-t"
                style="{{ $t['date'] }}; border-color: {{ $border }}30;">
-                {{ $a['owners_count'] }} {{ $a['owners_count'] === 1 ? 'player' : 'players' }} · {{ $pct }}%
+                {{ $a['owners_count'] }} {{ $a['owners_count'] === 1 ? 'player' : 'players' }} · {{ $pctDisplay }}
             </p>
 
         </div>

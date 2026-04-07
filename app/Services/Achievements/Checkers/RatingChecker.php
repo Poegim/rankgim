@@ -77,7 +77,7 @@ class RatingChecker
             ->filter(function ($row) use ($gameNumbers) {
                 $winnerGameNumber = $gameNumbers->get($row->winner_id)?->get($row->game_id)['game_number'] ?? 0;
                 $loserGameNumber  = $gameNumbers->get($row->loser_id)?->get($row->game_id)['game_number'] ?? 0;
-                return $winnerGameNumber >= 15 && $loserGameNumber >= 15;
+                return $winnerGameNumber >= 30 && $loserGameNumber >= 30;
             })
             ->groupBy('winner_id');
 

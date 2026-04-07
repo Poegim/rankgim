@@ -48,15 +48,30 @@ class HistoryChecker
                 $batch[] = $this->row($playerId, 'time_traveler', 'd', $years, $date);
             }
 
-            // Dinosaur — first game 5+ years ago and still active
-            // unlocked_at = date of last game (when they proved they're still active)
-            $firstGame      = Carbon::parse($firstGameDate);
-            $lastGame       = Carbon::parse($lastGameDate);
-            $yearsInDb      = $firstGame->diffInYears($now);
-            $monthsSinceLast = $lastGame->diffInMonths($now);
+            // Old Breed — played a game in 2017 or earlier
+            $firstYear = Carbon::parse($history->first()->played_at)->year;
+            if ($firstYear <= 2017) {
+                $batch[] = $this->row($playerId, 'old_breed', 'c', $firstYear, $history->first()->played_at);
+            }
 
-            if ($yearsInDb >= 5 && $monthsSinceLast <= config('rankgim.inactive_months')) {
-                $batch[] = $this->row($playerId, 'dinosaur', 'a', $yearsInDb, $lastGameDate);
+            // Before the Plague — played a game before 2020
+            $beforePlague = $history->first(fn($h) => Carbon::parse($h->played_at)->year < 2020);
+            if ($beforePlague) {
+                $batch[] = $this->row($playerId, 'before_the_plague', 'c', null, $beforePlague->played_at);
+            }
+
+            // Patient Zero — played a game in 2020
+            $in2020 = $history->first(fn($h) => Carbon::parse($h->played_at)->year === 2020);
+            if ($in2020) {
+                $batch[] = $this->row($playerId, 'patient_zero', 'c', null, $in2020->played_at);
+            }
+
+            // Plague Survivor — played a game before and after 2020
+            if ($beforePlague) {
+                $afterPlague = $history->first(fn($h) => Carbon::parse($h->played_at)->year > 2020);
+                if ($afterPlague) {
+                    $batch[] = $this->row($playerId, 'plague_survivor', 'a', null, $afterPlague->played_at);
+                }
             }
         }
 

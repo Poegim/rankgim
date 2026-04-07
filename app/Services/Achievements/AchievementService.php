@@ -8,7 +8,6 @@ use App\Services\Achievements\Checkers\CommunityChecker;
 use App\Services\Achievements\Checkers\DramaChecker;
 use App\Services\Achievements\Checkers\GamesChecker;
 use App\Services\Achievements\Checkers\HistoryChecker;
-use App\Services\Achievements\Checkers\PrecisionChecker;
 use App\Services\Achievements\Checkers\PrestigeChecker;
 use App\Services\Achievements\Checkers\RankingChecker;
 use App\Services\Achievements\Checkers\RatingChecker;
@@ -30,7 +29,6 @@ class AchievementService
         private HistoryChecker   $history,
         private DramaChecker     $drama,
         private CalendarChecker  $calendar,
-        private PrecisionChecker $precision,
         private PrestigeChecker  $prestige,
         private SecretChecker    $secret,
     ) {}
@@ -63,7 +61,6 @@ class AchievementService
         $batch = array_merge($batch, $this->history->check($stats, $sharedData));
         $batch = array_merge($batch, $this->drama->check($stats, $ratings, $sharedData));
         $batch = array_merge($batch, $this->calendar->check($stats, $sharedData));
-        $batch = array_merge($batch, $this->precision->check($stats, $sharedData));
         $batch = array_merge($batch, $this->prestige->check($stats, $sharedData));
         $batch = array_merge($batch, $this->secret->check($stats, $ratings, $sharedData));
 

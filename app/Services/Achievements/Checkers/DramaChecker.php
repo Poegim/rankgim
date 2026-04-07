@@ -40,7 +40,7 @@ class DramaChecker
             ->filter(function ($row) use ($gameNumbers) {
                 $winnerGameNumber = $gameNumbers->get($row->winner_id)?->get($row->game_id)['game_number'] ?? 0;
                 $loserGameNumber  = $gameNumbers->get($row->loser_id)?->get($row->game_id)['game_number'] ?? 0;
-                return $winnerGameNumber >= 15 && $loserGameNumber >= 15;
+                return $winnerGameNumber >= 30 && $loserGameNumber >= 30;
             })
             ->groupBy('winner_id');
 
@@ -85,26 +85,6 @@ class DramaChecker
             }
 
             // ---------------------------------------------------------------
-            // Rollercoaster — lose 100+ rating and recover in the same month
-            // unlocked_at = date of the last game in that month
-            // ---------------------------------------------------------------
-            $byMonth = $history->groupBy(
-                fn($h) => Carbon::parse($h->played_at)->format('Y-m')
-            );
-
-            foreach ($byMonth as $month => $games) {
-                $startRating = $games->first()->rating_before;
-                $minRating   = $games->min('rating_after');
-                $maxRating   = $games->max('rating_after');
-
-                if (($startRating - $minRating) >= 100 && $maxRating >= $startRating) {
-                    $date = $games->max('played_at');
-                    $batch[] = $this->row($playerId, 'rollercoaster', 'b', null, $date);
-                    break;
-                }
-            }
-
-            // ---------------------------------------------------------------
             // Against All Odds — beat a top 3 player while outside top 50
             // unlocked_at = date of that game
             // ---------------------------------------------------------------
@@ -123,13 +103,24 @@ class DramaChecker
                     $month = Carbon::parse($h->played_at)->format('Y-m');
                     if (!isset($outsideTop50Months[$month])) continue;
 
-                    $opponentId = DB::table('rating_histories')
+                    $opponentId = \DB::table('rating_histories')
                         ->where('game_id', $h->game_id)
                         ->where('player_id', '!=', $playerId)
                         ->value('player_id');
 
-                    if ($opponentId && isset($top3PlayerIds[$opponentId])) {
-                        $batch[] = $this->row($playerId, 'against_all_odds', 'a', null, $h->played_at);
+                    if (!$opponentId) continue;
+
+                    // Check top 10
+                    $opponentSnaps = $sharedData['snapshots']->get($opponentId);
+                    if (!$opponentSnaps) continue;
+
+                    $opponentBestRank = $opponentSnaps->min('rank');
+
+                    if ($opponentBestRank <= 3 && isset($top3PlayerIds[$opponentId])) {
+                        $batch[] = $this->row($playerId, 'against_all_odds', 's', null, $h->played_at);
+                        break;
+                    } elseif ($opponentBestRank <= 10) {
+                        $batch[] = $this->row($playerId, 'against_all_odds_10', 'a', null, $h->played_at);
                         break;
                     }
                 }

@@ -43,7 +43,7 @@ class CommunityChecker
             if ($playerGames) {
                 $seenCountries   = [];
                 $countryDates    = [];
-                $countryMilestones = [5 => null, 10 => null, 20 => null];
+                $countryMilestones = [5 => null, 10 => null, 20 => null, 30 => null, 40 => null];
 
                 foreach ($playerGames as $game) {
                     $code = $game->country_code;
@@ -61,9 +61,11 @@ class CommunityChecker
 
                 $countryCount = count($seenCountries);
 
-                if ($countryCount >= 5  && $countryMilestones[5])  $batch[] = $this->row($playerId, 'traveler',     'd', $countryCount, $countryMilestones[5]);
-                if ($countryCount >= 10 && $countryMilestones[10]) $batch[] = $this->row($playerId, 'explorer',     'c', $countryCount, $countryMilestones[10]);
-                if ($countryCount >= 20 && $countryMilestones[20]) $batch[] = $this->row($playerId, 'globetrotter', 'b', $countryCount, $countryMilestones[20]);
+                if ($countryCount >= 5  && $countryMilestones[5])  $batch[] = $this->row($playerId, 'traveler',                 'd', $countryCount, $countryMilestones[5]);
+                if ($countryCount >= 10 && $countryMilestones[10]) $batch[] = $this->row($playerId, 'explorer',                 'c', $countryCount, $countryMilestones[10]);
+                if ($countryCount >= 20 && $countryMilestones[20]) $batch[] = $this->row($playerId, 'globetrotter',             'b', $countryCount, $countryMilestones[20]);
+                if ($countryCount >= 30 && $countryMilestones[30]) $batch[] = $this->row($playerId, 'citizen_of_the_universe',  'a', $countryCount, $countryMilestones[30]);
+                if ($countryCount >= 40 && $countryMilestones[40]) $batch[] = $this->row($playerId, 'koprulu_cartographer',     's', $countryCount, $countryMilestones[40]);
             }
 
             // ---------------------------------------------------------------
@@ -75,8 +77,7 @@ class CommunityChecker
             if ($playerTournaments) {
                 $seenTournaments    = [];
                 $tournamentDates    = [];
-                $tournamentMilestones = [1 => null, 5 => null, 10 => null, 25 => null];
-
+                $tournamentMilestones = [5 => null, 25 => null, 100 => null, 250 => null, 500 => null];
                 foreach ($playerTournaments as $game) {
                     $tid = $game->tournament_id;
                     if (!isset($seenTournaments[$tid])) {
@@ -93,9 +94,12 @@ class CommunityChecker
 
                 $tournamentCount = count($seenTournaments);
 
-                if ($tournamentCount >= 5  && $tournamentMilestones[5])  $batch[] = $this->row($playerId, 'circuit_player',        'c', $tournamentCount, $tournamentMilestones[5]);
-                if ($tournamentCount >= 10 && $tournamentMilestones[10]) $batch[] = $this->row($playerId, 'road_warrior',          'b', $tournamentCount, $tournamentMilestones[10]);
-                if ($tournamentCount >= 25 && $tournamentMilestones[25]) $batch[] = $this->row($playerId, 'legend_of_the_circuit', 'a', $tournamentCount, $tournamentMilestones[25]);
+                if ($tournamentCount >= 5   && $tournamentMilestones[5])   $batch[] = $this->row($playerId, 'circuit_player',        'd', $tournamentCount, $tournamentMilestones[5]);
+                if ($tournamentCount >= 25  && $tournamentMilestones[25])  $batch[] = $this->row($playerId, 'road_warrior',          'c', $tournamentCount, $tournamentMilestones[25]);
+                if ($tournamentCount >= 100 && $tournamentMilestones[100]) $batch[] = $this->row($playerId, 'legend_of_the_circuit', 'b', $tournamentCount, $tournamentMilestones[100]);
+                if ($tournamentCount >= 250 && $tournamentMilestones[250]) $batch[] = $this->row($playerId, 'conqueror',             'a', $tournamentCount, $tournamentMilestones[250]);
+                if ($tournamentCount >= 500 && $tournamentMilestones[500]) $batch[] = $this->row($playerId, 'war_boy',               's', $tournamentCount, $tournamentMilestones[500]);
+
             }
         }
 
