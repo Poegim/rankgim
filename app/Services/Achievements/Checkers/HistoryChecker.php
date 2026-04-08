@@ -66,12 +66,28 @@ class HistoryChecker
             $beforePlague = $history->first(fn($h) => Carbon::parse($h->played_at)->year < 2020);
             if ($beforePlague) {
                 $batch[] = $this->row($playerId, 'before_the_plague', 'c', null, $beforePlague->played_at);
+
+                // Veteran of the Old World — reached 15 games before 2020
+                $gamesBeforePlague = $history->filter(
+                    fn($h) => Carbon::parse($h->played_at)->year < 2020
+                )->values();
+
+                if ($gamesBeforePlague->count() >= 15) {
+                    $date    = $gamesBeforePlague->get(14)->played_at;
+                    $batch[] = $this->row($playerId, 'before_the_plague_ranked', 'b', null, $date);
+                }
             }
 
             // Patient Zero — played a game in 2020
-            $in2020 = $history->first(fn($h) => Carbon::parse($h->played_at)->year === 2020);
-            if ($in2020) {
-                $batch[] = $this->row($playerId, 'patient_zero', 'c', null, $in2020->played_at);
+            $in2020 = $history->filter(fn($h) => Carbon::parse($h->played_at)->year === 2020)->values();
+            if ($in2020->isNotEmpty()) {
+                $batch[] = $this->row($playerId, 'patient_zero', 'c', null, $in2020->first()->played_at);
+
+                // Plague Rat — reached 15 games in 2020
+                if ($in2020->count() >= 15) {
+                    $date    = $in2020->get(14)->played_at;
+                    $batch[] = $this->row($playerId, 'patient_zero_ranked', 'b', null, $date);
+                }
             }
 
             // Plague Survivor — played a game before and after 2020

@@ -40,10 +40,6 @@
                     <flux:sidebar.item icon="globe-europe-africa" :href="route('countries.index')" :current="request()->routeIs('countries.index')" wire:navigate>
                         {{ __('Countries') }}
                     </flux:sidebar.item>
-
-                    <flux:sidebar.item href="{{ route('history.index') }}" icon="clock" :current="request()->routeIs('history.index')">
-                        History
-                    </flux:sidebar.item>
                     <flux:sidebar.item icon="calendar-days" :href="route('events.index')" :current="request()->routeIs('events.*')" wire:navigate>
                         <div class="flex items-center justify-between w-full">
                             <span>Events</span>
@@ -55,6 +51,10 @@
                         </div>
                     </flux:sidebar.item>
 
+                    <flux:sidebar.item icon="star" :href="route('achievements.index')" :current="request()->routeIs('achievements.index')" wire:navigate>
+                        {{ __('Achievements') }}
+                    </flux:sidebar.item>
+
                     <flux:sidebar.item icon="users" :href="route('players.index')" :current="request()->routeIs('players.index')" wire:navigate>
                         {{ __('Players') }}
                     </flux:sidebar.item>
@@ -64,6 +64,10 @@
                     </flux:sidebar.item>
                     <flux:sidebar.item icon="queue-list" :href="route('games.index')" :current="request()->routeIs('games.index')" wire:navigate>
                         {{ __('Games') }}
+                    </flux:sidebar.item>
+
+                    <flux:sidebar.item href="{{ route('history.index') }}" icon="clock" :current="request()->routeIs('history.index')">
+                        History
                     </flux:sidebar.item>
 
 

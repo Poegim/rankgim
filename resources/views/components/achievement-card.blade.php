@@ -100,11 +100,11 @@
 @endphp
 
 <div
-    class="rounded-xl p-3 flex flex-col gap-2 relative overflow-hidden {{ $masked ? 'opacity-60' : '' }}"
+    class="rounded-xl p-3 flex flex-col gap-2 relative overflow-visible h-full w-full {{ $masked ? 'opacity-60' : '' }}"
     style="{{ $t['card'] }} border: 1.5px solid {{ $border }};"
 >
     {{-- Top gradient bar in tier color --}}
-    <div class="absolute top-0 left-0 right-0 h-1" style="{{ $t['bar'] }}"></div>
+    <div class="absolute top-0 left-0 right-0 h-1 rounded-t-xl" style="{{ $t['bar'] }}"></div>
 
     {{-- Tier badge + optional date (player profile) or lock icon (masked) --}}
     <div class="flex items-center justify-between">

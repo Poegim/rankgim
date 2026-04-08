@@ -64,10 +64,11 @@ Route::get('/about', function () {
 // Events route using Livewire component
 Route::get('/events', App\Livewire\Events\Index::class)->name('events.index');
 
+// Achievements browser
+Route::get('/achievements', AchievementsBrowser::class)->name('achievements.index');
+
 // Admin routes with middleware for authentication and admin access
 Route::middleware(['auth', 'verified',  App\Http\Middleware\EnsureUserIsAdmin::class])->prefix('admin')->name('admin.')->group(function () {
-    // Achievements browser
-    Route::get('/achievements', AchievementsBrowser::class)->name('achievements.index');
     Route::get('/', fn() => view('admin.index'))->name('index');
     Route::get('/achievement-insights', \App\Livewire\Admin\AchievementInsights::class)->name('achievement-insights');
 
