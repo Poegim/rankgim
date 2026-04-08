@@ -63,7 +63,6 @@ $categoryBorders = [
     'history'   => '#888780',
     'drama'     => '#F0997B',
     'calendar'  => '#85B7EB',
-    'precision' => '#97C459',
     'prestige'  => '#FAC775',
     'secret'    => '#534AB7',
 ];
@@ -79,7 +78,6 @@ $categoryLabels = [
     'history'   => '🕰️ History',
     'drama'     => '🎭 Drama',
     'calendar'  => '📆 Calendar',
-    'precision' => '🎯 Precision',
     'prestige'  => '💀 Prestige',
     'secret'    => '🔒 Secret',
 ];

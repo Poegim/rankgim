@@ -117,7 +117,7 @@ class SecretChecker
             // Millennium — 1000th game
             // unlocked_at = date of the 1000th game
             // ------------------------------------------------------------------
-            if ($games >= 1000) {
+            if ($games >= 2000) {
                 $date = $history->values()->get(1999)->played_at ?? now()->toDateString();
                 $batch[] = $this->row($playerId, 'millennium', 's', 2000, $date);
             }

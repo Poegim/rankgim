@@ -412,6 +412,14 @@ return [
         'secret'      => false,
         'group'       => null,
     ],
+        'glass_cannon' => [
+        'name'        => 'Glass Cannon',
+        'description' => 'Reach 1500+ rating with more losses than wins',
+        'tier'        => 'a',
+        'category'    => 'rating',
+        'secret'      => false,
+        'group'       => null,
+    ],
 
     // -------------------------------------------------------------------------
     // Win streaks
@@ -858,8 +866,8 @@ return [
         'group'       => null,
     ],
     'millennium' => [
-        'name'        => 'Millennium',
-        'description' => 'Play your 1000th game',
+        'name'        => 'Y2K',
+        'description' => '2000 games. The computers survived. So did you.',
         'tier'        => 'a',
         'category'    => 'secret',
         'secret'      => true,

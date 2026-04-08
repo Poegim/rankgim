@@ -85,13 +85,28 @@ class RatingChecker
             // Giant Slayer — first game where diff >= 200
             $first200 = $playerUpsets->first(fn($u) => $u->diff >= 200);
             if ($first200) {
-                $batch[] = $this->row($playerId, 'giant_slayer', 'c', $first200->diff, $first200->played_at);
+                $batch[] = $this->row($playerId, 'giant_slayer', 'a', $first200->diff, $first200->played_at);
             }
 
             // David vs Goliath — first game where diff >= 300
             $first300 = $playerUpsets->first(fn($u) => $u->diff >= 300);
             if ($first300) {
                 $batch[] = $this->row($playerId, 'david_vs_goliath', 'a', $first300->diff, $first300->played_at);
+            }
+        }
+
+        // Glass Cannon — reached 1500+ rating while having more losses than wins at that moment
+        // Scan history to find first point where rating_after >= 1500 AND running losses > running wins
+        $wins   = 0;
+        $losses = 0;
+
+        foreach ($history as $h) {
+            if ($h->result === 'win')  $wins++;
+            if ($h->result === 'loss') $losses++;
+
+            if ($h->rating_after >= 1500 && $losses > $wins) {
+                $batch[] = $this->row($playerId, 'glass_cannon', 'a', $h->rating_after, $h->played_at);
+                break;
             }
         }
 
