@@ -110,7 +110,7 @@ class SecretChecker
             // ------------------------------------------------------------------
             if ($games >= 666) {
                 $date = $history->values()->get(665)->played_at ?? now()->toDateString();
-                $batch[] = $this->row($playerId, 'beast_mode', 'b', 666, $date);
+                $batch[] = $this->row($playerId, 'beast_mode', 'a', 666, $date);
             }
 
             // ------------------------------------------------------------------
@@ -118,8 +118,8 @@ class SecretChecker
             // unlocked_at = date of the 1000th game
             // ------------------------------------------------------------------
             if ($games >= 1000) {
-                $date = $history->values()->get(999)->played_at ?? now()->toDateString();
-                $batch[] = $this->row($playerId, 'millennium', 'a', 1000, $date);
+                $date = $history->values()->get(1999)->played_at ?? now()->toDateString();
+                $batch[] = $this->row($playerId, 'millennium', 's', 2000, $date);
             }
 
             // ------------------------------------------------------------------

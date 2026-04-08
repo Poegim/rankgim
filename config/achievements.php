@@ -852,7 +852,7 @@ return [
     'beast_mode' => [
         'name'        => 'Beast Mode',
         'description' => 'Play your 666th game',
-        'tier'        => 'b',
+        'tier'        => 'a',
         'category'    => 'secret',
         'secret'      => true,
         'group'       => null,
