@@ -2,6 +2,7 @@
 
 namespace App\Services\Achievements\Checkers;
 
+use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 
 class CommunityChecker
@@ -33,6 +34,9 @@ class CommunityChecker
             ->get()
             ->groupBy('player_id');
 
+        // Build country -> region lookup once for all players
+        $countryRegions = collect(config('countries'))->pluck('region', 'code');
+
         foreach ($stats as $playerId => $s) {
             // ---------------------------------------------------------------
             // Traveler / Explorer / Globetrotter
@@ -41,8 +45,8 @@ class CommunityChecker
             $playerGames = $opponentGamesByPlayer->get($playerId);
 
             if ($playerGames) {
-                $seenCountries   = [];
-                $countryDates    = [];
+                $seenCountries     = [];
+                $countryDates      = [];
                 $countryMilestones = [5 => null, 10 => null, 20 => null, 30 => null, 40 => null];
 
                 foreach ($playerGames as $game) {
@@ -61,11 +65,27 @@ class CommunityChecker
 
                 $countryCount = count($seenCountries);
 
-                if ($countryCount >= 5  && $countryMilestones[5])  $batch[] = $this->row($playerId, 'traveler',                 'd', $countryCount, $countryMilestones[5]);
-                if ($countryCount >= 10 && $countryMilestones[10]) $batch[] = $this->row($playerId, 'explorer',                 'c', $countryCount, $countryMilestones[10]);
-                if ($countryCount >= 20 && $countryMilestones[20]) $batch[] = $this->row($playerId, 'globetrotter',             'b', $countryCount, $countryMilestones[20]);
-                if ($countryCount >= 30 && $countryMilestones[30]) $batch[] = $this->row($playerId, 'citizen_of_the_universe',  'a', $countryCount, $countryMilestones[30]);
-                if ($countryCount >= 40 && $countryMilestones[40]) $batch[] = $this->row($playerId, 'koprulu_cartographer',     's', $countryCount, $countryMilestones[40]);
+                if ($countryCount >= 5  && $countryMilestones[5])  $batch[] = $this->row($playerId, 'traveler',                'd', $countryCount, $countryMilestones[5]);
+                if ($countryCount >= 10 && $countryMilestones[10]) $batch[] = $this->row($playerId, 'explorer',                'c', $countryCount, $countryMilestones[10]);
+                if ($countryCount >= 20 && $countryMilestones[20]) $batch[] = $this->row($playerId, 'globetrotter',            'b', $countryCount, $countryMilestones[20]);
+                if ($countryCount >= 30 && $countryMilestones[30]) $batch[] = $this->row($playerId, 'citizen_of_the_universe', 'a', $countryCount, $countryMilestones[30]);
+                if ($countryCount >= 40 && $countryMilestones[40]) $batch[] = $this->row($playerId, 'koprulu_cartographer',    's', $countryCount, $countryMilestones[40]);
+
+                // Around the World — opponents from South America, Europe and Asia in a single calendar month
+                $byMonth = $playerGames->groupBy(fn($g) => Carbon::parse($g->played_at)->format('Y-m'));
+
+                foreach ($byMonth as $month => $games) {
+                    $regions = $games->map(fn($g) => $countryRegions->get($g->country_code))->unique();
+
+                    if (
+                        $regions->contains('South America') &&
+                        $regions->contains('Europe') &&
+                        $regions->contains('Asia')
+                    ) {
+                        $batch[] = $this->row($playerId, 'around_the_world', 'b', null, $games->max('played_at'));
+                        break;
+                    }
+                }
             }
 
             // ---------------------------------------------------------------
@@ -75,9 +95,9 @@ class CommunityChecker
             $playerTournaments = $tournamentGamesByPlayer->get($playerId);
 
             if ($playerTournaments) {
-                $seenTournaments    = [];
-                $tournamentDates    = [];
+                $seenTournaments      = [];
                 $tournamentMilestones = [5 => null, 25 => null, 100 => null, 250 => null, 500 => null];
+
                 foreach ($playerTournaments as $game) {
                     $tid = $game->tournament_id;
                     if (!isset($seenTournaments[$tid])) {
@@ -99,7 +119,6 @@ class CommunityChecker
                 if ($tournamentCount >= 100 && $tournamentMilestones[100]) $batch[] = $this->row($playerId, 'legend_of_the_circuit', 'b', $tournamentCount, $tournamentMilestones[100]);
                 if ($tournamentCount >= 250 && $tournamentMilestones[250]) $batch[] = $this->row($playerId, 'conqueror',             'a', $tournamentCount, $tournamentMilestones[250]);
                 if ($tournamentCount >= 500 && $tournamentMilestones[500]) $batch[] = $this->row($playerId, 'war_boy',               's', $tournamentCount, $tournamentMilestones[500]);
-
             }
         }
 

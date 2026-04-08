@@ -62,8 +62,7 @@ return [
     ],
     'tears_in_rain' => [
         'name'        => 'Tears in Rain',
-        'description' => '1000 games. I\'ve seen things you people wouldn\'t believe. All those moments will be lost in time, like tears in rain.',
-        'tier'        => 's',
+        'description' => '1000 games. I\'ve seen things you wouldn\'t believe. Carriers over Aiur. Zerg swarms darkening the sky. All those moments, lost in time. Like tears in rain.',        'tier'        => 's',
         'category'    => 'games',
         'secret'      => false,
         'group'       => 'games_played',
@@ -540,11 +539,175 @@ return [
         'secret'      => false,
         'group'       => 'rivalry_total',
     ],
+    // -------------------------------------------------------------------------
+    // Mirror Master
+    // -------------------------------------------------------------------------
+    'mirror_master_d' => [
+        'name'        => 'Mirror Master',
+        'description' => 'Win 5 games in a mirror matchup',
+        'tier'        => 'd',
+        'category'    => 'rivalry',
+        'secret'      => false,
+        'group'       => 'mirror_master',
+    ],
+    'mirror_master_c' => [
+        'name'        => 'Mirror Master',
+        'description' => 'Win 10 games in a mirror matchup',
+        'tier'        => 'c',
+        'category'    => 'rivalry',
+        'secret'      => false,
+        'group'       => 'mirror_master',
+    ],
+    'mirror_master_b' => [
+        'name'        => 'Mirror Master',
+        'description' => 'Win 25 games in a mirror matchup',
+        'tier'        => 'b',
+        'category'    => 'rivalry',
+        'secret'      => false,
+        'group'       => 'mirror_master',
+    ],
+    'mirror_master_a' => [
+        'name'        => 'Mirror Master',
+        'description' => 'Win 50 games in a mirror matchup',
+        'tier'        => 'a',
+        'category'    => 'rivalry',
+        'secret'      => false,
+        'group'       => 'mirror_master',
+    ],
+    'mirror_master_s' => [
+        'name'        => 'Mirror Master',
+        'description' => 'Win 100 games in a mirror matchup',
+        'tier'        => 's',
+        'category'    => 'rivalry',
+        'secret'      => false,
+        'group'       => 'mirror_master',
+    ],
 
+    // -------------------------------------------------------------------------
+    // Race Slayer — Protoss vs Zerg
+    // -------------------------------------------------------------------------
+
+    // SC1 — device used to lure Zerg in the campaign
+    'protoss_slayer_zerg_d' => ['name' => 'Psi Emitter', 'description' => 'Win 5 games as Protoss against Zerg', 'tier' => 'd', 'category' => 'rivalry', 'secret' => false, 'group' => 'protoss_slayer_zerg'],
+
+    // SC1 — Tassadar's carrier, parody of "Carrier Has Arrived"
+    'protoss_slayer_zerg_c' => ['name' => 'Gantrithor Has Arrived', 'description' => 'Win 10 games as Protoss against Zerg', 'tier' => 'c', 'category' => 'rivalry', 'secret' => false, 'group' => 'protoss_slayer_zerg'],
+
+    // Stargate SG-1 — Asgard vs Replicators, perfect fit for Protoss vs Zerg
+    'protoss_slayer_zerg_b' => ['name' => 'We Do Not Negotiate With Insects', 'description' => 'Win 25 games as Protoss against Zerg', 'tier' => 'b', 'category' => 'rivalry', 'secret' => false, 'group' => 'protoss_slayer_zerg'],
+
+    // SC — Protoss battle cry, parody of "This Is Sparta!" from 300
+    'protoss_slayer_zerg_a' => ['name' => 'This Is Aiur!', 'description' => 'Win 50 games as Protoss against Zerg', 'tier' => 'a', 'category' => 'rivalry', 'secret' => false, 'group' => 'protoss_slayer_zerg'],
+
+    // Inspired by MacArthur after Japan's surrender: "The guns are silent"
+    'protoss_slayer_zerg_s' => ['name' => 'The Claws Are Silent', 'description' => 'Win 100 games as Protoss against Zerg', 'tier' => 's', 'category' => 'rivalry', 'secret' => false, 'group' => 'protoss_slayer_zerg'],
+
+    // -------------------------------------------------------------------------
+    // Race Slayer — Protoss vs Terran
+    // -------------------------------------------------------------------------
+
+    // Ghostbusters — also SC Terran Ghost unit
+    'protoss_slayer_terran_d' => ['name' => 'Ghost Buster', 'description' => 'Win 5 games as Protoss against Terran', 'tier' => 'd', 'category' => 'rivalry', 'secret' => false, 'group' => 'protoss_slayer_terran'],
+
+    // SC — Terran Bunker, classic PvT objective
+    'protoss_slayer_terran_c' => ['name' => 'Bunker Breaker', 'description' => 'Win 10 games as Protoss against Terran', 'tier' => 'c', 'category' => 'rivalry', 'secret' => false, 'group' => 'protoss_slayer_terran'],
+
+    // Star Wars — Darth Vader "I find your lack of faith disturbing"
+    'protoss_slayer_terran_b' => ['name' => 'I Find Your Lack Of Shields Disturbing', 'description' => 'Win 25 games as Protoss against Terran', 'tier' => 'b', 'category' => 'rivalry', 'secret' => false, 'group' => 'protoss_slayer_terran'],
+
+    // SC — Kerrigan (Zerg) also hates Terran, Protoss agrees
+    'protoss_slayer_terran_a' => ['name' => 'Kerrigan Had The Right Idea', 'description' => 'Win 50 games as Protoss against Terran', 'tier' => 'a', 'category' => 'rivalry', 'secret' => false, 'group' => 'protoss_slayer_terran'],
+
+    // SC — Emperor Arcturus Mengsk, main Terran antagonist in SC1
+    'protoss_slayer_terran_s' => ['name' => "Mengsk's Nightmare", 'description' => 'Win 100 games as Protoss against Terran', 'tier' => 's', 'category' => 'rivalry', 'secret' => false, 'group' => 'protoss_slayer_terran'],
+
+    // -------------------------------------------------------------------------
+    // Race Slayer — Zerg vs Protoss
+    // -------------------------------------------------------------------------
+
+    // SC — Nexus is the Protoss main building
+    'zerg_slayer_protoss_d' => ['name' => 'Nexus Eater', 'description' => 'Win 5 games as Zerg against Protoss', 'tier' => 'd', 'category' => 'rivalry', 'secret' => false, 'group' => 'zerg_slayer_protoss'],
+
+    // SC — Carrier is iconic Protoss unit, parody of "No Shoes No Service"
+    'zerg_slayer_protoss_c' => ['name' => 'No Carriers Allowed', 'description' => 'Win 10 games as Zerg against Protoss', 'tier' => 'c', 'category' => 'rivalry', 'secret' => false, 'group' => 'zerg_slayer_protoss'],
+
+    // SC — Khas, ancient Protoss who created the Khala (psionic bond)
+    'zerg_slayer_protoss_b' => ['name' => 'Khas Would Be Disappointed', 'description' => 'Win 25 games as Zerg against Protoss', 'tier' => 'b', 'category' => 'rivalry', 'secret' => false, 'group' => 'zerg_slayer_protoss'],
+
+    // humor — Zerg consuming Protoss plasma shields
+    'zerg_slayer_protoss_a' => ['name' => 'Your Shields Taste Like Chicken', 'description' => 'Win 50 games as Zerg against Protoss', 'tier' => 'a', 'category' => 'rivalry', 'secret' => false, 'group' => 'zerg_slayer_protoss'],
+
+    // Churchill — "Never was so much owed by so many to so few", Battle of Britain
+    'zerg_slayer_protoss_s' => ['name' => 'Never Was So Much Consumed By So Many', 'description' => 'Win 100 games as Zerg against Protoss', 'tier' => 's', 'category' => 'rivalry', 'secret' => false, 'group' => 'zerg_slayer_protoss'],
+
+    // -------------------------------------------------------------------------
+    // Race Slayer — Zerg vs Terran
+    // -------------------------------------------------------------------------
+
+    // humor — Zerg infestation = biological hazard
+    'zerg_slayer_terran_d' => ['name' => 'Bio Hazard', 'description' => 'Win 5 games as Zerg against Terran', 'tier' => 'd', 'category' => 'rivalry', 'secret' => false, 'group' => 'zerg_slayer_terran'],
+
+    // SC — Mar Sara, first planet infested by Zerg in SC1
+    'zerg_slayer_terran_c' => ['name' => 'The Planet Is Ours Now', 'description' => 'Win 10 games as Zerg against Terran', 'tier' => 'c', 'category' => 'rivalry', 'secret' => false, 'group' => 'zerg_slayer_terran'],
+
+    // SC1 — Mengsk abandoned Kerrigan on Tarsonis, she became the Queen of Blades
+    'zerg_slayer_terran_b' => ['name' => 'You Asked For This, Mengsk', 'description' => 'Win 25 games as Zerg against Terran', 'tier' => 'b', 'category' => 'rivalry', 'secret' => false, 'group' => 'zerg_slayer_terran'],
+
+    // SC — Sarah Kerrigan, Queen of Blades, was a Terran before infestation
+    'zerg_slayer_terran_a' => ['name' => 'Sarah Sends Her Regards', 'description' => 'Win 50 games as Zerg against Terran', 'tier' => 'a', 'category' => 'rivalry', 'secret' => false, 'group' => 'zerg_slayer_terran'],
+
+    // Star Trek — Borg assimilation catchphrase, perfect for Zerg
+    'zerg_slayer_terran_s' => ['name' => 'Resistance Is Futile', 'description' => 'Win 100 games as Zerg against Terran', 'tier' => 's', 'category' => 'rivalry', 'secret' => false, 'group' => 'zerg_slayer_terran'],
+
+    // -------------------------------------------------------------------------
+    // Race Slayer — Terran vs Zerg
+    // -------------------------------------------------------------------------
+
+    // humor — Zerg as pests
+    'terran_slayer_zerg_d' => ['name' => 'Pest Control', 'description' => 'Win 5 games as Terran against Zerg', 'tier' => 'd', 'category' => 'rivalry', 'secret' => false, 'group' => 'terran_slayer_zerg'],
+
+    // Starship Troopers (1997) — propaganda slogan
+    'terran_slayer_zerg_c' => ['name' => 'The Only Good Bug Is A Dead Bug', 'description' => 'Win 10 games as Terran against Zerg', 'tier' => 'c', 'category' => 'rivalry', 'secret' => false, 'group' => 'terran_slayer_zerg'],
+
+    // Apocalypse Now (1979) — "I love the smell of napalm in the morning"
+    'terran_slayer_zerg_b' => ['name' => 'I Love The Smell Of Napalm', 'description' => 'Win 25 games as Terran against Zerg', 'tier' => 'b', 'category' => 'rivalry', 'secret' => false, 'group' => 'terran_slayer_zerg'],
+
+    // Aliens (1986) — "it's the only way to be sure"
+    'terran_slayer_zerg_a' => ['name' => 'I Say We Nuke The Site From Orbit', 'description' => 'Win 50 games as Terran against Zerg', 'tier' => 'a', 'category' => 'rivalry', 'secret' => false, 'group' => 'terran_slayer_zerg'],
+
+    // SC — Brood War expansion, the definitive Terran vs Zerg conflict
+    'terran_slayer_zerg_s' => ['name' => 'The Brood War', 'description' => 'Win 100 games as Terran against Zerg', 'tier' => 's', 'category' => 'rivalry', 'secret' => false, 'group' => 'terran_slayer_zerg'],
+
+    // -------------------------------------------------------------------------
+    // Race Slayer — Terran vs Protoss
+    // -------------------------------------------------------------------------
+
+    // SC — Protoss plasma shields, first thing Terran must break
+    'terran_slayer_protoss_d' => ['name' => 'Shield Breaker', 'description' => 'Win 5 games as Terran against Protoss', 'tier' => 'd', 'category' => 'rivalry', 'secret' => false, 'group' => 'terran_slayer_protoss'],
+
+    // Predator (1987) — Dutch discovers the alien can be hurt
+    'terran_slayer_protoss_c' => ['name' => 'If It Bleeds We Can Kill It', 'description' => 'Win 10 games as Terran against Protoss', 'tier' => 'c', 'category' => 'rivalry', 'secret' => false, 'group' => 'terran_slayer_protoss'],
+
+    // humor — Protoss came from Aiur, should have stayed there
+    'terran_slayer_protoss_b' => ['name' => 'You Should Have Stayed Home', 'description' => 'Win 25 games as Terran against Protoss', 'tier' => 'b', 'category' => 'rivalry', 'secret' => false, 'group' => 'terran_slayer_protoss'],
+
+    // humor — Terran dismissing Protoss homeworld
+    'terran_slayer_protoss_a' => ['name' => 'Aiur? Never Heard Of It', 'description' => 'Win 50 games as Terran against Protoss', 'tier' => 'a', 'category' => 'rivalry', 'secret' => false, 'group' => 'terran_slayer_protoss'],
+
+    // Latin — "sic transit gloria mundi" (thus passes the glory of the world), adapted for Protoss
+    'terran_slayer_protoss_s' => ['name' => 'Sic Transit Gloria Protoss', 'description' => 'Win 100 games as Terran against Protoss', 'tier' => 's', 'category' => 'rivalry', 'secret' => false, 'group' => 'terran_slayer_protoss'],
 
     // -------------------------------------------------------------------------
     // Community
     // -------------------------------------------------------------------------
+    'around_the_world' => [
+        'name'        => 'Around the World',
+        'description' => 'Play opponents from South America, Europe, and Asia in a single calendar month.',
+        'tier'        => 'b',
+        'category'    => 'community',
+        'secret'      => false,
+        'group'       => null,
+    ],
     'traveler' => [
         'name'        => 'First Contact',
         'description' => 'Play against players from 5 different countries',

@@ -137,6 +137,11 @@ class AchievementService
             ->whereNull('player_id')
             ->pluck('country_code', 'id');
 
+        // Player races — used by rivalry checker (mirror master)
+        $playerRaces = DB::table('players')
+            ->whereNull('player_id')
+            ->pluck('race', 'id');
+
         // Player names — used by secret checker (initials achievement)
         $playerNames = DB::table('players')
             ->whereNull('player_id')
@@ -162,6 +167,7 @@ class AchievementService
             'player_order'      => $playerOrder,
             'tournament_counts' => $tournamentCounts,
             'player_countries'  => $playerCountries,
+            'player_races'      => $playerRaces,
             'player_names'      => $playerNames,
             'game_numbers'      => $gameNumbers,
         ];
