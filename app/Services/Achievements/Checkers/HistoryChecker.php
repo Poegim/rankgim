@@ -3,6 +3,7 @@
 namespace App\Services\Achievements\Checkers;
 
 use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 
 class HistoryChecker
 {
@@ -11,9 +12,16 @@ class HistoryChecker
         $batch = [];
         $now   = now();
 
-        $playerOrder = $sharedData['player_order'];
-        $first500    = $playerOrder->take(500)->flip();
-        $first50     = $playerOrder->take(50)->flip();
+        // First 500 and first 50 players who actually have games
+        $first500 = DB::table('players')
+            ->whereNull('player_id')
+            ->whereIn('id', DB::table('rating_histories')->distinct()->pluck('player_id'))
+            ->orderBy('id')
+            ->limit(500)
+            ->pluck('id')
+            ->flip();
+
+        $first50 = $first500->take(50);
 
         foreach ($stats as $playerId => $s) {
             $history = $sharedData['histories']->get($playerId);
