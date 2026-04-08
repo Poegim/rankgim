@@ -15,6 +15,8 @@ return [
     | secret      — if true, name/description hidden until unlocked
     | group       — progressive achievements in same group show only highest tier
     |               null = always show (standalone achievement)
+    | lore        — optional explanation of the cultural/historical reference behind the name
+    |               null = no reference to explain
     |
     | Tier colors (StarCraft League Ranks):
     |   D — green   #44BB44
@@ -35,6 +37,7 @@ return [
         'category'    => 'games',
         'secret'      => false,
         'group'       => 'games_played',
+        'lore'        => null,
     ],
     'rocky' => [
         'name'        => 'Rocky',
@@ -43,6 +46,7 @@ return [
         'category'    => 'games',
         'secret'      => false,
         'group'       => 'games_played',
+        'lore'        => 'Rocky (1976). Mickey tells Rocky that nobody hits as hard as life — what matters is that you keep getting up.',
     ],
     'inception' => [
         'name'        => 'Inception',
@@ -51,6 +55,7 @@ return [
         'category'    => 'games',
         'secret'      => false,
         'group'       => 'games_played',
+        'lore'        => 'Nolan\'s Inception (2010) — dreams within dreams. The rabbit hole line nods to Alice in Wonderland. Both ask: how far down are you willing to go?',
     ],
     'there_is_no_spoon' => [
         'name'        => 'There Is No Spoon',
@@ -59,13 +64,16 @@ return [
         'category'    => 'games',
         'secret'      => false,
         'group'       => 'games_played',
+        'lore'        => 'A nod to a famous scene in "The Matrix" (1999).',
     ],
     'tears_in_rain' => [
         'name'        => 'Tears in Rain',
-        'description' => '1000 games. I\'ve seen things you wouldn\'t believe. Carriers over Aiur. Zerg swarms darkening the sky. All those moments, lost in time. Like tears in rain.',        'tier'        => 's',
+        'description' => '1000 games. I\'ve seen things you wouldn\'t believe. Carriers over Aiur. Zerg swarms darkening the sky. All those moments, lost in time. Like tears in rain.',
+        'tier'        => 's',
         'category'    => 'games',
         'secret'      => false,
         'group'       => 'games_played',
+        'lore'        => 'Inspired by Roy Batty’s legendary dying monologue in "Blade Runner" (1982) — "I\'ve seen things you people wouldn\'t believe..."',
     ],
 
     // -------------------------------------------------------------------------
@@ -78,6 +86,7 @@ return [
         'category'    => 'activity',
         'secret'      => false,
         'group'       => 'activity_total',
+        'lore'        => null,
     ],
     'dedicated' => [
         'name'        => 'Dedicated',
@@ -86,6 +95,7 @@ return [
         'category'    => 'activity',
         'secret'      => false,
         'group'       => 'activity_total',
+        'lore'        => null,
     ],
     'committed' => [
         'name'        => 'Committed',
@@ -94,6 +104,7 @@ return [
         'category'    => 'activity',
         'secret'      => false,
         'group'       => 'activity_total',
+        'lore'        => null,
     ],
     'obsessed' => [
         'name'        => 'Obsessed',
@@ -102,6 +113,7 @@ return [
         'category'    => 'activity',
         'secret'      => false,
         'group'       => 'activity_total',
+        'lore'        => null,
     ],
     'immortal' => [
         'name'        => 'Immortal',
@@ -110,6 +122,7 @@ return [
         'category'    => 'activity',
         'secret'      => false,
         'group'       => 'activity_total',
+        'lore'        => null,
     ],
 
     // -------------------------------------------------------------------------
@@ -122,6 +135,7 @@ return [
         'category'    => 'activity',
         'secret'      => false,
         'group'       => 'activity_streak',
+        'lore'        => null,
     ],
     'consistent' => [
         'name'        => 'Consistent',
@@ -130,6 +144,7 @@ return [
         'category'    => 'activity',
         'secret'      => false,
         'group'       => 'activity_streak',
+        'lore'        => null,
     ],
     'unstoppable_activity' => [
         'name'        => 'Unstoppable',
@@ -138,14 +153,16 @@ return [
         'category'    => 'activity',
         'secret'      => false,
         'group'       => 'activity_streak',
+        'lore'        => null,
     ],
-        'iron_will' => [
+    'iron_will' => [
         'name'        => 'Iron Will',
         'description' => 'Be active for 18 consecutive months',
         'tier'        => 'a',
         'category'    => 'activity',
         'secret'      => false,
         'group'       => 'activity_streak',
+        'lore'        => null,
     ],
     'machine' => [
         'name'        => 'Machine',
@@ -154,6 +171,7 @@ return [
         'category'    => 'activity',
         'secret'      => false,
         'group'       => 'activity_streak',
+        'lore'        => null,
     ],
 
     // -------------------------------------------------------------------------
@@ -166,6 +184,7 @@ return [
         'category'    => 'ranking',
         'secret'      => false,
         'group'       => 'top_rank',
+        'lore'        => null,
     ],
     'top_100' => [
         'name'        => 'Top 100',
@@ -174,6 +193,7 @@ return [
         'category'    => 'ranking',
         'secret'      => false,
         'group'       => 'top_rank',
+        'lore'        => null,
     ],
     'top_50' => [
         'name'        => 'Top 50',
@@ -182,6 +202,7 @@ return [
         'category'    => 'ranking',
         'secret'      => false,
         'group'       => 'top_rank',
+        'lore'        => null,
     ],
     'top_25' => [
         'name'        => 'Top 25',
@@ -190,6 +211,7 @@ return [
         'category'    => 'ranking',
         'secret'      => false,
         'group'       => 'top_rank',
+        'lore'        => null,
     ],
     'elite' => [
         'name'        => 'Elite',
@@ -198,6 +220,7 @@ return [
         'category'    => 'ranking',
         'secret'      => false,
         'group'       => 'top_rank',
+        'lore'        => null,
     ],
     'podium' => [
         'name'        => 'Podium',
@@ -206,6 +229,7 @@ return [
         'category'    => 'ranking',
         'secret'      => false,
         'group'       => 'top_rank',
+        'lore'        => null,
     ],
     'the_best' => [
         'name'        => 'The Best',
@@ -214,6 +238,7 @@ return [
         'category'    => 'ranking',
         'secret'      => false,
         'group'       => 'top_rank',
+        'lore'        => null,
     ],
 
     // -------------------------------------------------------------------------
@@ -226,6 +251,7 @@ return [
         'category'    => 'ranking',
         'secret'      => false,
         'group'       => 'top10_time',
+        'lore'        => null,
     ],
     'pillar' => [
         'name'        => 'Pillar',
@@ -234,6 +260,7 @@ return [
         'category'    => 'ranking',
         'secret'      => false,
         'group'       => 'top10_time',
+        'lore'        => null,
     ],
     'institution' => [
         'name'        => 'Institution',
@@ -242,6 +269,7 @@ return [
         'category'    => 'ranking',
         'secret'      => false,
         'group'       => 'top10_time',
+        'lore'        => null,
     ],
     'monument' => [
         'name'        => 'Monument',
@@ -250,6 +278,7 @@ return [
         'category'    => 'ranking',
         'secret'      => false,
         'group'       => 'top10_time',
+        'lore'        => null,
     ],
 
     // -------------------------------------------------------------------------
@@ -262,6 +291,7 @@ return [
         'category'    => 'ranking',
         'secret'      => false,
         'group'       => 'kings_return',
+        'lore'        => null,
     ],
     'legends_return' => [
         'name'        => "Legend's Return",
@@ -270,6 +300,7 @@ return [
         'category'    => 'ranking',
         'secret'      => false,
         'group'       => 'kings_return',
+        'lore'        => null,
     ],
     'ghosts_return' => [
         'name'        => "Ghost's Return",
@@ -278,6 +309,7 @@ return [
         'category'    => 'ranking',
         'secret'      => false,
         'group'       => 'kings_return',
+        'lore'        => null,
     ],
 
     // -------------------------------------------------------------------------
@@ -290,6 +322,7 @@ return [
         'category'    => 'rating',
         'secret'      => false,
         'group'       => 'rating_milestone',
+        'lore'        => null,
     ],
     'solid' => [
         'name'        => 'Solid',
@@ -298,6 +331,7 @@ return [
         'category'    => 'rating',
         'secret'      => false,
         'group'       => 'rating_milestone',
+        'lore'        => null,
     ],
     'strong' => [
         'name'        => 'Strong',
@@ -306,6 +340,7 @@ return [
         'category'    => 'rating',
         'secret'      => false,
         'group'       => 'rating_milestone',
+        'lore'        => null,
     ],
     'dangerous' => [
         'name'        => 'Dangerous',
@@ -314,6 +349,7 @@ return [
         'category'    => 'rating',
         'secret'      => false,
         'group'       => 'rating_milestone',
+        'lore'        => null,
     ],
     'fearsome' => [
         'name'        => 'Fearsome',
@@ -322,6 +358,7 @@ return [
         'category'    => 'rating',
         'secret'      => false,
         'group'       => 'rating_milestone',
+        'lore'        => null,
     ],
     'dominant' => [
         'name'        => 'Dominant',
@@ -330,6 +367,7 @@ return [
         'category'    => 'rating',
         'secret'      => false,
         'group'       => 'rating_milestone',
+        'lore'        => null,
     ],
     'elite_rating' => [
         'name'        => 'Elite',
@@ -338,6 +376,7 @@ return [
         'category'    => 'rating',
         'secret'      => false,
         'group'       => 'rating_milestone',
+        'lore'        => null,
     ],
     'terrifying' => [
         'name'        => 'Terrifying',
@@ -346,6 +385,7 @@ return [
         'category'    => 'rating',
         'secret'      => false,
         'group'       => 'rating_milestone',
+        'lore'        => null,
     ],
     'legendary' => [
         'name'        => 'Legendary',
@@ -354,6 +394,7 @@ return [
         'category'    => 'rating',
         'secret'      => false,
         'group'       => 'rating_milestone',
+        'lore'        => null,
     ],
     'mythical' => [
         'name'        => 'Mythical',
@@ -362,6 +403,7 @@ return [
         'category'    => 'rating',
         'secret'      => false,
         'group'       => 'rating_milestone',
+        'lore'        => null,
     ],
     'transcendent' => [
         'name'        => 'Transcendent',
@@ -370,6 +412,7 @@ return [
         'category'    => 'rating',
         'secret'      => false,
         'group'       => 'rating_milestone',
+        'lore'        => null,
     ],
     'otherworldly' => [
         'name'        => 'Otherworldly',
@@ -378,6 +421,7 @@ return [
         'category'    => 'rating',
         'secret'      => false,
         'group'       => 'rating_milestone',
+        'lore'        => null,
     ],
     'god_tier' => [
         'name'        => 'God-tier',
@@ -386,14 +430,16 @@ return [
         'category'    => 'rating',
         'secret'      => false,
         'group'       => 'rating_milestone',
+        'lore'        => null,
     ],
-        'giant_slayer' => [
+    'giant_slayer' => [
         'name'        => 'Giant Slayer',
         'description' => 'Beat a player rated 200+ higher than you (both players must have 30+ games)',
         'tier'        => 'a',
         'category'    => 'rating',
         'secret'      => false,
         'group'       => 'giant_slayer',
+        'lore'        => null,
     ],
     'david_vs_goliath' => [
         'name'        => 'David vs Goliath',
@@ -402,6 +448,7 @@ return [
         'category'    => 'rating',
         'secret'      => false,
         'group'       => 'giant_slayer',
+        'lore'        => null,
     ],
     'rocket' => [
         'name'        => 'Rocket',
@@ -410,14 +457,16 @@ return [
         'category'    => 'rating',
         'secret'      => false,
         'group'       => null,
+        'lore'        => null,
     ],
-        'glass_cannon' => [
+    'glass_cannon' => [
         'name'        => 'Glass Cannon',
         'description' => 'Reach 1500+ rating with more losses than wins',
         'tier'        => 'a',
         'category'    => 'rating',
         'secret'      => false,
         'group'       => null,
+        'lore'        => null,
     ],
 
     // -------------------------------------------------------------------------
@@ -430,6 +479,7 @@ return [
         'category'    => 'streaks',
         'secret'      => false,
         'group'       => 'win_streak',
+        'lore'        => null,
     ],
     'hot_streak' => [
         'name'        => 'Hot Streak',
@@ -438,6 +488,7 @@ return [
         'category'    => 'streaks',
         'secret'      => false,
         'group'       => 'win_streak',
+        'lore'        => null,
     ],
     'rampage' => [
         'name'        => 'Rampage',
@@ -446,6 +497,7 @@ return [
         'category'    => 'streaks',
         'secret'      => false,
         'group'       => 'win_streak',
+        'lore'        => null,
     ],
     'unstoppable_streak' => [
         'name'        => 'Unstoppable',
@@ -454,6 +506,7 @@ return [
         'category'    => 'streaks',
         'secret'      => false,
         'group'       => 'win_streak',
+        'lore'        => null,
     ],
     'juggernaut' => [
         'name'        => 'Juggernaut',
@@ -462,6 +515,7 @@ return [
         'category'    => 'streaks',
         'secret'      => false,
         'group'       => 'win_streak',
+        'lore'        => null,
     ],
     'terminator' => [
         'name'        => 'Terminator',
@@ -470,6 +524,7 @@ return [
         'category'    => 'streaks',
         'secret'      => false,
         'group'       => 'win_streak',
+        'lore'        => null,
     ],
     'phoenix' => [
         'name'        => 'Phoenix',
@@ -478,6 +533,7 @@ return [
         'category'    => 'streaks',
         'secret'      => false,
         'group'       => null,
+        'lore'        => 'The mythological bird that burns to ashes and is reborn. A symbol of resurrection across Egyptian, Greek, and Persian cultures.',
     ],
 
     // -------------------------------------------------------------------------
@@ -490,6 +546,7 @@ return [
         'category'    => 'rivalry',
         'secret'      => false,
         'group'       => 'rivalry_losses',
+        'lore'        => null,
     ],
     'cursed' => [
         'name'        => 'Cursed',
@@ -498,6 +555,7 @@ return [
         'category'    => 'rivalry',
         'secret'      => false,
         'group'       => 'rivalry_losses',
+        'lore'        => null,
     ],
     'bully' => [
         'name'        => 'Bully',
@@ -506,6 +564,7 @@ return [
         'category'    => 'rivalry',
         'secret'      => false,
         'group'       => 'rivalry_wins',
+        'lore'        => null,
     ],
     'executioner' => [
         'name'        => 'Executioner',
@@ -514,6 +573,7 @@ return [
         'category'    => 'rivalry',
         'secret'      => false,
         'group'       => 'rivalry_wins',
+        'lore'        => null,
     ],
     'the_rematch' => [
         'name'        => 'The Rematch',
@@ -522,6 +582,7 @@ return [
         'category'    => 'rivalry',
         'secret'      => false,
         'group'       => 'rivalry_total',
+        'lore'        => null,
     ],
     'the_rivalry' => [
         'name'        => 'The Rivalry',
@@ -530,6 +591,7 @@ return [
         'category'    => 'rivalry',
         'secret'      => false,
         'group'       => 'rivalry_total',
+        'lore'        => null,
     ],
     'the_feud' => [
         'name'        => 'The Feud',
@@ -538,7 +600,9 @@ return [
         'category'    => 'rivalry',
         'secret'      => false,
         'group'       => 'rivalry_total',
+        'lore'        => null,
     ],
+
     // -------------------------------------------------------------------------
     // Mirror Master
     // -------------------------------------------------------------------------
@@ -549,6 +613,7 @@ return [
         'category'    => 'rivalry',
         'secret'      => false,
         'group'       => 'mirror_master',
+        'lore'        => null,
     ],
     'mirror_master_c' => [
         'name'        => 'Mirror Master',
@@ -557,6 +622,7 @@ return [
         'category'    => 'rivalry',
         'secret'      => false,
         'group'       => 'mirror_master',
+        'lore'        => null,
     ],
     'mirror_master_b' => [
         'name'        => 'Mirror Master',
@@ -565,6 +631,7 @@ return [
         'category'    => 'rivalry',
         'secret'      => false,
         'group'       => 'mirror_master',
+        'lore'        => null,
     ],
     'mirror_master_a' => [
         'name'        => 'Mirror Master',
@@ -573,6 +640,7 @@ return [
         'category'    => 'rivalry',
         'secret'      => false,
         'group'       => 'mirror_master',
+        'lore'        => null,
     ],
     'mirror_master_s' => [
         'name'        => 'Mirror Master',
@@ -581,121 +649,332 @@ return [
         'category'    => 'rivalry',
         'secret'      => false,
         'group'       => 'mirror_master',
+        'lore'        => null,
     ],
 
     // -------------------------------------------------------------------------
     // Race Slayer — Protoss vs Zerg
     // -------------------------------------------------------------------------
 
-    // SC1 — device used to lure Zerg in the campaign
-    'protoss_slayer_zerg_d' => ['name' => 'Psi Emitter', 'description' => 'Win 5 games as Protoss against Zerg', 'tier' => 'd', 'category' => 'rivalry', 'secret' => false, 'group' => 'protoss_slayer_zerg'],
+    'protoss_slayer_zerg_d' => [
+        'name'        => 'Psi Emitter',
+        'description' => 'Win 5 games as Protoss against Zerg',
+        'tier'        => 'd',
+        'category'    => 'rivalry',
+        'secret'      => false,
+        'group'       => 'protoss_slayer_zerg',
+        'lore'        => 'A device that broadcast psionic signals to attract the Zerg. Mengsk used one on Tarsonis to lure the Swarm — and to betray Kerrigan.',
+    ],
 
-    // SC1 — Tassadar's carrier, parody of "Carrier Has Arrived"
-    'protoss_slayer_zerg_c' => ['name' => 'Gantrithor Has Arrived', 'description' => 'Win 10 games as Protoss against Zerg', 'tier' => 'c', 'category' => 'rivalry', 'secret' => false, 'group' => 'protoss_slayer_zerg'],
+    'protoss_slayer_zerg_c' => [
+        'name'        => 'Gantrithor Has Arrived',
+        'description' => 'Win 10 games as Protoss against Zerg',
+        'tier'        => 'c',
+        'category'    => 'rivalry',
+        'secret'      => false,
+        'group'       => 'protoss_slayer_zerg',
+        'lore'        => null,
+    ],
 
-    // Stargate SG-1 — Asgard vs Replicators, perfect fit for Protoss vs Zerg
-    'protoss_slayer_zerg_b' => ['name' => 'We Do Not Negotiate With Insects', 'description' => 'Win 25 games as Protoss against Zerg', 'tier' => 'b', 'category' => 'rivalry', 'secret' => false, 'group' => 'protoss_slayer_zerg'],
+    'protoss_slayer_zerg_b' => [
+        'name'        => 'We Do Not Negotiate With Insects',
+        'description' => 'Win 25 games as Protoss against Zerg',
+        'tier'        => 'b',
+        'category'    => 'rivalry',
+        'secret'      => false,
+        'group'       => 'protoss_slayer_zerg',
+        'lore' => 'Reference to the iconic scene in Tropic Thunder (2008) where Tom Cruise as Les Grossman declares, "We don’t negotiate with terrorists."',
+    ],
 
-    // SC — Protoss battle cry, parody of "This Is Sparta!" from 300
-    'protoss_slayer_zerg_a' => ['name' => 'This Is Aiur!', 'description' => 'Win 50 games as Protoss against Zerg', 'tier' => 'a', 'category' => 'rivalry', 'secret' => false, 'group' => 'protoss_slayer_zerg'],
+    'protoss_slayer_zerg_a' => [
+        'name'        => 'This Is Aiur!',
+        'description' => 'Win 50 games as Protoss against Zerg',
+        'tier'        => 'a',
+        'category'    => 'rivalry',
+        'secret'      => false,
+        'group'       => 'protoss_slayer_zerg',
+        'lore'        => '"This is Sparta!" from 300 (2006).',
+    ],
 
-    // Inspired by MacArthur after Japan's surrender: "The guns are silent"
-    'protoss_slayer_zerg_s' => ['name' => 'The Claws Are Silent', 'description' => 'Win 100 games as Protoss against Zerg', 'tier' => 's', 'category' => 'rivalry', 'secret' => false, 'group' => 'protoss_slayer_zerg'],
+    'protoss_slayer_zerg_s' => [
+        'name'        => 'The Claws Are Silent',
+        'description' => 'Win 100 games as Protoss against Zerg',
+        'tier'        => 's',
+        'category'    => 'rivalry',
+        'secret'      => false,
+        'group'       => 'protoss_slayer_zerg',
+        'lore'        => 'Riffs on MacArthur\'s words after Japan\'s surrender: "The guns are silent. A great tragedy has ended." Here, it\'s the Zerg claws that fall silent.',
+    ],
 
     // -------------------------------------------------------------------------
     // Race Slayer — Protoss vs Terran
     // -------------------------------------------------------------------------
 
-    // Ghostbusters — also SC Terran Ghost unit
-    'protoss_slayer_terran_d' => ['name' => 'Ghost Buster', 'description' => 'Win 5 games as Protoss against Terran', 'tier' => 'd', 'category' => 'rivalry', 'secret' => false, 'group' => 'protoss_slayer_terran'],
+    'protoss_slayer_terran_d' => [
+        'name'        => 'Ghost Buster',
+        'description' => 'Win 5 games as Protoss against Terran',
+        'tier'        => 'd',
+        'category'    => 'rivalry',
+        'secret'      => false,
+        'group'       => 'protoss_slayer_terran',
+        'lore'        => null,
+    ],
 
-    // SC — Terran Bunker, classic PvT objective
-    'protoss_slayer_terran_c' => ['name' => 'Bunker Breaker', 'description' => 'Win 10 games as Protoss against Terran', 'tier' => 'c', 'category' => 'rivalry', 'secret' => false, 'group' => 'protoss_slayer_terran'],
+    'protoss_slayer_terran_c' => [
+        'name'        => 'Bunker Breaker',
+        'description' => 'Win 10 games as Protoss against Terran',
+        'tier'        => 'c',
+        'category'    => 'rivalry',
+        'secret'      => false,
+        'group'       => 'protoss_slayer_terran',
+        'lore'        => null,
+    ],
 
-    // Star Wars — Darth Vader "I find your lack of faith disturbing"
-    'protoss_slayer_terran_b' => ['name' => 'I Find Your Lack Of Shields Disturbing', 'description' => 'Win 25 games as Protoss against Terran', 'tier' => 'b', 'category' => 'rivalry', 'secret' => false, 'group' => 'protoss_slayer_terran'],
+    'protoss_slayer_terran_b' => [
+        'name'        => 'I Find Your Lack Of Shields Disturbing',
+        'description' => 'Win 25 games as Protoss against Terran',
+        'tier'        => 'b',
+        'category'    => 'rivalry',
+        'secret'      => false,
+        'group'       => 'protoss_slayer_terran',
+        'lore'        => 'Darth Vader\'s "I find your lack of faith disturbing" from Star Wars (1977).',
+    ],
 
-    // SC — Kerrigan (Zerg) also hates Terran, Protoss agrees
-    'protoss_slayer_terran_a' => ['name' => 'Kerrigan Had The Right Idea', 'description' => 'Win 50 games as Protoss against Terran', 'tier' => 'a', 'category' => 'rivalry', 'secret' => false, 'group' => 'protoss_slayer_terran'],
+    'protoss_slayer_terran_a' => [
+        'name'        => 'Kerrigan Had The Right Idea',
+        'description' => 'Win 50 games as Protoss against Terran',
+        'tier'        => 'a',
+        'category'    => 'rivalry',
+        'secret'      => false,
+        'group'       => 'protoss_slayer_terran',
+        'lore'        => null,
+    ],
 
-    // SC — Emperor Arcturus Mengsk, main Terran antagonist in SC1
-    'protoss_slayer_terran_s' => ['name' => "Mengsk's Nightmare", 'description' => 'Win 100 games as Protoss against Terran', 'tier' => 's', 'category' => 'rivalry', 'secret' => false, 'group' => 'protoss_slayer_terran'],
+    'protoss_slayer_terran_s' => [
+        'name'        => "Mengsk's Nightmare",
+        'description' => 'Win 100 games as Protoss against Terran',
+        'tier'        => 's',
+        'category'    => 'rivalry',
+        'secret'      => false,
+        'group'       => 'protoss_slayer_terran',
+        'lore'        => null,
+    ],
 
     // -------------------------------------------------------------------------
     // Race Slayer — Zerg vs Protoss
     // -------------------------------------------------------------------------
 
-    // SC — Nexus is the Protoss main building
-    'zerg_slayer_protoss_d' => ['name' => 'Nexus Eater', 'description' => 'Win 5 games as Zerg against Protoss', 'tier' => 'd', 'category' => 'rivalry', 'secret' => false, 'group' => 'zerg_slayer_protoss'],
+    'zerg_slayer_protoss_d' => [
+        'name'        => 'Nexus Eater',
+        'description' => 'Win 5 games as Zerg against Protoss',
+        'tier'        => 'd',
+        'category'    => 'rivalry',
+        'secret'      => false,
+        'group'       => 'zerg_slayer_protoss',
+        'lore'        => null,
+    ],
 
-    // SC — Carrier is iconic Protoss unit, parody of "No Shoes No Service"
-    'zerg_slayer_protoss_c' => ['name' => 'No Carriers Allowed', 'description' => 'Win 10 games as Zerg against Protoss', 'tier' => 'c', 'category' => 'rivalry', 'secret' => false, 'group' => 'zerg_slayer_protoss'],
+    'zerg_slayer_protoss_c' => [
+        'name'        => 'No Carriers Allowed',
+        'description' => 'Win 10 games as Zerg against Protoss',
+        'tier'        => 'c',
+        'category'    => 'rivalry',
+        'secret'      => false,
+        'group'       => 'zerg_slayer_protoss',
+        'lore'        => null,
+    ],
 
-    // SC — Khas, ancient Protoss who created the Khala (psionic bond)
-    'zerg_slayer_protoss_b' => ['name' => 'Khas Would Be Disappointed', 'description' => 'Win 25 games as Zerg against Protoss', 'tier' => 'b', 'category' => 'rivalry', 'secret' => false, 'group' => 'zerg_slayer_protoss'],
+    'zerg_slayer_protoss_b' => [
+        'name'        => 'Khas Would Be Disappointed',
+        'description' => 'Win 25 games as Zerg against Protoss',
+        'tier'        => 'b',
+        'category'    => 'rivalry',
+        'secret'      => false,
+        'group'       => 'zerg_slayer_protoss',
+        'lore'        => null,
+    ],
 
-    // humor — Zerg consuming Protoss plasma shields
-    'zerg_slayer_protoss_a' => ['name' => 'Your Shields Taste Like Chicken', 'description' => 'Win 50 games as Zerg against Protoss', 'tier' => 'a', 'category' => 'rivalry', 'secret' => false, 'group' => 'zerg_slayer_protoss'],
+    'zerg_slayer_protoss_a' => [
+        'name'        => 'Your Shields Taste Like Chicken',
+        'description' => 'Win 50 games as Zerg against Protoss',
+        'tier'        => 'a',
+        'category'    => 'rivalry',
+        'secret'      => false,
+        'group'       => 'zerg_slayer_protoss',
+        'lore'        => null,
+    ],
 
-    // Churchill — "Never was so much owed by so many to so few", Battle of Britain
-    'zerg_slayer_protoss_s' => ['name' => 'Never Was So Much Consumed By So Many', 'description' => 'Win 100 games as Zerg against Protoss', 'tier' => 's', 'category' => 'rivalry', 'secret' => false, 'group' => 'zerg_slayer_protoss'],
+    'zerg_slayer_protoss_s' => [
+        'name'        => 'I am The Swarm.',
+        'description' => 'Win 100 games as Zerg against Protoss',
+        'tier'        => 's',
+        'category'    => 'rivalry',
+        'secret'      => false,
+        'group'       => 'zerg_slayer_protoss',
+        'lore'        => null,
+    ],
 
     // -------------------------------------------------------------------------
     // Race Slayer — Zerg vs Terran
     // -------------------------------------------------------------------------
 
-    // humor — Zerg infestation = biological hazard
-    'zerg_slayer_terran_d' => ['name' => 'Bio Hazard', 'description' => 'Win 5 games as Zerg against Terran', 'tier' => 'd', 'category' => 'rivalry', 'secret' => false, 'group' => 'zerg_slayer_terran'],
+    'zerg_slayer_terran_d' => [
+        'name'        => 'Bio Hazard',
+        'description' => 'Win 5 games as Zerg against Terran',
+        'tier'        => 'd',
+        'category'    => 'rivalry',
+        'secret'      => false,
+        'group'       => 'zerg_slayer_terran',
+        'lore'        => null,
+    ],
 
-    // SC — Mar Sara, first planet infested by Zerg in SC1
-    'zerg_slayer_terran_c' => ['name' => 'The Planet Is Ours Now', 'description' => 'Win 10 games as Zerg against Terran', 'tier' => 'c', 'category' => 'rivalry', 'secret' => false, 'group' => 'zerg_slayer_terran'],
+    'zerg_slayer_terran_c' => [
+        'name'        => 'The Planet Is Ours Now',
+        'description' => 'Win 10 games as Zerg against Terran',
+        'tier'        => 'c',
+        'category'    => 'rivalry',
+        'secret'      => false,
+        'group'       => 'zerg_slayer_terran',
+        'lore'        => null,
+    ],
 
-    // SC1 — Mengsk abandoned Kerrigan on Tarsonis, she became the Queen of Blades
-    'zerg_slayer_terran_b' => ['name' => 'You Asked For This, Mengsk', 'description' => 'Win 25 games as Zerg against Terran', 'tier' => 'b', 'category' => 'rivalry', 'secret' => false, 'group' => 'zerg_slayer_terran'],
+    'zerg_slayer_terran_b' => [
+        'name'        => 'You Asked For This, Mengsk',
+        'description' => 'Win 25 games as Zerg against Terran',
+        'tier'        => 'b',
+        'category'    => 'rivalry',
+        'secret'      => false,
+        'group'       => 'zerg_slayer_terran',
+        'lore'        => null,
+    ],
 
-    // SC — Sarah Kerrigan, Queen of Blades, was a Terran before infestation
-    'zerg_slayer_terran_a' => ['name' => 'Sarah Sends Her Regards', 'description' => 'Win 50 games as Zerg against Terran', 'tier' => 'a', 'category' => 'rivalry', 'secret' => false, 'group' => 'zerg_slayer_terran'],
+    'zerg_slayer_terran_a' => [
+        'name'        => 'Sarah Sends Her Regards',
+        'description' => 'Win 50 games as Zerg against Terran',
+        'tier'        => 'a',
+        'category'    => 'rivalry',
+        'secret'      => false,
+        'group'       => 'zerg_slayer_terran',
+        'lore'        => null,
+    ],
 
-    // Star Trek — Borg assimilation catchphrase, perfect for Zerg
-    'zerg_slayer_terran_s' => ['name' => 'Resistance Is Futile', 'description' => 'Win 100 games as Zerg against Terran', 'tier' => 's', 'category' => 'rivalry', 'secret' => false, 'group' => 'zerg_slayer_terran'],
+    'zerg_slayer_terran_s' => [
+        'name'        => 'Resistance Is Futile',
+        'description' => 'Win 100 games as Zerg against Terran',
+        'tier'        => 's',
+        'category'    => 'rivalry',
+        'secret'      => false,
+        'group'       => 'zerg_slayer_terran',
+        'lore' => 'Inspired by the Borg from Star Trek: The Next Generation',
+    ],
 
     // -------------------------------------------------------------------------
     // Race Slayer — Terran vs Zerg
     // -------------------------------------------------------------------------
 
-    // humor — Zerg as pests
-    'terran_slayer_zerg_d' => ['name' => 'Pest Control', 'description' => 'Win 5 games as Terran against Zerg', 'tier' => 'd', 'category' => 'rivalry', 'secret' => false, 'group' => 'terran_slayer_zerg'],
+    'terran_slayer_zerg_d' => [
+        'name'        => 'Pest Control',
+        'description' => 'Win 5 games as Terran against Zerg',
+        'tier'        => 'd',
+        'category'    => 'rivalry',
+        'secret'      => false,
+        'group'       => 'terran_slayer_zerg',
+        'lore'        => null,
+    ],
 
-    // Starship Troopers (1997) — propaganda slogan
-    'terran_slayer_zerg_c' => ['name' => 'The Only Good Bug Is A Dead Bug', 'description' => 'Win 10 games as Terran against Zerg', 'tier' => 'c', 'category' => 'rivalry', 'secret' => false, 'group' => 'terran_slayer_zerg'],
+    'terran_slayer_zerg_c' => [
+        'name'        => 'The Only Good Bug Is A Dead Bug',
+        'description' => 'Win 10 games as Terran against Zerg',
+        'tier'        => 'c',
+        'category'    => 'rivalry',
+        'secret'      => false,
+        'group'       => 'terran_slayer_zerg',
+        'lore'        => 'Starship Troopers (1997) — a propaganda slogan from the in-universe news broadcasts during humanity\'s war with Arachnids.',
+    ],
 
-    // Apocalypse Now (1979) — "I love the smell of napalm in the morning"
-    'terran_slayer_zerg_b' => ['name' => 'I Love The Smell Of Napalm', 'description' => 'Win 25 games as Terran against Zerg', 'tier' => 'b', 'category' => 'rivalry', 'secret' => false, 'group' => 'terran_slayer_zerg'],
+    'terran_slayer_zerg_b' => [
+        'name'        => 'I Love The Smell Of Napalm',
+        'description' => 'Win 25 games as Terran against Zerg',
+        'tier'        => 'b',
+        'category'    => 'rivalry',
+        'secret'      => false,
+        'group'       => 'terran_slayer_zerg',
+        'lore'        => 'Lt. Col. Kilgore on a napalm-scorched beach in Apocalypse Now (1979). Completely unbothered by the chaos. One of cinema\'s most memorable lines.',
+    ],
 
-    // Aliens (1986) — "it's the only way to be sure"
-    'terran_slayer_zerg_a' => ['name' => 'I Say We Nuke The Site From Orbit', 'description' => 'Win 50 games as Terran against Zerg', 'tier' => 'a', 'category' => 'rivalry', 'secret' => false, 'group' => 'terran_slayer_zerg'],
+    'terran_slayer_zerg_a' => [
+        'name'        => 'I Say We Nuke The Site From Orbit',
+        'description' => 'Win 50 games as Terran against Zerg',
+        'tier'        => 'a',
+        'category'    => 'rivalry',
+        'secret'      => false,
+        'group'       => 'terran_slayer_zerg',
+        'lore'        => 'Ripley\'s solution to the Xenomorph problem in Aliens (1986): "Nuke the entire site from orbit. It\'s the only way to be sure."',
+    ],
 
-    // SC — Brood War expansion, the definitive Terran vs Zerg conflict
-    'terran_slayer_zerg_s' => ['name' => 'The Brood War', 'description' => 'Win 100 games as Terran against Zerg', 'tier' => 's', 'category' => 'rivalry', 'secret' => false, 'group' => 'terran_slayer_zerg'],
+    'terran_slayer_zerg_s' => [
+        'name'        => 'The Brood War',
+        'description' => 'Win 100 games as Terran against Zerg',
+        'tier'        => 's',
+        'category'    => 'rivalry',
+        'secret'      => false,
+        'group'       => 'terran_slayer_zerg',
+        'lore'        => null,
+    ],
 
     // -------------------------------------------------------------------------
     // Race Slayer — Terran vs Protoss
     // -------------------------------------------------------------------------
 
-    // SC — Protoss plasma shields, first thing Terran must break
-    'terran_slayer_protoss_d' => ['name' => 'Shield Breaker', 'description' => 'Win 5 games as Terran against Protoss', 'tier' => 'd', 'category' => 'rivalry', 'secret' => false, 'group' => 'terran_slayer_protoss'],
+    'terran_slayer_protoss_d' => [
+        'name'        => 'Shield Breaker',
+        'description' => 'Win 5 games as Terran against Protoss',
+        'tier'        => 'd',
+        'category'    => 'rivalry',
+        'secret'      => false,
+        'group'       => 'terran_slayer_protoss',
+        'lore'        => null,
+    ],
 
-    // Predator (1987) — Dutch discovers the alien can be hurt
-    'terran_slayer_protoss_c' => ['name' => 'If It Bleeds We Can Kill It', 'description' => 'Win 10 games as Terran against Protoss', 'tier' => 'c', 'category' => 'rivalry', 'secret' => false, 'group' => 'terran_slayer_protoss'],
+    'terran_slayer_protoss_c' => [
+        'name'        => 'If It Bleeds We Can Kill It',
+        'description' => 'Win 10 games as Terran against Protoss',
+        'tier'        => 'c',
+        'category'    => 'rivalry',
+        'secret'      => false,
+        'group'       => 'terran_slayer_protoss',
+        'lore'        => 'Dutch (Schwarzenegger) in Predator (1987), after discovering the alien hunter can be wounded. The moment when an unstoppable enemy becomes stoppable.',
+    ],
 
-    // humor — Protoss came from Aiur, should have stayed there
-    'terran_slayer_protoss_b' => ['name' => 'You Should Have Stayed Home', 'description' => 'Win 25 games as Terran against Protoss', 'tier' => 'b', 'category' => 'rivalry', 'secret' => false, 'group' => 'terran_slayer_protoss'],
+    'terran_slayer_protoss_b' => [
+        'name'        => 'You Should Have Stayed Home',
+        'description' => 'Win 25 games as Terran against Protoss',
+        'tier'        => 'b',
+        'category'    => 'rivalry',
+        'secret'      => false,
+        'group'       => 'terran_slayer_protoss',
+        'lore'        => null,
+    ],
 
-    // humor — Terran dismissing Protoss homeworld
-    'terran_slayer_protoss_a' => ['name' => 'Aiur? Never Heard Of It', 'description' => 'Win 50 games as Terran against Protoss', 'tier' => 'a', 'category' => 'rivalry', 'secret' => false, 'group' => 'terran_slayer_protoss'],
+    'terran_slayer_protoss_a' => [
+        'name'        => 'Aiur? Never Heard Of It',
+        'description' => 'Win 50 games as Terran against Protoss',
+        'tier'        => 'a',
+        'category'    => 'rivalry',
+        'secret'      => false,
+        'group'       => 'terran_slayer_protoss',
+        'lore'        => null,
+    ],
 
-    // Latin — "sic transit gloria mundi" (thus passes the glory of the world), adapted for Protoss
-    'terran_slayer_protoss_s' => ['name' => 'Sic Transit Gloria Protoss', 'description' => 'Win 100 games as Terran against Protoss', 'tier' => 's', 'category' => 'rivalry', 'secret' => false, 'group' => 'terran_slayer_protoss'],
+    'terran_slayer_protoss_s' => [
+        'name'        => 'Sic Transit Gloria Protoss',
+        'description' => 'Win 100 games as Terran against Protoss',
+        'tier'        => 's',
+        'category'    => 'rivalry',
+        'secret'      => false,
+        'group'       => 'terran_slayer_protoss',
+        'lore'        => 'Adapted from the Latin phrase "Sic transit gloria mundi" — "Thus passes the glory of the world." ',
+    ],
 
     // -------------------------------------------------------------------------
     // Community
@@ -707,6 +986,7 @@ return [
         'category'    => 'community',
         'secret'      => false,
         'group'       => null,
+        'lore'        => null,
     ],
     'traveler' => [
         'name'        => 'First Contact',
@@ -715,6 +995,7 @@ return [
         'category'    => 'community',
         'secret'      => false,
         'group'       => 'countries',
+        'lore'        => null,
     ],
     'explorer' => [
         'name'        => 'Deep Space',
@@ -723,6 +1004,7 @@ return [
         'category'    => 'community',
         'secret'      => false,
         'group'       => 'countries',
+        'lore'        => null,
     ],
     'globetrotter' => [
         'name'        => 'Sector Commander',
@@ -731,6 +1013,7 @@ return [
         'category'    => 'community',
         'secret'      => false,
         'group'       => 'countries',
+        'lore'        => null,
     ],
     'citizen_of_the_universe' => [
         'name'        => 'Citizen of the Universe',
@@ -739,6 +1022,7 @@ return [
         'category'    => 'community',
         'secret'      => false,
         'group'       => 'countries',
+        'lore'        => null,
     ],
     'koprulu_cartographer' => [
         'name'        => 'Koprulu Cartographer',
@@ -747,8 +1031,8 @@ return [
         'category'    => 'community',
         'secret'      => false,
         'group'       => 'countries',
+        'lore'        => null,
     ],
-    
     'circuit_player' => [
         'name'        => 'Skirmish',
         'description' => 'Five battles fought.',
@@ -756,6 +1040,7 @@ return [
         'category'    => 'community',
         'secret'      => false,
         'group'       => 'tournaments',
+        'lore'        => null,
     ],
     'road_warrior' => [
         'name'        => 'Campaign',
@@ -764,6 +1049,7 @@ return [
         'category'    => 'community',
         'secret'      => false,
         'group'       => 'tournaments',
+        'lore'        => null,
     ],
     'legend_of_the_circuit' => [
         'name'        => 'Warlord',
@@ -772,6 +1058,7 @@ return [
         'category'    => 'community',
         'secret'      => false,
         'group'       => 'tournaments',
+        'lore'        => null,
     ],
     'conqueror' => [
         'name'        => 'Conqueror',
@@ -780,6 +1067,7 @@ return [
         'category'    => 'community',
         'secret'      => false,
         'group'       => 'tournaments',
+        'lore'        => null,
     ],
     'war_boy' => [
         'name'        => 'War Boy',
@@ -788,6 +1076,7 @@ return [
         'category'    => 'community',
         'secret'      => false,
         'group'       => 'tournaments',
+        'lore'        => 'Mad Max: Fury Road (2015). The War Boys are fanatical soldiers who worship Immortan Joe and seek a glorious death in combat, screaming "Witness me!" as they go.',
     ],
 
     // -------------------------------------------------------------------------
@@ -800,6 +1089,7 @@ return [
         'category'    => 'history',
         'secret'      => false,
         'group'       => 'founding',
+        'lore'        => null,
     ],
     'founding_father' => [
         'name'        => 'Founding Father',
@@ -808,6 +1098,7 @@ return [
         'category'    => 'history',
         'secret'      => false,
         'group'       => 'founding',
+        'lore'        => null,
     ],
     'time_traveler' => [
         'name'        => 'Time Traveler',
@@ -816,14 +1107,16 @@ return [
         'category'    => 'history',
         'secret'      => false,
         'group'       => null,
+        'lore'        => null,
     ],
-        'old_breed' => [
+    'old_breed' => [
         'name'        => 'Old Breed',
         'description' => 'Play a game in 2017 or earlier.',
         'tier'        => 'c',
         'category'    => 'history',
         'secret'      => false,
         'group'       => null,
+        'lore' => 'A reference to "With the Old Breed: At Peleliu and Okinawa" (1981) — often considered one of the finest WWII memoirs. Eugene Sledge describes his service with the 1st Marine Division during some of the Pacific War’s harshest fighting. Later adapted into HBO’s "The Pacific," produced by Steven Spielberg and Tom Hanks.',
     ],
     'before_the_plague' => [
         'name'        => 'Before the Plague',
@@ -832,6 +1125,7 @@ return [
         'category'    => 'history',
         'secret'      => false,
         'group'       => null,
+        'lore'        => null,
     ],
     'patient_zero' => [
         'name'        => 'Patient Zero',
@@ -840,6 +1134,7 @@ return [
         'category'    => 'history',
         'secret'      => false,
         'group'       => null,
+        'lore' => 'A reference to the COVID-19 pandemic of 2020.',
     ],
     'plague_survivor' => [
         'name'        => 'Plague Survivor',
@@ -848,6 +1143,7 @@ return [
         'category'    => 'history',
         'secret'      => false,
         'group'       => null,
+        'lore'        => 'A reference to the COVID-19 pandemic of 2020.',
     ],
 
     // -------------------------------------------------------------------------
@@ -860,6 +1156,7 @@ return [
         'category'    => 'drama',
         'secret'      => false,
         'group'       => null,
+        'lore'        => null,
     ],
 
     'against_all_odds_10' => [
@@ -869,6 +1166,7 @@ return [
         'category'    => 'drama',
         'secret'      => false,
         'group'       => 'against_all_odds',
+        'lore'        => null,
     ],
     'against_all_odds' => [
         'name'        => 'Against All Odds',
@@ -877,6 +1175,7 @@ return [
         'category'    => 'drama',
         'secret'      => false,
         'group'       => 'against_all_odds',
+        'lore'        => null,
     ],
     'upset_king' => [
         'name'        => 'Upset King',
@@ -885,13 +1184,12 @@ return [
         'category'    => 'drama',
         'secret'      => false,
         'group'       => null,
+        'lore'        => null,
     ],
 
     // -------------------------------------------------------------------------
     // Calendar
     // -------------------------------------------------------------------------
-    
-
     'night_shift' => [
         'name'        => 'Night Shift',
         'description' => 'The grind begins. 5 active days in a month.',
@@ -899,6 +1197,7 @@ return [
         'category'    => 'calendar',
         'secret'      => false,
         'group'       => 'active_days',
+        'lore'        => null,
     ],
     'no_days_off' => [
         'name'        => 'No Days Off',
@@ -907,6 +1206,7 @@ return [
         'category'    => 'calendar',
         'secret'      => false,
         'group'       => 'active_days',
+        'lore'        => null,
     ],
     'workaholic' => [
         'name'        => 'Workaholic',
@@ -915,6 +1215,7 @@ return [
         'category'    => 'calendar',
         'secret'      => false,
         'group'       => 'active_days',
+        'lore'        => null,
     ],
 
     // -------------------------------------------------------------------------
@@ -927,14 +1228,16 @@ return [
         'category'    => 'prestige',
         'secret'      => false,
         'group'       => null,
+        'lore'        => null,
     ],
-        'early_pressure' => [
+    'early_pressure' => [
         'name'        => 'Early Pressure',
         'description' => 'Deny the expansion. Win your first 3 games in a row.',
         'tier'        => 'b',
         'category'    => 'prestige',
         'secret'      => false,
         'group'       => 'perfect_start',
+        'lore'        => null,
     ],
     'all_in' => [
         'name'        => 'All In',
@@ -943,6 +1246,7 @@ return [
         'category'    => 'prestige',
         'secret'      => false,
         'group'       => 'perfect_start',
+        'lore'        => null,
     ],
     'perfect_start' => [
         'name'        => 'Perfect Start',
@@ -951,6 +1255,7 @@ return [
         'category'    => 'prestige',
         'secret'      => false,
         'group'       => 'perfect_start',
+        'lore'        => null,
     ],
 
     // -------------------------------------------------------------------------
@@ -963,6 +1268,7 @@ return [
         'category'    => 'secret',
         'secret'      => true,
         'group'       => null,
+        'lore'        => null,
     ],
     'valentines' => [
         'name'        => "Valentine's",
@@ -971,6 +1277,7 @@ return [
         'category'    => 'secret',
         'secret'      => true,
         'group'       => null,
+        'lore'        => null,
     ],
     'christmas' => [
         'name'        => 'Christmas',
@@ -979,6 +1286,7 @@ return [
         'category'    => 'secret',
         'secret'      => true,
         'group'       => null,
+        'lore'        => null,
     ],
     'halloween' => [
         'name'        => 'Halloween',
@@ -987,6 +1295,7 @@ return [
         'category'    => 'secret',
         'secret'      => true,
         'group'       => null,
+        'lore'        => null,
     ],
     'sc_birthday' => [
         'name'        => 'StarCraft Birthday',
@@ -995,14 +1304,16 @@ return [
         'category'    => 'secret',
         'secret'      => true,
         'group'       => null,
+        'lore'        => null,
     ],
-        'bw_birthday' => [
+    'bw_birthday' => [
         'name'        => 'Brood War Birthday',
         'description' => 'Play a game on November 30th — Brood War\'s anniversary',
         'tier'        => 'a',
         'category'    => 'secret',
         'secret'      => true,
         'group'       => null,
+        'lore'        => null,
     ],
     'remastered_birthday' => [
         'name'        => 'Remastered Birthday',
@@ -1011,6 +1322,7 @@ return [
         'category'    => 'secret',
         'secret'      => true,
         'group'       => null,
+        'lore'        => null,
     ],
     'mirror_match' => [
         'name'        => 'Mirror Match',
@@ -1019,6 +1331,7 @@ return [
         'category'    => 'secret',
         'secret'      => true,
         'group'       => null,
+        'lore'        => null,
     ],
     'beast_mode' => [
         'name'        => 'Beast Mode',
@@ -1027,6 +1340,7 @@ return [
         'category'    => 'secret',
         'secret'      => true,
         'group'       => null,
+        'lore'        => null,
     ],
     'millennium' => [
         'name'        => 'Y2K',
@@ -1035,6 +1349,7 @@ return [
         'category'    => 'secret',
         'secret'      => true,
         'group'       => null,
+        'lore'        => 'The global panic about whether computers would crash when the year hit 2000. Billions were spent on fixes. On January 1st, almost nothing happened.',
     ],
     'back_to_square_one' => [
         'name'        => 'Back to Square One',
@@ -1043,6 +1358,7 @@ return [
         'category'    => 'secret',
         'secret'      => true,
         'group'       => null,
+        'lore'        => null,
     ],
     'bad_day' => [
         'name'        => "It's Just a Bad Day",
@@ -1051,6 +1367,7 @@ return [
         'category'    => 'secret',
         'secret'      => true,
         'group'       => 'loss_streak',
+        'lore'        => null,
     ],
     'different_game' => [
         'name'        => 'Maybe Try a Different Game?',
@@ -1059,6 +1376,7 @@ return [
         'category'    => 'secret',
         'secret'      => true,
         'group'       => 'loss_streak',
+        'lore'        => null,
     ],
     'dedicated_to_the_cause' => [
         'name'        => 'Dedicated to the Cause',
@@ -1067,14 +1385,16 @@ return [
         'category'    => 'secret',
         'secret'      => true,
         'group'       => 'loss_streak',
+        'lore'        => null,
     ],
     'how' => [
         'name'        => 'How?!',
-        'description' => 'Lose to a player rated 500+ lower than you (both players must have 30+ games)',        
+        'description' => 'Lose to a player rated 500+ lower than you (both players must have 30+ games)',
         'tier'        => 'd',
         'category'    => 'secret',
         'secret'      => true,
         'group'       => null,
+        'lore'        => null,
     ],
     'rookie_mistake' => [
         'name'        => 'Rookie Mistake',
@@ -1083,6 +1403,7 @@ return [
         'category'    => 'secret',
         'secret'      => true,
         'group'       => null,
+        'lore'        => null,
     ],
 
 ];
