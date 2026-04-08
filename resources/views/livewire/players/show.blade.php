@@ -293,6 +293,9 @@
                             background: 'transparent',
                             toolbar: { show: false },
                             animations: { enabled: false },
+                            zoom: {
+        enabled: false  // disables scroll-to-zoom, restores page scroll
+    },
                         },
                         theme: {
                             mode: document.documentElement.classList.contains('dark') ? 'dark' : 'light',
@@ -360,6 +363,9 @@
                             height: 300,
                             toolbar: { show: false },
                             background: 'transparent',
+                            zoom: {
+        enabled: false  // disables scroll-to-zoom, restores page scroll
+    },
                         },
                         theme: {
                             mode: document.documentElement.classList.contains('dark') ? 'dark' : 'light',

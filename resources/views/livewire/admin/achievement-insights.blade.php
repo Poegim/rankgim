@@ -330,7 +330,10 @@
                 parentHeightOffset: 0,
                 toolbar: {
                     show: true
-                }
+                },
+                zoom: {
+        enabled: false  // disables scroll-to-zoom, restores page scroll
+    },
             },
             colors: ['#6366f1'],
             plotOptions: {

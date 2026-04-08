@@ -64,6 +64,7 @@ $categoryBorders = [
     'history'   => '#888780',
     'drama'     => '#F0997B',
     'calendar'  => '#85B7EB',
+    'precision' => '#97C459',
     'prestige'  => '#FAC775',
     'secret'    => '#534AB7',
 ];
@@ -79,6 +80,7 @@ $categoryLabels = [
     'history'   => '🕰️ History',
     'drama'     => '🎭 Drama',
     'calendar'  => '📆 Calendar',
+    'precision' => '🎯 Precision',
     'prestige'  => '💀 Prestige',
     'secret'    => '🔒 Secret',
 ];
@@ -102,7 +104,7 @@ $tiers      = ['s', 'a', 'b', 'c', 'd'];
         </div>
     </div>
 
-    {{-- Filters + sort --}}
+    {{-- Filters + sort bar --}}
     <div class="flex flex-wrap items-center gap-2">
 
         {{-- Category filter --}}
@@ -160,73 +162,26 @@ $tiers      = ['s', 'a', 'b', 'c', 'd'];
     <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-2">
 
         @forelse($this->achievements as $a)
-        @php
-            $t      = $tierStyles[$a['tier']] ?? $tierStyles['d'];
-            $border = $a['masked'] ? '#534AB7' : ($categoryBorders[$a['category']] ?? '#52525b');
-        @endphp
 
-        <div
-            class="rounded-xl p-3 flex flex-col gap-1.5 relative overflow-hidden {{ $a['masked'] ? 'opacity-60' : '' }}"
-            style="{{ $t['card'] }} border: 1.5px solid {{ $border }};"
-        >
-            {{-- Top bar --}}
-            <div class="absolute top-0 left-0 right-0 h-1" style="{{ $t['bar'] }}"></div>
-
-            {{-- Tier badge --}}
-            <div class="flex items-center justify-between">
-                <div class="w-6 h-6 rounded-md flex items-center justify-center text-xs font-bold shrink-0"
-                     style="{{ $t['tier'] }}">
-                    {{ $t['label'] }}
-                </div>
-                @if($a['masked'])
-                    <span class="text-xs" style="color: #534AB7;">🔒</span>
-                @endif
-            </div>
-
-            {{-- Category --}}
-            <span class="text-xs font-semibold uppercase tracking-widest" style="{{ $t['cat'] }}">
-                {{ $categoryLabels[$a['category']] ?? $a['category'] }}
-            </span>
-
-            {{-- Name --}}
-            <p class="text-xs font-semibold leading-tight" style="{{ $t['name'] }}">
-                {{ $a['name'] }}
-            </p>
-
-            {{-- Description --}}
-            @if($a['description'])
-                <p class="text-xs leading-relaxed flex-1" style="{{ $t['desc'] }}">
-                    {{ $a['description'] }}
-                </p>
-            @elseif($a['masked'])
-                <p class="text-xs italic" style="color: #534AB7;">Hidden achievement</p>
-            @endif
-
-            {{-- Owners count + "who has it" button --}}
-            <div class="mt-auto pt-1.5 border-t flex items-center justify-between gap-1"
-                 style="{{ $t['date'] }}; border-color: {{ $border }}30;">
-                <span class="text-xs font-mono">
-                    {{ $a['owners_count'] }} {{ $a['owners_count'] === 1 ? 'player' : 'players' }}
-                    @if($this->totalPlayers > 0)
-                        · {{ $a['pct'] }}%
-                    @endif
-                </span>
-                @if($a['owners_count'] > 0 && $this->isAdmin)
+            {{-- Pass show-holders-btn=true so the slot (who? button) is rendered --}}
+            <x-achievement-card
+                :achievement="$a"
+                :total-players="$this->totalPlayers"
+                :show-holders-btn="$this->isAdmin"
+            >
+                {{-- "who?" button lives here as a slot — wire:click stays in the Livewire context --}}
                 <button
                     wire:click="openHolders('{{ $a['key'] }}')"
                     class="text-xs underline underline-offset-2 opacity-60 hover:opacity-100 transition-opacity shrink-0"
-                    style="{{ $t['date'] }}"
+                    style="color: inherit;"
                     title="See who has this"
                 >who?</button>
-                @endif
-            </div>
-
-        </div>
+            </x-achievement-card>
 
         @empty
-        <div class="col-span-full rounded-xl border border-zinc-700/60 bg-zinc-800/40 p-8 text-center">
-            <p class="text-zinc-500">No achievements match the current filters.</p>
-        </div>
+            <div class="col-span-full rounded-xl border border-zinc-700/60 bg-zinc-800/40 p-8 text-center">
+                <p class="text-zinc-500">No achievements match the current filters.</p>
+            </div>
         @endforelse
 
     </div>
@@ -234,9 +189,11 @@ $tiers      = ['s', 'a', 'b', 'c', 'd'];
     {{-- Holders modal --}}
     @if($holdersKey)
     @php
-        $def = config('achievements')[$holdersKey] ?? null;
+        $def      = config('achievements')[$holdersKey] ?? null;
         $isSecret = $def['secret'] ?? false;
-        $holdersList = $this->holders;
+        $defName  = ($isSecret && !$this->isAdmin) ? '???' : ($def['name'] ?? $holdersKey);
+        $modalTier = $def['tier'] ?? 'd';
+        $mt       = $tierStyles[$modalTier] ?? $tierStyles['d'];
     @endphp
     <div
         class="fixed inset-0 z-50 flex items-center justify-center p-4"
@@ -249,71 +206,54 @@ $tiers      = ['s', 'a', 'b', 'c', 'd'];
             wire:click="closeHolders"
         ></div>
 
-        {{-- Modal --}}
-        <div class="relative z-10 w-full max-w-md rounded-2xl border border-zinc-700 bg-zinc-900 shadow-2xl overflow-hidden">
+        {{-- Modal panel --}}
+        <div class="relative z-10 w-full max-w-md rounded-2xl p-5 flex flex-col gap-4 overflow-hidden"
+             style="{{ $mt['card'] }} border: 1.5px solid {{ $categoryBorders[$def['category'] ?? ''] ?? '#52525b' }};">
+
+            {{-- Top bar --}}
+            <div class="absolute top-0 left-0 right-0 h-1" style="{{ $mt['bar'] }}"></div>
 
             {{-- Modal header --}}
-            <div class="flex items-center justify-between px-5 py-4 border-b border-zinc-800">
+            <div class="flex items-start justify-between gap-2 pt-1">
                 <div>
-                    @if($def && (!$isSecret || $this->isAdmin))
-                        <p class="font-bold text-white">{{ $def['name'] }}</p>
-                        <p class="text-xs text-zinc-400 mt-0.5">{{ $def['description'] }}</p>
-                    @else
-                        <p class="font-bold text-purple-400">🔒 Hidden achievement</p>
+                    <div class="flex items-center gap-2 mb-1">
+                        <span class="w-6 h-6 rounded-md flex items-center justify-center text-xs font-bold"
+                              style="{{ $mt['tier'] }}">{{ strtoupper($modalTier) }}</span>
+                        <span class="text-xs font-semibold uppercase tracking-widest" style="{{ $mt['cat'] }}">
+                            {{ $categoryLabels[$def['category'] ?? ''] ?? '' }}
+                        </span>
+                    </div>
+                    <p class="font-bold text-base" style="{{ $mt['name'] }}">{{ $defName }}</p>
+                    @if($def['description'] ?? false)
+                        <p class="text-xs mt-0.5" style="{{ $mt['desc'] }}">{{ $def['description'] }}</p>
                     @endif
                 </div>
-                <button
-                    wire:click="closeHolders"
-                    class="text-zinc-500 hover:text-white transition-colors ml-4 shrink-0"
-                >
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-                    </svg>
-                </button>
+                <button wire:click="closeHolders"
+                        class="text-zinc-500 hover:text-zinc-200 transition-colors shrink-0 mt-0.5"
+                        title="Close">✕</button>
             </div>
 
-            {{-- Holders list with custom scrollbar and fade --}}
-            <div class="relative">
-                {{-- Fade at the bottom to hint there's more content --}}
-                <div class="absolute bottom-0 left-0 right-0 h-8 bg-gradient-to-t from-zinc-900 to-transparent pointer-events-none z-10"></div>
-
-                <div
-                    class="max-h-72 overflow-y-auto divide-y divide-zinc-800/60"
-                    style="scrollbar-width: thin; scrollbar-color: #3f3f46 transparent;"
-                >
-                    <style>
-                        .holders-scroll::-webkit-scrollbar { width: 4px; }
-                        .holders-scroll::-webkit-scrollbar-track { background: transparent; }
-                        .holders-scroll::-webkit-scrollbar-thumb { background: #3f3f46; border-radius: 99px; }
-                        .holders-scroll::-webkit-scrollbar-thumb:hover { background: #52525b; }
-                    </style>
-                    @forelse($holdersList as $i => $holder)
-                    <a
-                        href="{{ route('players.show', ['id' => $holder['id'], 'slug' => $holder['slug']]) }}"
-                        wire:navigate
-                        wire:click="closeHolders"
-                        class="holders-scroll flex items-center gap-3 px-5 py-2.5 hover:bg-zinc-800/60 transition-colors"
-                    >
-                        {{-- Position number --}}
-                        <span class="text-xs font-mono text-zinc-600 w-5 text-right shrink-0">{{ $i + 1 }}</span>
-                        <img
-                            src="{{ asset('images/country_flags/' . strtolower($holder['country_code']) . '.svg') }}"
-                            class="w-7 h-5 rounded-sm shrink-0"
-                        >
-                        <span class="font-semibold text-sm text-white flex-1">{{ $holder['name'] }}</span>
-                        <span class="text-xs font-mono text-zinc-500 shrink-0">
-                            {{ \Carbon\Carbon::parse($holder['unlocked_at'])->format('M Y') }}
-                        </span>
-                    </a>
-                    @empty
-                    <div class="px-5 py-6 text-center text-zinc-500 text-sm">No one has this yet.</div>
-                    @endforelse
-                </div>
-            </div>
-
-            {{-- Modal footer --}}
-            <div class="px-5 py-3 border-t border-zinc-800 text-xs text-zinc-500">
-                {{ $holdersList->count() }} {{ $holdersList->count() === 1 ? 'player' : 'players' }} unlocked this
+            {{-- Holders list --}}
+            <div class="flex flex-col gap-1 max-h-72 overflow-y-auto pr-1">
+                @forelse($this->holders as $h)
+                <a href="{{ route('players.show', ['id' => $h['id'], 'slug' => $h['slug']]) }}"
+                   wire:navigate
+                   class="flex items-center justify-between rounded-lg px-3 py-2 hover:bg-white/5 transition-colors">
+                    <div class="flex items-center gap-2">
+                        @if($h['country_code'])
+                            <img src="https://flagcdn.com/w40/{{ strtolower($h['country_code']) }}.png"
+                                 class="w-5 h-3.5 rounded-sm object-cover"
+                                 alt="{{ $h['country_code'] }}">
+                        @endif
+                        <span class="text-sm font-medium text-white">{{ $h['name'] }}</span>
+                    </div>
+                    <span class="text-xs font-mono" style="{{ $mt['date'] }}">
+                        {{ \Carbon\Carbon::parse($h['unlocked_at'])->format('M Y') }}
+                    </span>
+                </a>
+                @empty
+                    <p class="text-sm text-zinc-500 text-center py-4">No holders yet.</p>
+                @endforelse
             </div>
 
         </div>

@@ -8,6 +8,10 @@
             <a href="{{ route('admin.achievement-insights') }}" class=" my-6 rounded bg-amber-600 py-2 px-6"> View Insights
             </a>
         </div>
+        <div class="my-4">
+            <a href="{{ route('admin.achievements.index') }}" class=" my-6 rounded bg-amber-600 py-2 px-6"> View Achivements
+            </a>
+        </div>
         </div>
 
     <div

@@ -446,7 +446,10 @@ document.addEventListener('DOMContentLoaded', function () {
     const gridColor = isDark ? '#27272a' : '#e4e4e7';
 
     const baseOptions = {
-        chart: { toolbar: { show: false }, fontFamily: 'DM Sans, inherit' },
+        chart: { toolbar: { show: false }, fontFamily: 'DM Sans, inherit', zoom: {
+                enabled: false  // disables scroll-to-zoom, restores page scroll
+            },
+         },
         dataLabels: { enabled: false },
         grid: { borderColor: gridColor },
         xaxis: { labels: { style: { colors: textColor } } },
@@ -456,7 +459,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
     new ApexCharts(document.querySelector('#chart-games-year'), {
         ...baseOptions,
-        chart: { ...baseOptions.chart, type: 'bar', height: 224 },
+        chart: { ...baseOptions.chart, type: 'bar', height: 224, zoom: {
+        enabled: false  // disables scroll-to-zoom, restores page scroll
+    }, },
         series: [{ name: 'Games', data: @json($this->gamesPerYear->pluck('total')) }],
         xaxis: { ...baseOptions.xaxis, categories: @json($this->gamesPerYear->pluck('year')) },
         colors: ['#6366f1'],
@@ -464,7 +469,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
     new ApexCharts(document.querySelector('#chart-players-year'), {
         ...baseOptions,
-        chart: { ...baseOptions.chart, type: 'bar', height: 224 },
+        chart: { ...baseOptions.chart, type: 'bar', height: 224, zoom: {
+        enabled: false  // disables scroll-to-zoom, restores page scroll
+    }, },
         series: [{ name: 'Players', data: @json($this->activePlayersPerYear->pluck('total')) }],
         xaxis: { ...baseOptions.xaxis, categories: @json($this->activePlayersPerYear->pluck('year')) },
         colors: ['#8b5cf6'],
@@ -472,7 +479,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
     new ApexCharts(document.querySelector('#chart-spread-trend'), {
         ...baseOptions,
-        chart: { ...baseOptions.chart, type: 'line', height: 224 },
+        chart: { ...baseOptions.chart, type: 'line', height: 224, zoom: {
+        enabled: false  // disables scroll-to-zoom, restores page scroll
+    }, },
         stroke: { curve: 'smooth', width: [2, 2, 2] },
         series: [
             {

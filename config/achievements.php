@@ -683,7 +683,7 @@ return [
         'category'    => 'rivalry',
         'secret'      => false,
         'group'       => 'protoss_slayer_zerg',
-        'lore' => 'Reference to the iconic scene in Tropic Thunder (2008) where Tom Cruise as Les Grossman declares, "We don’t negotiate with terrorists."',
+        'lore'        => 'Reference to the iconic scene in Tropic Thunder (2008) where Tom Cruise as Les Grossman declares, "We don’t negotiate with terrorists."',
     ],
 
     'protoss_slayer_zerg_a' => [
@@ -703,7 +703,7 @@ return [
         'category'    => 'rivalry',
         'secret'      => false,
         'group'       => 'protoss_slayer_zerg',
-        'lore'        => 'Riffs on MacArthur\'s words after Japan\'s surrender: "The guns are silent. A great tragedy has ended." Here, it\'s the Zerg claws that fall silent.',
+        'lore'        => 'Riffs on MacArthur\'s words after Japan\'s surrender: "The guns are silent. A great tragedy has ended."',
     ],
 
     // -------------------------------------------------------------------------
@@ -1125,7 +1125,7 @@ return [
         'category'    => 'history',
         'secret'      => false,
         'group'       => null,
-        'lore'        => null,
+        'lore' => 'A reference to the COVID-19 pandemic of 2020.',
     ],
     'patient_zero' => [
         'name'        => 'Patient Zero',

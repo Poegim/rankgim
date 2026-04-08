@@ -46,8 +46,7 @@ Route::get('/countries/{code1}-vs-{code2}', CountriesCompare::class)->name('coun
 // History route
 Route::get('/history', [HistoryController::class, 'index'])->name('history.index');
 
-// Achievements browser
-Route::get('/achievements', AchievementsBrowser::class)->name('achievements.index');
+
 
 // Games route
 Route::get('/games', fn() => view('games.index'))->name('games.index');
@@ -67,8 +66,13 @@ Route::get('/events', App\Livewire\Events\Index::class)->name('events.index');
 
 // Admin routes with middleware for authentication and admin access
 Route::middleware(['auth', 'verified',  App\Http\Middleware\EnsureUserIsAdmin::class])->prefix('admin')->name('admin.')->group(function () {
+    // Achievements browser
+    Route::get('/achievements', AchievementsBrowser::class)->name('achievements.index');
     Route::get('/', fn() => view('admin.index'))->name('index');
     Route::get('/achievement-insights', \App\Livewire\Admin\AchievementInsights::class)->name('achievement-insights');
+
+
+
 });
 
 

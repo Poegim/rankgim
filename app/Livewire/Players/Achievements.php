@@ -26,6 +26,7 @@ class Achievements extends Component
                     'name'         => $def['name'],
                     'description'  => $def['description'],
                     'tier'         => $achievement->tier,
+                    'lore'         => $def['lore'] ?? null,
                     'category'     => $def['category'],
                     'secret'       => $def['secret'],
                     'group'        => $def['group'] ?? null,

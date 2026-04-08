@@ -66,9 +66,7 @@
                         {{ __('Games') }}
                     </flux:sidebar.item>
 
-                    <flux:sidebar.item href="{{ route('achievements.index') }}" wire:navigate icon="sparkles" :current="request()->routeIs('achievements.index')">
-                        Achievements
-                    </flux:sidebar.item>
+
 
 
 
