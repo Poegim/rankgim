@@ -21,9 +21,17 @@ class SendEventReminderJob implements ShouldQueue
     public function handle(): void
     {
         User::whereNotNull('email')
-            ->where('event_reminders', true)
-            ->each(function ($user) {
-                Mail::to($user->email)->send(new EventReminderMail($this->event));
+        ->where('event_reminders', true)
+        ->where(function ($query) {
+            // Filter by type preference
+            if ($this->event->isStream()) {
+                $query->where('event_reminders_stream', true);
+            } else {
+                $query->where('event_reminders_open', true);
+            }
+        })
+        ->each(function ($user) {
+            Mail::to($user->email)->send(new EventReminderMail($this->event));
         });
 
         $this->event->update(['reminder_sent_at' => now()]);

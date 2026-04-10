@@ -10,6 +10,7 @@ class Event extends Model
 {
     protected $fillable = [
         'name',
+        'type',
         'description',
         'starts_at',
         'timezone',
@@ -38,6 +39,21 @@ class Event extends Model
         'discord' => ['label' => 'Discord', 'color' => '#5865f2'],
         'forum' => ['label' => 'Forum', 'color' => '#6b7280'],
         'other' => ['label' => 'Link', 'color' => '#6b7280'],
+    ];
+
+    public const TYPES = [
+        'stream' => [
+            'label'       => 'Stream / Watch',
+            'badge'       => 'Stream',
+            'color'       => '#9146ff',
+            'description' => 'Live stream or tournament to watch',
+        ],
+        'open' => [
+            'label'       => 'Open Tournament',
+            'badge'       => 'Open',
+            'color'       => '#f59e0b',
+            'description' => 'Open tournament — register and play',
+        ],
     ];
 
     
@@ -78,6 +94,24 @@ class Event extends Model
     public function isUpcoming(): bool
     {
         return $this->starts_at->isFuture();
+    }
+
+    public function isStream(): bool
+    {
+        return $this->type === 'stream';
+    }
+
+    public function isOpen(): bool
+    {
+        return $this->type === 'open';
+    }
+
+    /**
+     * Registration is open for open events until they start.
+     */
+    public function isRegistrationOpen(): bool
+    {
+        return $this->isOpen() && $this->isUpcoming();
     }
 
     /**

@@ -16,14 +16,25 @@
             @foreach($this->upcomingEvents as $event)
             <div class="flex items-center justify-between py-2.5 gap-4">
                 <div class="min-w-0">
-                    <p class="text-sm font-semibold text-zinc-800 dark:text-white truncate">{{ $event->name }}</p>
+                    <div class="flex items-center gap-1.5">
+                        {{-- Type badge --}}
+                        @if($event->isStream())
+                        <span class="shrink-0 px-1.5 py-0.5 rounded text-xs font-medium bg-purple-500/15 text-purple-300 border border-purple-500/25">
+                            Stream
+                        </span>
+                        @else
+                        <span class="shrink-0 px-1.5 py-0.5 rounded text-xs font-medium bg-amber-500/15 text-amber-300 border border-amber-500/25">
+                            Open
+                        </span>
+                        @endif
+                        <p class="text-sm font-semibold text-zinc-800 dark:text-white truncate">{{ $event->name }}</p>
+                    </div>
                     @if($event->description)
                     <p class="text-xs text-zinc-500 truncate mt-0.5">{{ $event->description }}</p>
                     @endif
                 </div>
         <div class="shrink-0 text-right">
-            <p class="text-base font-mono font-bold text-amber-400 tabular-nums"
-                x-data="{
+            <p class="{{ $event->isStream() ? 'text-purple-300' : 'text-amber-400' }} text-base font-mono font-bold tabular-nums"                x-data="{
                     target: {{ $event->starts_at->timestamp }},
                     d: 0, h: 0, m: 0, s: 0,
                     init() { this.tick(); setInterval(() => this.tick(), 1000); },

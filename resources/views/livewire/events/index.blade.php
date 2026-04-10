@@ -4,12 +4,12 @@
         <div>
             <flux:heading size="xl">Events</flux:heading>
             <flux:subheading>
-                Tournaments, showmatches & community events
+                Tournaments, showmatches &amp; community events
             </flux:subheading>
         </div>
 
         <div class="flex items-center gap-3">
-            {{-- View toggle --}}
+            {{-- Time view toggle --}}
             <div class="flex rounded-lg overflow-hidden border border-zinc-700">
                 <button wire:click="setView('upcoming')"
                     class="px-3 py-1.5 text-sm transition-colors {{ $view === 'upcoming' ? 'bg-zinc-700 text-white' : 'text-zinc-400 hover:text-white' }}">
@@ -29,11 +29,49 @@
             <button wire:click="openAddModal"
                 class="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium rounded-lg bg-amber-500/10 text-amber-400 border border-amber-500/20 hover:bg-amber-500/20 transition-colors">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                </svg>
                 Add Event
             </button>
             @endauth
         </div>
+    </div>
+
+    {{-- Type filter tabs: All / Stream / Open --}}
+    <div class="flex gap-2 mb-6">
+        <button wire:click="setTypeFilter('all')"
+            class="px-4 py-1.5 rounded-full text-sm font-medium transition-colors border
+                {{ $typeFilter === 'all'
+                    ? 'bg-zinc-700 text-white border-zinc-600'
+                    : 'text-zinc-400 border-zinc-700 hover:text-white hover:border-zinc-500' }}">
+            All
+        </button>
+        {{-- Stream tab — purple accent --}}
+        <button wire:click="setTypeFilter('stream')"
+            class="flex items-center gap-1.5 px-4 py-1.5 rounded-full text-sm font-medium transition-colors border
+                {{ $typeFilter === 'stream'
+                    ? 'bg-purple-500/20 text-purple-300 border-purple-500/40'
+                    : 'text-zinc-400 border-zinc-700 hover:text-purple-300 hover:border-purple-500/30' }}">
+            {{-- TV/stream icon --}}
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M15 10l4.553-2.277A1 1 0 0121 8.723v6.554a1 1 0 01-1.447.894L15 14M3 8a1 1 0 011-1h10a1 1 0 011 1v8a1 1 0 01-1 1H4a1 1 0 01-1-1V8z" />
+            </svg>
+            Stream
+        </button>
+        {{-- Open tab — amber accent --}}
+        <button wire:click="setTypeFilter('open')"
+            class="flex items-center gap-1.5 px-4 py-1.5 rounded-full text-sm font-medium transition-colors border
+                {{ $typeFilter === 'open'
+                    ? 'bg-amber-500/20 text-amber-300 border-amber-500/40'
+                    : 'text-zinc-400 border-zinc-700 hover:text-amber-300 hover:border-amber-500/30' }}">
+            {{-- Trophy icon --}}
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />
+            </svg>
+            Open
+        </button>
     </div>
 
     {{-- Timeline --}}
@@ -41,7 +79,8 @@
     <div class="text-center py-16 text-zinc-500">
         <svg class="w-12 h-12 mx-auto mb-3 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
-                d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+                d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+        </svg>
         <p class="text-lg">No {{ $view === 'past' ? 'past' : 'upcoming' }} events</p>
         @auth
         <button wire:click="openAddModal" class="mt-3 text-sm text-amber-400 hover:text-amber-300">Add the first
@@ -50,7 +89,7 @@
     </div>
     @else
     <div class="relative">
-        {{-- Timeline line --}}
+        {{-- Timeline vertical line --}}
         <div class="absolute left-[19px] top-0 bottom-0 w-px bg-zinc-700/50 hidden sm:block"></div>
 
         @foreach($this->groupedEvents as $month => $events)
@@ -65,141 +104,152 @@
 
         {{-- Events in this month --}}
         @foreach($events as $event)
-        @php $isPast = $event->isPast(); @endphp
+        @php
+            $isPast   = $event->isPast();
+            $isStream = $event->isStream();
+            $isOpen   = $event->isOpen();
+        @endphp
         <div class="relative sm:pl-14 mb-3" wire:key="event-{{ $event->id }}">
-            {{-- Timeline dot --}}
+            {{-- Timeline dot — purple for stream, amber for open --}}
             <div class="absolute left-[15px] top-5 w-[9px] h-[9px] rounded-full hidden sm:block
-                            {{ $isPast ? 'bg-zinc-600' : 'bg-amber-400' }}">
+                {{ $isPast
+                    ? 'bg-zinc-600'
+                    : ($isStream ? 'bg-purple-400' : 'bg-amber-400') }}">
             </div>
 
             <div class="rounded-xl border transition-colors
-                            {{ $isPast
-                                ? 'bg-zinc-800/30 border-zinc-700/50 opacity-75'
-                                : 'bg-zinc-800/50 border-zinc-700/50 hover:border-zinc-600' }}">
+                {{ $isPast
+                    ? 'bg-zinc-800/40 border-zinc-700/40'
+                    : ($isStream
+                        ? 'bg-zinc-800/80 border-purple-500/20 hover:border-purple-500/40'
+                        : 'bg-zinc-800/80 border-amber-500/20 hover:border-amber-500/40') }}
+                p-4">
 
-                <div class="p-4">
-                    <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-2">
-                        <div class="flex flex-col sm:flex-row justify-between gap-3 w-full min-w-0">
-                            {{-- Left: name / description / links --}}
-                            <div class="grid gap-2 min-w-0">
-                                <div class="flex items-center gap-2 min-w-0">
-                                    <h3 class="font-semibold text-white truncate">{{ $event->name }}</h3>
-                                    @if($event->is_online)
-                                    <span class="text-xs text-zinc-500 shrink-0">Online</span>
-                                    @else
-                                    <span class="text-xs text-zinc-500 shrink-0">📍 {{ $event->location }}</span>
-                                    @endif
-                                </div>
-                                <div>
-                                    @if($event->description)
-                                    <p class="mt-2 text-sm text-zinc-400 line-clamp-2">{{ $event->description }}</p>
-                                    @endif
-                                </div>
-                                {{-- External links --}}
-                                @if($event->hasLinks())
-                                <div class="flex flex-wrap gap-1.5 sm:flex-nowrap">
-                                    @foreach($event->parsedLinks() as $link)
-                                    <a href="{{ $link['url'] }}" target="_blank" rel="noopener noreferrer"
-                                        class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-medium transition-all hover:scale-105"
-                                        style="background: {{ $link['color'] }}15; color: {{ $link['color'] }}; border: 1px solid {{ $link['color'] }}33;">
-                                        @switch($link['type'])
-                                        @case('twitch')
-                                        <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="currentColor">
-                                            <path
-                                                d="M11.571 4.714h1.715v5.143H11.57zm4.715 0H18v5.143h-1.714zM6 0L1.714 4.286v15.428h5.143V24l4.286-4.286h3.428L22.286 12V0zm14.571 11.143l-3.428 3.428h-3.429l-3 3v-3H6.857V1.714h13.714z" />
-                                        </svg>
-                                        @break
-                                        @case('challonge')
-                                        <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="currentColor">
-                                            <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" /></svg>
-                                        @break
-                                        @case('youtube')
-                                        <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="currentColor">
-                                            <path
-                                                d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z" />
-                                        </svg>
-                                        @break
-                                        @case('facebook')
-                                        <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="currentColor">
-                                            <path
-                                                d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
-                                        </svg>
-                                        @break
-                                        @case('discord')
-                                        <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="currentColor">
-                                            <path
-                                                d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994a.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z" />
-                                        </svg>
-                                        @break
-                                        @default
-                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                                        </svg>
-                                        @endswitch
-                                        {{ $link['label'] ?: ucfirst($link['type']) }}
-                                    </a>
-                                    @endforeach
-                                </div>
-                                @endif
-                            </div>
+                {{-- Top row: type badge + live badge + name --}}
+                <div class="flex items-start justify-between gap-3">
+                    <div class="flex items-center gap-2 flex-wrap min-w-0">
 
-{{-- Right: dates + countdown --}}
-<div class="flex flex-col gap-1 shrink-0 items-end">
-    {{-- Countdown - big and visible --}}
-    @if(!$isPast)
-    <div class="text-xl font-mono font-bold text-amber-400 tabular-nums"
-        x-data="{
-            target: {{ $event->starts_at->timestamp }},
-            d: 0, h: 0, m: 0, s: 0,
-            init() { this.tick(); setInterval(() => this.tick(), 1000); },
-            tick() {
-                const diff = this.target - Math.floor(Date.now() / 1000);
-                if (diff <= 0) { this.d = this.h = this.m = this.s = 0; return; }
-                this.d = Math.floor(diff / 86400);
-                this.h = Math.floor((diff % 86400) / 3600);
-                this.m = Math.floor((diff % 3600) / 60);
-                this.s = diff % 60;
-            }
-        }">
-        <span x-show="d > 0" x-text="d + 'd '"></span><span x-text="String(h).padStart(2,'0') + 'h ' + String(m).padStart(2,'0') + 'm ' + String(s).padStart(2,'0') + 's'"></span>
-    </div>
-    @endif
+                        {{-- Type badge --}}
+                        @if($isStream)
+                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium
+                            bg-purple-500/15 text-purple-300 border border-purple-500/25">
+                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M15 10l4.553-2.277A1 1 0 0121 8.723v6.554a1 1 0 01-1.447.894L15 14M3 8a1 1 0 011-1h10a1 1 0 011 1v8a1 1 0 01-1 1H4a1 1 0 01-1-1V8z" />
+                            </svg>
+                            Stream
+                        </span>
+                        @else
+                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium
+                            bg-amber-500/15 text-amber-300 border border-amber-500/25">
+                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />
+                            </svg>
+                            Open
+                        </span>
+                        @endif
 
-    {{-- Dates --}}
-    <div class="flex flex-col gap-1 text-sm font-mono mt-1">
-        @foreach($event->displayDates() as $dt)
-        <div class="text-zinc-500 whitespace-nowrap text-right">
-            {{ $dt['datetime'] }} {{ $dt['label'] }}
-        </div>
-        @endforeach
-    </div>
-</div>
-                        </div>
-
-
+                        <h3 class="font-semibold text-white truncate">{{ $event->name }}</h3>
                     </div>
 
-                    {{-- Edit/Delete for owner or admin/mod --}}
-                    @auth
-                    @if(auth()->id() === $event->created_by || auth()->user()->canManageGames())
-                    <div class="flex items-center gap-2 mt-3 pt-3 border-t border-zinc-700/30">
-                        <button wire:click="openEditModal({{ $event->id }})"
-                            class="text-xs text-zinc-500 hover:text-zinc-300 transition-colors">
-                            Edit
-                        </button>
-                        <span class="text-zinc-700">·</span>
-                        <button wire:click="$set('confirmingDeleteId', {{ $event->id }})"
-                            class="text-xs text-zinc-500 hover:text-red-400 transition-colors">
-                            Delete
-                        </button>
-                        <span class="ml-auto text-xs text-zinc-600">
-                            by {{ $event->user?->name ?? 'unknown' }}
-                        </span>
+                    {{-- Countdown (upcoming only) --}}
+                    @if(!$isPast)
+                    <div class="text-sm font-mono font-bold shrink-0
+                        {{ $isStream ? 'text-purple-300' : 'text-amber-300' }}"
+                        x-data="{
+                            target: {{ $event->starts_at->timestamp }},
+                            d: 0, h: 0, m: 0, s: 0,
+                            init() { this.tick(); setInterval(() => this.tick(), 1000); },
+                            tick() {
+                                const diff = this.target - Math.floor(Date.now() / 1000);
+                                if (diff <= 0) { this.d = this.h = this.m = this.s = 0; return; }
+                                this.d = Math.floor(diff / 86400);
+                                this.h = Math.floor((diff % 86400) / 3600);
+                                this.m = Math.floor((diff % 3600) / 60);
+                                this.s = diff % 60;
+                            }
+                        }">
+                        <span x-show="d > 0" x-text="d + 'd '"></span><span
+                            x-text="String(h).padStart(2,'0') + 'h ' + String(m).padStart(2,'0') + 'm ' + String(s).padStart(2,'0') + 's'"></span>
                     </div>
                     @endif
-                    @endauth
                 </div>
+
+                {{-- Description --}}
+                @if($event->description)
+                <p class="text-sm text-zinc-400 mt-2 leading-relaxed">{{ $event->description }}</p>
+                @endif
+
+                {{-- Date/time row --}}
+                <div class="flex flex-wrap gap-x-4 gap-y-1 mt-3">
+                    @foreach($event->displayDates() as $dt)
+                    <span class="text-xs font-mono text-zinc-500 whitespace-nowrap">
+                        {{ $dt['datetime'] }} <span class="text-zinc-600">{{ $dt['label'] }}</span>
+                    </span>
+                    @endforeach
+                </div>
+
+                {{-- Links row --}}
+                <div class="flex items-center gap-3 mt-3 flex-wrap">
+                    @if($event->is_online && !$event->location)
+                    <span class="inline-flex items-center gap-1 text-xs text-zinc-500">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9" />
+                        </svg>
+                        Online
+                    </span>
+                    @elseif($event->location)
+                    <span class="inline-flex items-center gap-1 text-xs text-zinc-500">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                        </svg>
+                        {{ $event->location }}
+                    </span>
+                    @endif
+
+                    @foreach($event->parsedLinks() as $link)
+                    <a href="{{ $link['url'] }}" target="_blank" rel="noopener"
+                        class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium transition-opacity hover:opacity-80"
+                        style="background: {{ $link['color'] }}20; color: {{ $link['color'] }}; border: 1px solid {{ $link['color'] }}40">
+                        {{ $link['label'] ?? ucfirst($link['type']) }}
+                    </a>
+                    @endforeach
+
+                    {{-- Registration open indicator — shown for open events before start --}}
+                    @if($isOpen && !$isPast)
+                    <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium
+                        bg-green-500/15 text-green-400 border border-green-500/25">
+                        <span class="w-1.5 h-1.5 rounded-full bg-green-400 inline-block"></span>
+                        Registration open
+                    </span>
+                    @endif
+                </div>
+
+                {{-- Edit/Delete for owner or admin/mod --}}
+                @auth
+                @if(auth()->id() === $event->created_by || auth()->user()->canManageGames())
+                <div class="flex items-center gap-2 mt-3 pt-3 border-t border-zinc-700/30">
+                    <button wire:click="openEditModal({{ $event->id }})"
+                        class="text-xs text-zinc-500 hover:text-zinc-300 transition-colors">
+                        Edit
+                    </button>
+                    <span class="text-zinc-700">·</span>
+                    <button wire:click="$set('confirmingDeleteId', {{ $event->id }})"
+                        class="text-xs text-zinc-500 hover:text-red-400 transition-colors">
+                        Delete
+                    </button>
+                    <span class="ml-auto text-xs text-zinc-600">
+                        by {{ $event->user?->name ?? 'unknown' }}
+                    </span>
+                </div>
+                @endif
+                @endauth
+
             </div>
         </div>
         @endforeach
@@ -207,150 +257,179 @@
     </div>
     @endif
 
-    {{-- ════════════════════════════════════════════════ --}}
-    {{-- Add / Edit Modal --}}
-    {{-- ════════════════════════════════════════════════ --}}
-    @auth
-    @if($showModal)
-    <div class="fixed inset-0 z-50 flex items-center justify-center p-4" x-data
-        x-on:keydown.escape.window="$wire.set('showModal', false)">
-        {{-- Backdrop --}}
-        <div class="absolute inset-0 bg-black/60" wire:click="$set('showModal', false)"></div>
-
-        {{-- Modal content --}}
-        <div
-            class="relative w-full max-w-lg max-h-[85vh] overflow-y-auto rounded-xl bg-zinc-900 border border-zinc-700 shadow-2xl">
-            <div class="p-6">
-                <h2 class="text-lg font-semibold mb-4">
-                    {{ $editingId ? 'Edit Event' : 'Add Event' }}
-                </h2>
-
-                <div class="space-y-4">
-                    {{-- Name --}}
-                    <div>
-                        <label class="block text-sm text-zinc-400 mb-1">Event name *</label>
-                        <input type="text" wire:model="name"
-                            class="w-full rounded-lg bg-zinc-800 border border-zinc-700 px-3 py-2 text-sm text-white focus:outline-none focus:border-amber-500/50"
-                            placeholder="e.g. Through life with Netwars #42">
-                        @error('name') <p class="text-xs text-red-400 mt-1">{{ $message }}</p> @enderror
-                    </div>
-
-                    {{-- Description --}}
-                    <div>
-                        <label class="block text-sm text-zinc-400 mb-1">Description</label>
-                        <textarea wire:model="description" rows="2"
-                            class="w-full rounded-lg bg-zinc-800 border border-zinc-700 px-3 py-2 text-sm text-white focus:outline-none focus:border-amber-500/50 resize-none"
-                            placeholder="Server: EU, channel: op rankgim"></textarea>
-                    </div>
-
-                    {{-- Date/time + Timezone --}}
-                    <div class="grid grid-cols-5 gap-3">
-                        <div class="col-span-3">
-                            <label class="block text-sm text-zinc-400 mb-1">Starts at *</label>
-                            <input type="datetime-local" wire:model="startsAt"
-                                class="w-full rounded-lg bg-zinc-800 border border-zinc-700 px-3 py-2 text-sm text-white focus:outline-none focus:border-amber-500/50">
-                            @error('startsAt') <p class="text-xs text-red-400 mt-1">{{ $message }}</p> @enderror
-                        </div>
-                        <div class="col-span-2">
-                            <label class="block text-sm text-zinc-400 mb-1">Timezone</label>
-                            <select wire:model="timezone"
-                                class="w-full rounded-lg bg-zinc-800 border border-zinc-700 px-3 py-2 text-sm text-white focus:outline-none focus:border-amber-500/50">
-                                @foreach($this->timezones as $tz => $label)
-                                <option value="{{ $tz }}">{{ $label }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                    </div>
-
-                    {{-- Online / Location --}}
-                    <div>
-                        <label class="flex items-center gap-2 text-sm text-zinc-400 cursor-pointer">
-                            <input type="checkbox" wire:model.live="isOnline"
-                                class="rounded bg-zinc-800 border-zinc-600 text-amber-500 focus:ring-amber-500/30">
-                            Online event
-                        </label>
-                        @if(!$isOnline)
-                        <input type="text" wire:model="location"
-                            class="w-full mt-2 rounded-lg bg-zinc-800 border border-zinc-700 px-3 py-2 text-sm text-white focus:outline-none focus:border-amber-500/50"
-                            placeholder="Location (city, venue)">
-                        @endif
-                    </div>
-
-                    {{-- External Links --}}
-                    <div>
-                        <div class="flex items-center justify-between mb-2">
-                            <label class="text-sm text-zinc-400">External links</label>
-                            <button type="button" wire:click="addLink"
-                                class="text-xs text-amber-400 hover:text-amber-300">
-                                + Add link
-                            </button>
-                        </div>
-
-                        @foreach($links as $i => $link)
-                        <div class="flex items-start gap-2 mb-2" wire:key="link-{{ $i }}">
-                            <select wire:model="links.{{ $i }}.type"
-                                class="w-28 shrink-0 rounded-lg bg-zinc-800 border border-zinc-700 px-2 py-1.5 text-xs text-white focus:outline-none focus:border-amber-500/50">
-                                @foreach($this->linkTypes as $key => $meta)
-                                <option value="{{ $key }}">{{ $meta['label'] }}</option>
-                                @endforeach
-                            </select>
-                            <input type="url" wire:model="links.{{ $i }}.url" placeholder="https://..."
-                                class="flex-1 rounded-lg bg-zinc-800 border border-zinc-700 px-2 py-1.5 text-xs text-white focus:outline-none focus:border-amber-500/50">
-                            <input type="text" wire:model="links.{{ $i }}.label" placeholder="Label"
-                                class="w-20 shrink-0 rounded-lg bg-zinc-800 border border-zinc-700 px-2 py-1.5 text-xs text-white focus:outline-none focus:border-amber-500/50">
-                            <button type="button" wire:click="removeLink({{ $i }})"
-                                class="shrink-0 p-1.5 text-zinc-500 hover:text-red-400 transition-colors">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M6 18L18 6M6 6l12 12" /></svg>
-                            </button>
-                        </div>
-                        @endforeach
-                        @error('links.*.url') <p class="text-xs text-red-400 mt-1">{{ $message }}</p> @enderror
-                    </div>
-                </div>
-
-                {{-- Actions --}}
-                <div class="flex items-center justify-end gap-3 mt-6 pt-4 border-t border-zinc-700/50">
-                    <button wire:click="$set('showModal', false)"
-                        class="px-4 py-2 text-sm text-zinc-400 hover:text-white transition-colors">
-                        Cancel
-                    </button>
-                    <button wire:click="save"
-                        class="px-4 py-2 text-sm font-medium rounded-lg bg-amber-500 text-black hover:bg-amber-400 transition-colors">
-                        {{ $editingId ? 'Save Changes' : 'Create Event' }}
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-    @endif
-    @endauth
-
+    {{-- Delete confirmation modal --}}
     @if($confirmingDeleteId)
-    <div class="fixed inset-0 z-50 flex items-center justify-center p-4">
-        {{-- Backdrop --}}
-        <div class="absolute inset-0 bg-black/60" wire:click="$set('confirmingDeleteId', null)"></div>
-
-        {{-- Modal --}}
-        <div class="relative w-full max-w-sm rounded-xl bg-zinc-900 border border-zinc-700 shadow-2xl p-6">
-            <h2 class="text-lg font-semibold text-white mb-2">
-                Delete event
-            </h2>
-
-            <p class="text-sm text-zinc-400 mb-6">
-                Are you sure you want to delete this event? This action cannot be undone.
-            </p>
-
-            <div class="flex items-center justify-end gap-3">
+    <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm"
+        wire:click.self="$set('confirmingDeleteId', null)">
+        <div class="bg-zinc-900 border border-zinc-700 rounded-xl p-6 w-full max-w-sm mx-4">
+            <h3 class="text-lg font-semibold text-white mb-2">Delete event?</h3>
+            <p class="text-sm text-zinc-400 mb-5">This action cannot be undone.</p>
+            <div class="flex justify-end gap-3">
                 <button wire:click="$set('confirmingDeleteId', null)"
-                    class="px-4 py-2 text-sm text-zinc-400 hover:text-white">
+                    class="px-4 py-2 text-sm text-zinc-400 hover:text-white transition-colors">
                     Cancel
                 </button>
-
                 <button wire:click="delete"
-                    class="px-4 py-2 text-sm font-medium rounded-lg bg-red-500 text-white hover:bg-red-400">
+                    class="px-4 py-2 text-sm font-medium rounded-lg bg-red-500/10 text-red-400 border border-red-500/20 hover:bg-red-500/20 transition-colors">
                     Delete
+                </button>
+            </div>
+        </div>
+    </div>
+    @endif
+
+    {{-- Add / Edit modal --}}
+    @if($showModal)
+    <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm"
+        wire:click.self="$set('showModal', false)">
+        <div class="bg-zinc-900 border border-zinc-700 rounded-xl w-full max-w-lg mx-4 overflow-y-auto max-h-[90vh]">
+            <div class="flex items-center justify-between p-5 border-b border-zinc-700/50">
+                <h2 class="text-lg font-semibold text-white">
+                    {{ $editingId ? 'Edit Event' : 'Add Event' }}
+                </h2>
+                <button wire:click="$set('showModal', false)" class="text-zinc-400 hover:text-white transition-colors">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+
+            <div class="p-5 space-y-4">
+
+                {{-- Event name --}}
+                <div>
+                    <label class="block text-sm text-zinc-400 mb-1">Event name</label>
+                    <input type="text" wire:model="name"
+                        class="w-full rounded-lg bg-zinc-800 border border-zinc-700 px-3 py-2 text-sm text-white focus:outline-none focus:border-amber-500/50"
+                        placeholder="e.g. Sunday Open #12">
+                    @error('name') <p class="text-xs text-red-400 mt-1">{{ $message }}</p> @enderror
+                </div>
+
+                {{-- Event type selector --}}
+                <div>
+                    <label class="block text-sm text-zinc-400 mb-2">Event type</label>
+                    <div class="flex gap-2">
+                        {{-- Stream option --}}
+                        <button type="button" wire:click="$set('type', 'stream')"
+                            class="flex-1 flex flex-col items-center gap-1.5 px-3 py-3 rounded-lg border text-sm transition-colors
+                                {{ $type === 'stream'
+                                    ? 'bg-purple-500/15 border-purple-500/40 text-purple-300'
+                                    : 'bg-zinc-800 border-zinc-700 text-zinc-400 hover:border-zinc-600' }}">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M15 10l4.553-2.277A1 1 0 0121 8.723v6.554a1 1 0 01-1.447.894L15 14M3 8a1 1 0 011-1h10a1 1 0 011 1v8a1 1 0 01-1 1H4a1 1 0 01-1-1V8z" />
+                            </svg>
+                            <span class="font-medium">Stream</span>
+                            <span class="text-xs opacity-70">Watch only</span>
+                        </button>
+                        {{-- Open tournament option --}}
+                        <button type="button" wire:click="$set('type', 'open')"
+                            class="flex-1 flex flex-col items-center gap-1.5 px-3 py-3 rounded-lg border text-sm transition-colors
+                                {{ $type === 'open'
+                                    ? 'bg-amber-500/15 border-amber-500/40 text-amber-300'
+                                    : 'bg-zinc-800 border-zinc-700 text-zinc-400 hover:border-zinc-600' }}">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />
+                            </svg>
+                            <span class="font-medium">Open</span>
+                            <span class="text-xs opacity-70">Register &amp; play</span>
+                        </button>
+                    </div>
+                </div>
+
+                {{-- Description --}}
+                <div>
+                    <label class="block text-sm text-zinc-400 mb-1">Description <span class="text-zinc-600">(optional)</span></label>
+                    <textarea wire:model="description" rows="3"
+                        class="w-full rounded-lg bg-zinc-800 border border-zinc-700 px-3 py-2 text-sm text-white focus:outline-none focus:border-amber-500/50 resize-none"
+                        placeholder="Details, format, rules…"></textarea>
+                    @error('description') <p class="text-xs text-red-400 mt-1">{{ $message }}</p> @enderror
+                </div>
+
+                {{-- Start datetime + Timezone --}}
+                <div class="grid grid-cols-2 gap-3">
+                    <div class="col-span-2">
+                        <label class="block text-sm text-zinc-400 mb-1">Start</label>
+                        <input type="datetime-local" wire:model="startsAt"
+                            class="w-full rounded-lg bg-zinc-800 border border-zinc-700 px-3 py-2 text-sm text-white focus:outline-none focus:border-amber-500/50">
+                        @error('startsAt') <p class="text-xs text-red-400 mt-1">{{ $message }}</p> @enderror
+                    </div>
+                    <div class="col-span-2">
+                        <label class="block text-sm text-zinc-400 mb-1">Timezone</label>
+                        <select wire:model="timezone"
+                            class="w-full rounded-lg bg-zinc-800 border border-zinc-700 px-3 py-2 text-sm text-white focus:outline-none focus:border-amber-500/50">
+                            @foreach($this->timezones as $tz => $label)
+                            <option value="{{ $tz }}">{{ $label }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                </div>
+
+                {{-- Online / Location --}}
+                <div>
+                    <label class="flex items-center gap-2 text-sm text-zinc-400 cursor-pointer">
+                        <input type="checkbox" wire:model.live="isOnline"
+                            class="rounded bg-zinc-800 border-zinc-600 text-amber-500 focus:ring-amber-500/30">
+                        Online event
+                    </label>
+                    @if(!$isOnline)
+                    <input type="text" wire:model="location"
+                        class="w-full mt-2 rounded-lg bg-zinc-800 border border-zinc-700 px-3 py-2 text-sm text-white focus:outline-none focus:border-amber-500/50"
+                        placeholder="Location (city, venue)">
+                    @endif
+                </div>
+
+                {{-- External links --}}
+                <div>
+                    <div class="flex items-center justify-between mb-2">
+                        <label class="text-sm text-zinc-400">External links</label>
+                        <button type="button" wire:click="addLink"
+                            class="text-xs text-amber-400 hover:text-amber-300">
+                            + Add link
+                        </button>
+                    </div>
+
+                    @foreach($links as $i => $link)
+                    <div class="flex items-start gap-2 mb-2" wire:key="link-{{ $i }}">
+                        <select wire:model="links.{{ $i }}.type"
+                            class="w-28 shrink-0 rounded-lg bg-zinc-800 border border-zinc-700 px-2 py-1.5 text-xs text-white focus:outline-none focus:border-amber-500/50">
+                            @foreach($this->linkTypes as $key => $meta)
+                            <option value="{{ $key }}">{{ $meta['label'] }}</option>
+                            @endforeach
+                        </select>
+                        <input type="url" wire:model="links.{{ $i }}.url"
+                            class="flex-1 rounded-lg bg-zinc-800 border border-zinc-700 px-2 py-1.5 text-xs text-white focus:outline-none focus:border-amber-500/50"
+                            placeholder="https://…">
+                        <input type="text" wire:model="links.{{ $i }}.label"
+                            class="w-24 rounded-lg bg-zinc-800 border border-zinc-700 px-2 py-1.5 text-xs text-white focus:outline-none focus:border-amber-500/50"
+                            placeholder="Label">
+                        <button type="button" wire:click="removeLink({{ $i }})"
+                            class="text-zinc-500 hover:text-red-400 transition-colors pt-1.5">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                        </button>
+                    </div>
+                    @endforeach
+                </div>
+
+            </div>
+
+            {{-- Modal footer --}}
+            <div class="flex justify-end gap-3 p-5 border-t border-zinc-700/50">
+                <button wire:click="$set('showModal', false)"
+                    class="px-4 py-2 text-sm text-zinc-400 hover:text-white transition-colors">
+                    Cancel
+                </button>
+                <button wire:click="save"
+                    class="px-4 py-2 text-sm font-medium rounded-lg
+                        {{ $type === 'open'
+                            ? 'bg-amber-500/10 text-amber-400 border border-amber-500/20 hover:bg-amber-500/20'
+                            : 'bg-purple-500/10 text-purple-400 border border-purple-500/20 hover:bg-purple-500/20' }}
+                        transition-colors">
+                    {{ $editingId ? 'Save changes' : 'Add event' }}
                 </button>
             </div>
         </div>

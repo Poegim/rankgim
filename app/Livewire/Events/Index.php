@@ -13,6 +13,9 @@ class Index extends Component
 {
     #[Url]
     public string $view = 'upcoming'; // upcoming | past | all
+    
+    #[Url]
+    public string $typeFilter = 'all'; // all | stream | open   
 
     public ?int $confirmingDeleteId = null;
 
@@ -27,9 +30,15 @@ class Index extends Component
     public bool $isOnline = true;
     public string $location = '';
     public array $links = [];
+    public string $type = 'stream';
     
 
     // ── Computed ───────────────────────────────────────
+    #[Computed]
+    public function eventTypes(): array
+    {
+        return Event::TYPES;
+    }
 
     #[Computed]
     public function events(): Collection
@@ -41,6 +50,11 @@ class Index extends Component
             $query->where('starts_at', '>=', now());
         } elseif ($this->view === 'past') {
             $query->where('starts_at', '<', now());
+        }
+
+        // Filter by event type
+        if ($this->typeFilter !== 'all') {
+            $query->where('type', $this->typeFilter);
         }
 
         return $query->get();
@@ -109,6 +123,7 @@ class Index extends Component
 
         $this->editingId = $event->id;
         $this->name = $event->name;
+        $this->type = $event->type;
         $this->description = $event->description ?? '';
         // Convert stored UTC to the event's timezone for the form
         $this->startsAt = $event->startsAtLocal()->format('Y-m-d\TH:i');
@@ -124,6 +139,7 @@ class Index extends Component
     {
         $this->validate([
             'name' => 'required|string|max:255',
+            'type' => 'required|string|in:' . implode(',', array_keys(Event::TYPES)),
             'description' => 'nullable|string|max:2000',
             'startsAt' => 'required|date',
             'timezone' => 'required|string|in:' . implode(',', array_keys(Event::TIMEZONES)),
@@ -145,6 +161,7 @@ class Index extends Component
 
         $data = [
             'name' => $this->name,
+            'type' => $this->type,
             'description' => $this->description ?: null,
             'starts_at' => $startsAtUtc,
             'timezone' => $this->timezone,
@@ -187,9 +204,16 @@ class Index extends Component
         unset($this->events, $this->groupedEvents);
     }
 
+    public function setTypeFilter(string $type): void
+    {
+        $this->typeFilter = $type;
+        unset($this->events, $this->groupedEvents);
+    }
+
     private function resetForm(): void
     {
         $this->editingId = null;
+        $this->type = 'stream';
         $this->name = '';
         $this->description = '';
         $this->startsAt = '';

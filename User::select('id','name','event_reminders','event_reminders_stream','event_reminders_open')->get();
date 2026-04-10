@@ -1,0 +1,47 @@
+[90m= [39m[34;4mIlluminate\Database\Eloquent\Collection[39;24m {#999
+    [34mall[39m: [
+      [34;4mApp\Models\Event[39;24m {#6577
+        [34mid[39m: [35m2[39m,
+        [34mname[39m: "[32mqweqwe[39m",
+        [34mtype[39m: "[32mstream[39m",
+        [34mstarts_at[39m: "[32m2026-04-05 11:45:00[39m",
+        [34mreminder_sent_at[39m: [36mnull[39m,
+      },
+      [34;4mApp\Models\Event[39;24m {#6578
+        [34mid[39m: [35m3[39m,
+        [34mname[39m: "[32mqdvvv[39m",
+        [34mtype[39m: "[32mopen[39m",
+        [34mstarts_at[39m: "[32m2026-04-12 09:11:00[39m",
+        [34mreminder_sent_at[39m: [36mnull[39m,
+      },
+      [34;4mApp\Models\Event[39;24m {#6579
+        [34mid[39m: [35m4[39m,
+        [34mname[39m: "[32mxzczxczxcc[39m",
+        [34mtype[39m: "[32mstream[39m",
+        [34mstarts_at[39m: "[32m2026-04-10 10:03:00[39m",
+        [34mreminder_sent_at[39m: [36mnull[39m,
+      },
+      [34;4mApp\Models\Event[39;24m {#6580
+        [34mid[39m: [35m5[39m,
+        [34mname[39m: "[32mbsl 22 ga[39m",
+        [34mtype[39m: "[32mstream[39m",
+        [34mstarts_at[39m: "[32m2026-04-11 18:00:00[39m",
+        [34mreminder_sent_at[39m: [36mnull[39m,
+      },
+      [34;4mApp\Models\Event[39;24m {#6581
+        [34mid[39m: [35m6[39m,
+        [34mname[39m: "[32masdasdsadasasdsadasdsa[39m",
+        [34mtype[39m: "[32mstream[39m",
+        [34mstarts_at[39m: "[32m2026-04-10 10:45:00[39m",
+        [34mreminder_sent_at[39m: "[32m2026-04-10 10:39:27[39m",
+      },
+      [34;4mApp\Models\Event[39;24m {#6582
+        [34mid[39m: [35m7[39m,
+        [34mname[39m: "[32mxxxxxxxxxxxx[39m",
+        [34mtype[39m: "[32mopen[39m",
+        [34mstarts_at[39m: "[32m2026-04-10 10:48:00[39m",
+        [34mreminder_sent_at[39m: "[32m2026-04-10 10:39:28[39m",
+      },
+    ],
+  }
+
