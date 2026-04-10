@@ -24,7 +24,6 @@
                 }
                 @endphp
 
-
                 <flux:sidebar sticky collapsible="mobile"
                     class="border-e border-zinc-200 bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-900">
                     <flux:sidebar.header>
@@ -35,17 +34,33 @@
                         <flux:sidebar.group class="grid">
                             <livewire:player-search />
                             <flux:sidebar.item icon="home" :href="route('dashboard')"
-                                :current="request()->routeIs('dashboard')">
+                                :current="request()->routeIs('dashboard')" wire:navigate>
                                 {{ __('Dashboard') }}
                             </flux:sidebar.item>
                             <flux:sidebar.item icon="trophy" :href="route('rankings.index')"
                                 :current="request()->routeIs('rankings.index')" wire:navigate>
                                 {{ __('Ranking') }}
                             </flux:sidebar.item>
-                            <flux:sidebar.item icon="globe-europe-africa" :href="route('countries.index')"
+
+                            <flux:sidebar.group expandable heading="More" icon="squares-2x2"
+                                :expanded="request()->routeIs('players.*', 'tournaments.*', 'games.*', 'countries.*')">
+                                <flux:sidebar.item icon="globe-europe-africa" :href="route('countries.index')"
                                 :current="request()->routeIs('countries.index')" wire:navigate>
                                 {{ __('Countries') }}
                             </flux:sidebar.item>
+                                <flux:sidebar.item icon="users" :href="route('players.index')"
+                                    :current="request()->routeIs('players.index')" wire:navigate>
+                                    {{ __('Players') }}
+                                </flux:sidebar.item>
+                                <flux:sidebar.item icon="calendar-days" :href="route('tournaments.index')"
+                                    :current="request()->routeIs('tournaments.index')" wire:navigate>
+                                    {{ __('Tournaments') }}
+                                </flux:sidebar.item>
+                                <flux:sidebar.item icon="queue-list" :href="route('games.index')"
+                                    :current="request()->routeIs('games.index')" wire:navigate>
+                                    {{ __('Games') }}
+                                </flux:sidebar.item>
+                            </flux:sidebar.group>
                             <flux:sidebar.item icon="calendar-days" :href="route('events.index')"
                                 :current="request()->routeIs('events.*')" wire:navigate>
                                 <div class="flex items-center justify-between w-full">
@@ -57,49 +72,28 @@
                                     @endif
                                 </div>
                             </flux:sidebar.item>
-
                             <flux:sidebar.item icon="star" :href="route('achievements.index')"
                                 :current="request()->routeIs('achievements.index')" wire:navigate>
                                 {{ __('Achievements') }}
                             </flux:sidebar.item>
-
-                            <flux:sidebar.item icon="users" :href="route('players.index')"
-                                :current="request()->routeIs('players.index')" wire:navigate>
-                                {{ __('Players') }}
-                            </flux:sidebar.item>
-
-                            <flux:sidebar.item icon="calendar-days" :href="route('tournaments.index')"
-                                :current="request()->routeIs('tournaments.index')" wire:navigate>
-                                {{ __('Tournaments') }}
-                            </flux:sidebar.item>
-                            <flux:sidebar.item icon="queue-list" :href="route('games.index')"
-                                :current="request()->routeIs('games.index')" wire:navigate>
-                                {{ __('Games') }}
-                            </flux:sidebar.item>
-
-                            <flux:sidebar.item href="{{ route('history.index') }}" icon="clock"
-                                :current="request()->routeIs('history.index')">
-                                History
+                            
+                            <flux:sidebar.item icon="chart-bar" :href="route('stats.index')"
+                                :current="request()->routeIs('stats.index')" >
+                                {{ __('Stats') }}
                             </flux:sidebar.item>
                             <flux:sidebar.item icon="information-circle" :href="route('about')"
                                 :current="request()->routeIs('about')" wire:navigate>
                                 {{ __('About') }}
                             </flux:sidebar.item>
-                            @auth    
-                                @if(auth()->user()->isAdmin())
-                                <flux:sidebar.item icon="shield-check" :href="route('admin.index')"
+                            @auth
+                            @if(auth()->user()->isAdmin())
+                            <flux:sidebar.item icon="shield-check" :href="route('admin.index')"
                                 :current="request()->routeIs('admin.*')" wire:navigate>
                                 {{ __('Admin Panel') }}
                             </flux:sidebar.item>
                             @endif
                             @endauth
-
-
-
-
                         </flux:sidebar.group>
-
-
                     </flux:sidebar.nav>
                     <flux:spacer />
 
@@ -121,9 +115,7 @@
                         </a>
                     </div>
 
-
                     @auth
-
                     <x-desktop-user-menu class="hidden lg:block" :name="auth()->user()->name" />
                     @endauth
                     @guest

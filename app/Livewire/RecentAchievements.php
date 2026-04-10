@@ -4,6 +4,7 @@ namespace App\Livewire;
 
 use App\Models\PlayerAchievement;
 use App\Models\SystemStat;
+use Illuminate\Support\Facades\Cache;
 use Livewire\Attributes\Computed;
 use Livewire\Component;
 
@@ -26,9 +27,11 @@ class RecentAchievements extends Component
     #[Computed]
     public function totalPlayers(): int
     {
-        return \App\Models\PlayerRating::whereHas(
-            'player', fn($q) => $q->whereNull('player_id')
-        )->count();
+        return Cache::remember('dashboard.total_players', 3600, function () {
+            return \App\Models\PlayerRating::whereHas(
+                'player', fn($q) => $q->whereNull('player_id')
+            )->count();
+        });
     }
 
     #[Computed]
@@ -36,49 +39,46 @@ class RecentAchievements extends Component
     {
         if (!$this->lastSnapshotDate) return collect();
 
-        $definitions = config('achievements');
+        // Cache keyed to snapshot date — rotates automatically when new snapshot is taken
+        return Cache::remember('dashboard.recent_achievements.' . $this->lastSnapshotDate, 3600, function () {
+            $definitions = config('achievements');
 
-        // Load owners_count per key in a single query to avoid N+1
-        $ownerCounts = PlayerAchievement::selectRaw('`key`, MAX(owners_count) as owners_count')
-            ->groupBy('key')
-            ->pluck('owners_count', 'key');
+            // This query is now inside the cache closure — runs only on cache miss
+            $ownerCounts = PlayerAchievement::selectRaw('`key`, MAX(owners_count) as owners_count')
+                ->groupBy('key')
+                ->pluck('owners_count', 'key');
 
-        return PlayerAchievement::with('player')
-            // Only main players (not aliases)
-            ->whereHas('player', fn($q) => $q->whereNull('player_id'))
-            // Only achievements from the latest snapshot run
-            ->whereDate('unlocked_at', $this->lastSnapshotDate)
-            // Exclude high-noise onboarding achievements that spam the feed
-            ->whereNotIn('key', self::EXCLUDED_KEYS)
-            ->get()
-            ->map(function ($pa) use ($definitions, $ownerCounts) {
-                $def = $definitions[$pa->key] ?? null;
+            return PlayerAchievement::with('player')
+                ->whereHas('player', fn($q) => $q->whereNull('player_id'))
+                ->whereDate('unlocked_at', $this->lastSnapshotDate)
+                ->whereNotIn('key', self::EXCLUDED_KEYS)
+                ->get()
+                ->map(function ($pa) use ($definitions, $ownerCounts) {
+                    $def = $definitions[$pa->key] ?? null;
 
-                // Build array matching the shape expected by x-achievement-card
-                return [
-                    'key'          => $pa->key,
-                    'name'         => $def ? $def['name'] : $pa->key,
-                    'description'  => $def['description'] ?? null,
-                    'tier'         => $pa->tier,
-                    'category'     => $def['category'] ?? null,
-                    'secret'       => $def['secret'] ?? false,
-                    'group'        => $def['group'] ?? null,
-                    'lore'         => $def['lore'] ?? null,
-                    'masked'       => false,
-                    'owners_count' => $ownerCounts->get($pa->key, 0),
-                    'pct'          => 0,
-                    // Extra fields used in the blade for player link
-                    'player_id'    => $pa->player_id,
-                    'player_name'  => $pa->player->name,
-                    'country'      => $pa->player->country_code,
-                    'race'         => $pa->player->race,
-                    'unlocked_at'  => $pa->unlocked_at,
-                ];
-            })
-            // Sort S → A → B → C → D
-            ->sortBy(fn($a) => array_search($a['tier'], ['s', 'a', 'b', 'c', 'd']))
-            ->values();
-    }
+                    return [
+                        'key'          => $pa->key,
+                        'name'         => $def ? $def['name'] : $pa->key,
+                        'description'  => $def['description'] ?? null,
+                        'tier'         => $pa->tier,
+                        'category'     => $def['category'] ?? null,
+                        'secret'       => $def['secret'] ?? false,
+                        'group'        => $def['group'] ?? null,
+                        'lore'         => $def['lore'] ?? null,
+                        'masked'       => false,
+                        'owners_count' => $ownerCounts->get($pa->key, 0),
+                        'pct'          => 0,
+                        'player_id'    => $pa->player_id,
+                        'player_name'  => $pa->player->name,
+                        'country'      => $pa->player->country_code,
+                        'race'         => $pa->player->race,
+                        'unlocked_at'  => $pa->unlocked_at,
+                    ];
+                })
+                ->sortBy(fn($a) => array_search($a['tier'], ['s', 'a', 'b', 'c', 'd']))
+                ->values();
+        });
+}
 
     public function render()
     {

@@ -43,9 +43,8 @@ Route::get('/countries', Index::class)->name('countries.index');
 Route::get('/countries/{code1}-vs-{code2}', CountriesCompare::class)->name('countries.compare');
 
 
-// History route
-Route::get('/history', [HistoryController::class, 'index'])->name('history.index');
-
+// Stats route (previously History)
+Route::get('/stats', [HistoryController::class, 'index'])->name('stats.index');
 
 
 // Games route

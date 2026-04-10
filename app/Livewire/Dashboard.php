@@ -7,6 +7,8 @@ use Livewire\Component;
 
 class Dashboard extends Component
 {
+    public bool $showMore = false;
+
     #[Computed]
     public function upcomingEvents()
     {

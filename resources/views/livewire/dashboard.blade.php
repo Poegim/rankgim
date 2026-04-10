@@ -77,68 +77,9 @@
         </div>
     </div>
     @endif
-
-    {{-- Top 10 ranking --}}
+    {{-- Top players --}}
     <livewire:dashboard.top-players />
 
-    {{-- Race matchups --}}
-    <livewire:dashboard.race-matchups />
-
     {{-- Recent achievements --}}
-    <div class="md:col-span-2">
-        <livewire:recent-achievements />
-    </div>
-
-    {{-- Games & active players per year charts --}}
-    <livewire:dashboard.yearly-charts />
-
-    {{-- Recent games + Recent tournaments --}}
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <livewire:dashboard.recent-games />
-        <livewire:dashboard.recent-tournaments />
-    </div>
-
-    {{-- Spread chart --}}
-    <livewire:dashboard.spread-chart />
-
-    {{-- Show more interesting stats — components inside x-if are not mounted until button is clicked --}}
-    <div x-data="{ open: false }">
-
-        <button
-            x-show="!open"
-            x-on:click="open = true"
-            class="w-full py-2.5 rounded-xl border border-zinc-200 dark:border-zinc-700 text-sm font-medium text-zinc-500 dark:text-zinc-400 hover:text-zinc-800 dark:hover:text-white hover:border-zinc-400 dark:hover:border-zinc-500 transition-colors"
-        >
-            Show more interesting stats ↓
-        </button>
-
-        {{-- Components are only mounted in DOM after clicking the button --}}
-        <template x-if="open">
-            <div class="flex flex-col gap-4 mt-4">
-
-                {{-- Risers + Fallers + Hot streaks --}}
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div class="md:col-span-2">
-                        <livewire:dashboard.risers-and-fallers />
-                    </div>
-                    <livewire:dashboard.hot-streaks />
-                </div>
-
-                
-
-                {{-- Most active + Biggest upsets + Most dominant --}}
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <livewire:dashboard.most-active />
-                    <livewire:dashboard.biggest-upsets />
-                    <livewire:dashboard.most-dominant />
-                </div>
-
-                {{-- Top rivalries --}}
-                <livewire:dashboard.top-rivalries />
-
-            </div>
-        </template>
-
-    </div>
-
+    <livewire:recent-achievements />
 </div>
