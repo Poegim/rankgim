@@ -80,22 +80,22 @@
     @endif
 
     {{-- Top 10 ranking --}}
-    <livewire:dashboard.top-players />
+    <livewire:dashboard.top-players lazy/>
 
     {{-- Race matchups --}}
-    <livewire:dashboard.race-matchups />
+    <livewire:dashboard.race-matchups  lazy />
 
     <div class="md:col-span-2">
-        <livewire:recent-achievements />
+        <livewire:recent-achievements lazy />
     </div>
 
     {{-- Games & active players per year charts --}}
-    <livewire:dashboard.yearly-charts />
+    <livewire:dashboard.yearly-charts  />
 
     {{-- Recent games + Recent achievements (full width) --}}
     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <livewire:dashboard.recent-games />
-        <livewire:dashboard.recent-tournaments />
+        <livewire:dashboard.recent-games lazy />
+        <livewire:dashboard.recent-tournaments lazy />
     </div>
     
 
@@ -104,22 +104,22 @@
     {{-- Risers + Fallers + Hot streaks --}}
     <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div class="md:col-span-2">
-            <livewire:dashboard.risers-and-fallers />
+            <livewire:dashboard.risers-and-fallers lazy />
         </div>
-        <livewire:dashboard.hot-streaks />
+        <livewire:dashboard.hot-streaks lazy />
     </div>
 
     {{-- Spread chart --}}
-    <livewire:dashboard.spread-chart />
+    <livewire:dashboard.spread-chart  />
 
     {{-- Most active + Biggest upsets + Most dominant --}}
     <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <livewire:dashboard.most-active />
-        <livewire:dashboard.biggest-upsets />
-        <livewire:dashboard.most-dominant />
+        <livewire:dashboard.most-active lazy />
+        <livewire:dashboard.biggest-upsets lazy />
+        <livewire:dashboard.most-dominant lazy />
     </div>
 
     {{-- Top rivalries --}}
-    <livewire:dashboard.top-rivalries />
+    <livewire:dashboard.top-rivalries lazy />
 
 </div>
