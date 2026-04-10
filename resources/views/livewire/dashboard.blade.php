@@ -3,7 +3,7 @@
     {{-- Upcoming events — only rendered when there are events --}}
     {{-- <livewire:events.upcoming /> --}}
 
-        {{-- Upcoming Events --}}
+    {{-- Upcoming Events --}}
     @if($this->upcomingEvents->isNotEmpty())
     <div class="rounded-xl border border-zinc-200 dark:border-zinc-700 p-5">
         <div class="flex items-center justify-between mb-4">
@@ -29,6 +29,17 @@
                         @endif
                         <p class="text-sm font-semibold text-zinc-800 dark:text-white truncate">{{ $event->name }}</p>
                     </div>
+                    @if($event->parsedLinks())
+                        <div class="flex flex-wrap gap-1.5 mt-1">
+                            @foreach($event->parsedLinks() as $link)
+                            <a href="{{ $link['url'] }}" target="_blank" rel="noopener"
+                                class="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium transition-opacity hover:opacity-80"
+                                style="background: {{ $link['color'] }}20; color: {{ $link['color'] }}; border: 1px solid {{ $link['color'] }}40">
+                                {{ $link['label'] ?: ucfirst($link['type']) }}
+                            </a>
+                            @endforeach
+                        </div>
+                        @endif
                     @if($event->description)
                     <p class="text-xs text-zinc-500 truncate mt-0.5">{{ $event->description }}</p>
                     @endif
