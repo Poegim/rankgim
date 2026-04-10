@@ -320,10 +320,7 @@
                                 hours of talks and thousands of games on Europe &amp; ICCup — as teammates and
                                 rivals</span>
                             <div class="flex flex-wrap justify-center gap-x-4 gap-y-1">
-                                @foreach(['Moagim', 'MofD)Respect', 'PzH.MT', 'Azoun', 'Hukk[bwd]', 'Havoc_', 'Sadeff',
-                                'aFF]oOKiVoo[', 'Darkelf-', 'Kat[tr] aka KatY-', 'Effka[pG]', 'Driver[soasc]',
-                                'fallen.apollyon', 'ALK_aida', 'wiz[WL]ard', 'Super-Nova[TT]', 'GreenGosu',
-                                '[aSc]Arhon', 'sFv.Dibuk', 'm4rlin', 'Bzium', 'wow.Seru_', 'agipek'] as $friend)
+                                @foreach(['Moagim', 'MofD)Respect', 'PzH.MT', 'Azoun', 'Hukk[bwd]', 'Havoc_', 'Sadeff', 'aFF]oOKiVoo[', 'Darkelf-', 'Kat[tr] aka KatY-', 'Effka[pG]', 'Driver[soasc]', 'fallen.apollyon', 'ALK_aida', 'wiz[WL]ard', 'Super-Nova[TT]', 'GreenGosu', '[aSc]Arhon', 'sFv.Dibuk', 'm4rlin', 'Bzium', 'wow.Seru_', 'agipek'] as $friend)
                                 <span style="font-family: 'IM Fell English', serif;"
                                     class="text-sm text-zinc-500 dark:text-zinc-400">{{ $friend }}</span>
                                 @endforeach
@@ -336,8 +333,7 @@
                                 class="text-xs uppercase tracking-widest text-zinc-400 dark:text-zinc-600">For the LAN
                                 parties and real-life memories</span>
                             <div class="flex flex-wrap justify-center gap-x-4 gap-y-1">
-                                @foreach(['Kebes', 'Apogeum', 'Redeyes', 'FuriaKutasów', 'Sprite', 'peR aka eRa',
-                                'aFF]Squizen[', 'aFF]Amlacz[', 'Welder'] as $friend)
+                                @foreach(['Kebes', 'Apogeum', 'Redeyes', 'FuriaKutasów', 'Sprite', 'peR aka eRa', 'aFF]Squizen[', 'aFF]Amlacz[', 'Welder'] as $friend)
                                 <span style="font-family: 'IM Fell English', serif;"
                                     class="text-sm text-zinc-500 dark:text-zinc-400">{{ $friend }}</span>
                                 @endforeach
@@ -350,8 +346,7 @@
                                 class="text-xs uppercase tracking-widest text-zinc-400 dark:text-zinc-600">For being the
                                 great clanmates</span>
                             <div class="flex flex-wrap justify-center gap-x-4 gap-y-1">
-                                @foreach(['aFF]WolF[', 'aFF]Rasowy[', 'aFF]sluslu[', 'aFF]Mido[', 'aFF]money[',
-                                'aFF]Surgeon[', 'aFF]Sfiesu[', 'aFF]Borek[', 'aFF]Sneazel['] as $friend)
+                                @foreach(['aFF]WolF[', 'aFF]Rasowy[', 'aFF]sluslu[', 'aFF]Mido[', 'aFF]money[', 'aFF]Surgeon[', 'aFF]Sfiesu[', 'aFF]Borek[', 'aFF]Sneazel['] as $friend)
                                 <span style="font-family: 'IM Fell English', serif;"
                                     class="text-sm text-zinc-500 dark:text-zinc-400">{{ $friend }}</span>
                                 @endforeach
@@ -377,8 +372,7 @@
                                 class="text-xs uppercase tracking-widest text-zinc-400 dark:text-zinc-600">For being
                                 part of my StarCraft life — and sometimes my real one</span>
                             <div class="flex flex-wrap justify-center gap-x-4 gap-y-1">
-                                @foreach(['Arcanos', 'LadiesFirst', 'MMoreAndMore', 'FurryDrone', 'Taehee', 'KubciO',
-                                'Shocker_40', 'Fosken', 'Radley', 'Bonyth', 'Koget', 'Yeti', 'ZZZero'] as $friend)
+                                @foreach(['Arcanos', 'LadiesFirst', 'MMoreAndMore', 'FurryDrone', 'Taehee', 'KubciO', 'Shocker_40', 'Fosken', 'Radley', 'Bonyth', 'Koget', 'Yeti', 'ZZZero'] as $friend)
                                 <span style="font-family: 'IM Fell English', serif;"
                                     class="text-sm text-zinc-500 dark:text-zinc-400">{{ $friend }}</span>
                                 @endforeach
@@ -430,8 +424,7 @@
         <div class="flex flex-col gap-3">
             <h2 class="text-sm font-semibold text-zinc-400 uppercase tracking-widest">Built with</h2>
             <div class="flex flex-wrap gap-2">
-                @foreach(['Laravel 12', 'Livewire', 'Flux UI', 'Alpine.js', 'Tailwind CSS', 'ApexCharts', 'MySQL'] as
-                $tech)
+                @foreach(['Laravel 12', 'Livewire', 'Flux UI', 'Alpine.js', 'Tailwind CSS', 'ApexCharts', 'MySQL'] as $tech)
                 <span
                     class="px-3 py-1 rounded-full border border-zinc-200 dark:border-zinc-700 text-sm text-zinc-600 dark:text-zinc-400 bg-white dark:bg-zinc-800">
                     {{ $tech }}
