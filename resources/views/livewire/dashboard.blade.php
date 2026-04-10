@@ -29,6 +29,11 @@
                         @endif
                         <p class="text-sm font-semibold text-zinc-800 dark:text-white truncate">{{ $event->name }}</p>
                     </div>
+                    
+                    @if($event->description)
+                    <p class="text-xs text-zinc-500 truncate mt-0.5">{{ $event->description }}</p>
+                    @endif
+
                     @if($event->parsedLinks())
                         <div class="flex flex-wrap gap-1.5 mt-1">
                             @foreach($event->parsedLinks() as $link)
@@ -39,9 +44,6 @@
                             </a>
                             @endforeach
                         </div>
-                        @endif
-                    @if($event->description)
-                    <p class="text-xs text-zinc-500 truncate mt-0.5">{{ $event->description }}</p>
                     @endif
                 </div>
         <div class="shrink-0 text-right">
