@@ -45,6 +45,13 @@
                             @endforeach
                         </div>
                     @endif
+                    @if($event->isRegistrationOpen())
+                    <span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-xs font-medium
+                        bg-green-500/15 text-green-400 border border-green-500/25 mt-1">
+                        <span class="w-1.5 h-1.5 rounded-full bg-green-400 inline-block"></span>
+                        Registration open
+                    </span>
+                    @endif
                 </div>
         <div class="shrink-0 text-right">
             <p class="{{ $event->isStream() ? 'text-purple-300' : 'text-amber-400' }} text-base font-mono font-bold tabular-nums"                x-data="{
