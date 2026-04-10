@@ -85,12 +85,14 @@
                                 :current="request()->routeIs('about')" wire:navigate>
                                 {{ __('About') }}
                             </flux:sidebar.item>
-                            @if(auth()->user()->isAdmin())
-                            <flux:sidebar.item icon="shield-check" :href="route('admin.index')"
+                            @auth    
+                                @if(auth()->user()->isAdmin())
+                                <flux:sidebar.item icon="shield-check" :href="route('admin.index')"
                                 :current="request()->routeIs('admin.*')" wire:navigate>
                                 {{ __('Admin Panel') }}
                             </flux:sidebar.item>
                             @endif
+                            @endauth
 
 
 
