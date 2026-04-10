@@ -156,92 +156,85 @@
         <div class="border-t border-zinc-200 dark:border-zinc-700"></div>
 
         {{-- In honour --}}
+        {{-- Dedication section — IM Fell English, clean and modest --}}
         <div class="flex flex-col gap-4">
-            <h2 class="text-sm font-semibold text-zinc-400 uppercase tracking-widest">To the people who made those years unforgettable</h2>
-            <div class="rounded-xl border border-zinc-300 dark:border-zinc-600 p-8 bg-zinc-100 dark:bg-zinc-800/80">
-                <div class="flex flex-col items-center gap-6">
-                    <div class="flex flex-col items-center gap-6">
-                        <p class="text-zinc-500 dark:text-zinc-400 text-center max-w-lg leading-relaxed">
-                            For the hours we spent playing together, the conversations that outlasted our games, and everything in between — those were some of the best years of my life. It was a great honour, and I miss you all.
-                        </p>
-                        <div class="w-12 border-t border-zinc-300 dark:border-zinc-600"></div>
+            <h2 class="text-sm font-semibold text-zinc-400 uppercase tracking-widest" style="font-family: 'IM Fell English', serif;">To the people who made those years unforgettable</h2>
+            <div class="rounded-xl border border-zinc-300 dark:border-zinc-700 p-8 bg-zinc-50 dark:bg-zinc-900/40">
+                <div class="flex flex-col items-center gap-6 max-w-2xl mx-auto">
 
-                        <div class="flex flex-col gap-6 w-full">
+                    <p style="font-family: 'IM Fell English', serif;" class="text-lg text-zinc-500 dark:text-zinc-400 text-center leading-relaxed italic text-base max-w-lg">
+                        For the hours we spent playing together, the conversations that were logner than the games, and everything in between — those were some of the best years of my life. It was a great honour, and I miss you all.
+                    </p>
 
-                            {{-- Main crew --}}
-                            <div class="flex flex-col items-center gap-2">
-                                <span class="text-xs uppercase tracking-widest text-zinc-400 dark:text-zinc-500">For infinite hours of talks and thousands of games on Europe & ICCup — as teammates and rivals</span>
-                                <div class="flex flex-wrap justify-center gap-x-6 gap-y-3">
-                                    @foreach(['Moagim', 'MofD)Respect', 'PzH.MT', 'Azoun', 'Hukk[bwd]', 'Havoc_', 'Sadeff', 'aFF]oOKiVoo[', 'Darkelf-', 'Kat[tr] aka KatY-', 'Effka[pG]', 'Driver[soasc]', 'fallen.apollyon', 'ALK_aida', 'wiz[WL]ard', 'Super-Nova[TT]', 'GreenGosu', '[aSc]Arhon', 'sFv.Dibuk', 'm4rlin', 'Bzium', 'wow.Seru_', 'agipek'] as $friend)
-                                    <span class="text-lg font-bold tracking-wide bg-gradient-to-r from-amber-600 via-orange-500 to-red-400 dark:from-amber-400 dark:via-orange-400 dark:to-red-300 bg-clip-text text-transparent">
-                                        {{ $friend }}
-                                    </span>
-                                    @endforeach
-                                </div>
+                    <div class="w-8 border-t border-zinc-300 dark:border-zinc-700"></div>
+
+                    <div class="flex flex-col gap-7 w-full">
+
+                        {{-- Main crew --}}
+                        <div class="flex flex-col items-center gap-2">
+                            <span style="font-family: 'IM Fell English', serif;" class="text-xs uppercase tracking-widest text-zinc-400 dark:text-zinc-600">For infinite hours of talks and thousands of games on Europe &amp; ICCup — as teammates and rivals</span>
+                            <div class="flex flex-wrap justify-center gap-x-4 gap-y-1">
+                                @foreach(['Moagim', 'MofD)Respect', 'PzH.MT', 'Azoun', 'Hukk[bwd]', 'Havoc_', 'Sadeff', 'aFF]oOKiVoo[', 'Darkelf-', 'Kat[tr] aka KatY-', 'Effka[pG]', 'Driver[soasc]', 'fallen.apollyon', 'ALK_aida', 'wiz[WL]ard', 'Super-Nova[TT]', 'GreenGosu', '[aSc]Arhon', 'sFv.Dibuk', 'm4rlin', 'Bzium', 'wow.Seru_', 'agipek'] as $friend)
+                                <span style="font-family: 'IM Fell English', serif;" class="text-sm text-zinc-500 dark:text-zinc-400">{{ $friend }}</span>
+                                @endforeach
                             </div>
-
-                            {{-- LAN & real life --}}
-                            <div class="flex flex-col items-center gap-2">
-                                <span class="text-xs uppercase tracking-widest text-zinc-400 dark:text-zinc-500">For the LAN parties and real-life memories</span>
-                                <div class="flex flex-wrap justify-center gap-x-6 gap-y-3">
-                                    @foreach(['Kebes', 'Apogeum', 'Redeyes', 'FuriaKutasów', 'Sprite', 'peR aka eRa', 'aFF]Squizen[', 'aFF]Amlacz[', 'Welder'] as $friend)
-                                    <span class="text-lg font-bold tracking-wide bg-gradient-to-r from-amber-600 via-orange-500 to-red-400 dark:from-amber-400 dark:via-orange-400 dark:to-red-300 bg-clip-text text-transparent">
-                                        {{ $friend }}
-                                    </span>
-                                    @endforeach
-                                </div>
-                            </div>
-
-                            
-                            {{-- Clanmates --}}
-                            <div class="flex flex-col items-center gap-2">
-                                <span class="text-xs uppercase tracking-widest text-zinc-400 dark:text-zinc-500">For being the great clanmates</span>
-                                <div class="flex flex-wrap justify-center gap-x-6 gap-y-3">
-                                    @foreach(['aFF]WolF[', 'aFF]Rasowy[', 'aFF]sluslu[', 'aFF]Mido[', 'aFF]money[', 'aFF]Surgeon[', 'aFF]Sfiesu[', 'aFF]Borek[', 'aFF]Sneazel['] as $friend)
-                                    <span class="text-lg font-bold tracking-wide bg-gradient-to-r from-amber-600 via-orange-500 to-red-400 dark:from-amber-400 dark:via-orange-400 dark:to-red-300 bg-clip-text text-transparent">
-                                        {{ $friend }}
-                                    </span>
-                                    @endforeach
-                                </div>
-                            </div>
-
-                            {{-- Always online --}}
-                            <div class="flex flex-col items-center gap-2">
-                                <span class="text-xs uppercase tracking-widest text-zinc-400 dark:text-zinc-500">For being eternally online on POL-1</span>
-                                <div class="flex flex-wrap justify-center gap-x-6 gap-y-3">
-                                    @foreach(['metody[watb]'] as $friend)
-                                    <span class="text-lg font-bold tracking-wide bg-gradient-to-r from-amber-600 via-orange-500 to-red-400 dark:from-amber-400 dark:via-orange-400 dark:to-red-300 bg-clip-text text-transparent">
-                                        {{ $friend }}
-                                    </span>
-                                    @endforeach
-                                </div>
-                            </div>
-
-                            {{-- Others--}}
-                            <div class="flex flex-col items-center gap-2">
-                                <span class="text-xs uppercase tracking-widest text-zinc-400 dark:text-zinc-500">For being part of my StarCraft life — and sometimes my real one. Whether you were an inspiration, a familiar face, or someone I only met once.</span>
-                                <div class="flex flex-wrap justify-center gap-x-6 gap-y-3">
-                                    @foreach(['Arcanos', 'LadiesFirst', 'MMoreAndMore', 'FurryDrone', 'Taehee', 'KubciO', 'Shocker_40', 'Fosken', 'Radley', 'Bonyth', 'Koget', 'Yeti', 'ZZZero'] as $friend)
-                                    <span class="text-lg font-bold tracking-wide bg-gradient-to-r from-amber-600 via-orange-500 to-red-400 dark:from-amber-400 dark:via-orange-400 dark:to-red-300 bg-clip-text text-transparent">
-                                        {{ $friend }}
-                                    </span>
-                                    @endforeach
-                                </div>
-                            </div>
-
-
                         </div>
+
+                        {{-- LAN & real life --}}
+                        <div class="flex flex-col items-center gap-2">
+                            <span style="font-family: 'IM Fell English', serif;" class="text-xs uppercase tracking-widest text-zinc-400 dark:text-zinc-600">For the LAN parties and real-life memories</span>
+                            <div class="flex flex-wrap justify-center gap-x-4 gap-y-1">
+                                @foreach(['Kebes', 'Apogeum', 'Redeyes', 'FuriaKutasów', 'Sprite', 'peR aka eRa', 'aFF]Squizen[', 'aFF]Amlacz[', 'Welder'] as $friend)
+                                <span style="font-family: 'IM Fell English', serif;" class="text-sm text-zinc-500 dark:text-zinc-400">{{ $friend }}</span>
+                                @endforeach
+                            </div>
+                        </div>
+
+                        {{-- Clanmates --}}
+                        <div class="flex flex-col items-center gap-2">
+                            <span style="font-family: 'IM Fell English', serif;" class="text-xs uppercase tracking-widest text-zinc-400 dark:text-zinc-600">For being the great clanmates</span>
+                            <div class="flex flex-wrap justify-center gap-x-4 gap-y-1">
+                                @foreach(['aFF]WolF[', 'aFF]Rasowy[', 'aFF]sluslu[', 'aFF]Mido[', 'aFF]money[', 'aFF]Surgeon[', 'aFF]Sfiesu[', 'aFF]Borek[', 'aFF]Sneazel['] as $friend)
+                                <span style="font-family: 'IM Fell English', serif;" class="text-sm text-zinc-500 dark:text-zinc-400">{{ $friend }}</span>
+                                @endforeach
+                            </div>
+                        </div>
+
+                        {{-- Always online --}}
+                        <div class="flex flex-col items-center gap-2">
+                            <span style="font-family: 'IM Fell English', serif;" class="text-xs uppercase tracking-widest text-zinc-400 dark:text-zinc-600">For being eternally online on POL-1</span>
+                            <div class="flex flex-wrap justify-center gap-x-4 gap-y-1">
+                                @foreach(['metody[watb]'] as $friend)
+                                <span style="font-family: 'IM Fell English', serif;" class="text-sm text-zinc-500 dark:text-zinc-400">{{ $friend }}</span>
+                                @endforeach
+                            </div>
+                        </div>
+
+                        {{-- Others --}}
+                        <div class="flex flex-col items-center gap-2">
+                            <span style="font-family: 'IM Fell English', serif;" class="text-xs uppercase tracking-widest text-zinc-400 dark:text-zinc-600">For being part of my StarCraft life — and sometimes my real one</span>
+                            <div class="flex flex-wrap justify-center gap-x-4 gap-y-1">
+                                @foreach(['Arcanos', 'LadiesFirst', 'MMoreAndMore', 'FurryDrone', 'Taehee', 'KubciO', 'Shocker_40', 'Fosken', 'Radley', 'Bonyth', 'Koget', 'Yeti', 'ZZZero'] as $friend)
+                                <span style="font-family: 'IM Fell English', serif;" class="text-sm text-zinc-500 dark:text-zinc-400">{{ $friend }}</span>
+                                @endforeach
+                            </div>
+                        </div>
+
                     </div>
-                    <p class="text-sm italic text-zinc-400 dark:text-zinc-200 text-center leading-relaxed">
+
+                    <div class="w-8 border-t border-zinc-300 dark:border-zinc-700"></div>
+
+                    <p style="font-family: 'IM Fell English', serif;" class="text-md italic text-zinc-400 dark:text-zinc-500 text-center leading-relaxed">
                         …and the rest of
-                        <span class="font-semibold not-italic text-zinc-500 dark:text-zinc-300">StarCraft POL-1 @ Europe</span>,
-                        <span class="font-semibold not-italic text-zinc-500 dark:text-zinc-300">Netwars.pl</span>,
+                        <span class="not-italic text-zinc-500 dark:text-zinc-400">StarCraft POL-1 @ Europe</span>,
+                        <span class="not-italic text-zinc-500 dark:text-zinc-400">Netwars.pl</span>,
                         teams
-                        <span class="font-semibold not-italic text-zinc-500 dark:text-zinc-300">aFF · T4 · [MiB] · PzM · [WL]</span>
+                        <span class="not-italic text-zinc-500 dark:text-zinc-400">aFF · T4 · [MiB] · PzM · [WL]</span>
                         — plus everyone I forgot, because I'm old and bad with names.
                         <br class="hidden sm:block">
                         If you see this and feel you should be here, don't hesitate to reach out.
                     </p>
+
                 </div>
             </div>
         </div>
