@@ -95,21 +95,21 @@
 
         {{-- Yearly with navigation --}}
         <div class="rounded-xl border border-zinc-200 dark:border-zinc-700 p-4">
-            <div class="flex items-center justify-between mb-4">
+            <div class="flex flex-col gap-3 mb-4">
                 <p class="text-sm font-medium text-zinc-500 dark:text-zinc-400">🗓️ Games by country
                     <span class="text-xs">({{ $yearFilter === 'last12' ? 'last 12 months' : $yearFilter }})</span>
                 </p>
-                <div class="flex items-center gap-1">
+                <div class="flex items-center flex-wrap gap-1">
                     @foreach($this->availableYears as $year)
-                        <button
-                            wire:click="setYearFilter('{{ $year }}')"
-                            class="px-2 py-1 text-xs rounded-md transition-colors
-                                {{ $yearFilter === $year
-                                    ? 'bg-indigo-500 text-white'
-                                    : 'text-zinc-400 hover:text-zinc-200 hover:bg-zinc-700' }}"
-                        >
-                            {{ $year === 'last12' ? '12M' : $year }}
-                        </button>
+                    <button
+                        wire:click="setYearFilter('{{ $year }}')"
+                        class="px-2 py-1 text-xs rounded-md transition-colors
+                            {{ $yearFilter === $year
+                                ? 'bg-indigo-500 text-white'
+                                : 'text-zinc-400 hover:text-zinc-200 hover:bg-zinc-700' }}"
+                    >
+                        {{ $year === 'last12' ? '12M' : $year }}
+                    </button>
                     @endforeach
                 </div>
             </div>

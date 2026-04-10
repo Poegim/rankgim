@@ -132,8 +132,11 @@
                 </flux:sidebar>
 
                 {{-- Mobile Header — always visible on mobile --}}
+                {{-- Mobile Header — always visible on mobile --}}
                 <flux:header class="lg:hidden">
                     <flux:sidebar.toggle class="lg:hidden" icon="bars-2" inset="left" />
+                    <flux:spacer />
+                    <x-app-logo href="{{ route('dashboard') }}" />
                     <flux:spacer />
                     @auth
                     <flux:dropdown position="top" align="end">

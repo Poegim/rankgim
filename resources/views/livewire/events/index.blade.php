@@ -102,157 +102,120 @@
             <h2 class="text-sm font-semibold text-zinc-400 uppercase tracking-wider">{{ $month }}</h2>
         </div>
 
-        {{-- Events in this month --}}
-        @foreach($events as $event)
-        @php
-            $isPast   = $event->isPast();
-            $isStream = $event->isStream();
-            $isOpen   = $event->isOpen();
-        @endphp
-        <div class="relative sm:pl-14 mb-3" wire:key="event-{{ $event->id }}">
-            {{-- Timeline dot — purple for stream, amber for open --}}
-            <div class="absolute left-[15px] top-5 w-[9px] h-[9px] rounded-full hidden sm:block
-                {{ $isPast
-                    ? 'bg-zinc-600'
-                    : ($isStream ? 'bg-purple-400' : 'bg-amber-400') }}">
-            </div>
+            @foreach($events as $event)
+                @php
+                    $isPast   = $event->isPast();
+                    $isStream = $event->isStream();
+                    $isOpen   = $event->isOpen();
+                @endphp
+                <div class="relative sm:pl-14 mb-3" wire:key="event-{{ $event->id }}">
+                    {{-- Timeline dot --}}
+                    <div class="absolute left-[15px] top-5 w-[9px] h-[9px] rounded-full hidden sm:block
+                        {{ $isPast ? 'bg-zinc-600' : ($isStream ? 'bg-purple-400' : 'bg-amber-400') }}">
+                    </div>
 
-            <div class="rounded-xl border transition-colors
-                {{ $isPast
-                    ? 'bg-zinc-800/40 border-zinc-700/40'
-                    : ($isStream
-                        ? 'bg-zinc-800/80 border-purple-500/20 hover:border-purple-500/40'
-                        : 'bg-zinc-800/80 border-amber-500/20 hover:border-amber-500/40') }}
-                p-4">
+                    <div class="rounded-xl border transition-colors p-4
+                        {{ $isPast
+                            ? 'bg-zinc-900/40 border-zinc-700/40'
+                            : ($isStream
+                                ? 'bg-zinc-900/80 border-purple-500/20 hover:border-purple-500/40'
+                                : 'bg-zinc-900/80 border-amber-500/20 hover:border-amber-500/40') }}">
 
-                {{-- Top row: type badge + live badge + name --}}
-                <div class="flex items-start justify-between gap-3">
-                    <div class="flex items-center gap-2 flex-wrap min-w-0">
+                        {{-- Badge + name + countdown --}}
+                        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1.5 sm:gap-3">
+                            <div class="flex items-center gap-2 min-w-0">
+                                @if($isStream)
+                                <span class="shrink-0 inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-purple-500/15 text-purple-300 border border-purple-500/25">Stream</span>
+                                @else
+                                <span class="shrink-0 inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-amber-500/15 text-amber-300 border border-amber-500/25">Open</span>
+                                @endif
+                                <h3 class="font-semibold text-white truncate">{{ $event->name }}</h3>
+                            </div>
 
-                        {{-- Type badge --}}
-                        @if($isStream)
-                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium
-                            bg-purple-500/15 text-purple-300 border border-purple-500/25">
-                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M15 10l4.553-2.277A1 1 0 0121 8.723v6.554a1 1 0 01-1.447.894L15 14M3 8a1 1 0 011-1h10a1 1 0 011 1v8a1 1 0 01-1 1H4a1 1 0 01-1-1V8z" />
-                            </svg>
-                            Stream
-                        </span>
-                        @else
-                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium
-                            bg-amber-500/15 text-amber-300 border border-amber-500/25">
-                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />
-                            </svg>
-                            Open
-                        </span>
+                            @if(!$isPast)
+                            <div class="text-sm font-mono font-bold {{ $isStream ? 'text-purple-300' : 'text-amber-300' }}"
+                                x-data="{
+                                    target: {{ $event->starts_at->timestamp }},
+                                    d: 0, h: 0, m: 0, s: 0,
+                                    init() { this.tick(); setInterval(() => this.tick(), 1000); },
+                                    tick() {
+                                        const diff = this.target - Math.floor(Date.now() / 1000);
+                                        if (diff <= 0) { this.d = this.h = this.m = this.s = 0; return; }
+                                        this.d = Math.floor(diff / 86400);
+                                        this.h = Math.floor((diff % 86400) / 3600);
+                                        this.m = Math.floor((diff % 3600) / 60);
+                                        this.s = diff % 60;
+                                    }
+                                }">
+                                <span x-show="d > 0" x-text="d + 'd '"></span><span x-text="String(h).padStart(2,'0') + 'h ' + String(m).padStart(2,'0') + 'm ' + String(s).padStart(2,'0') + 's'"></span>
+                            </div>
+                            @endif
+                        </div>
+
+                        {{-- Description --}}
+                        @if($event->description)
+                        <p class="text-sm text-zinc-400 mt-2 leading-relaxed">{{ $event->description }}</p>
                         @endif
 
-                        <h3 class="font-semibold text-white truncate">{{ $event->name }}</h3>
+                        {{-- Dates — wrap on mobile --}}
+                        <div class="flex flex-wrap gap-x-3 gap-y-1 mt-3">
+                            @foreach($event->displayDates() as $dt)
+                            <span class="text-xs font-mono text-zinc-500 whitespace-nowrap">
+                                {{ $dt['datetime'] }} <span class="text-zinc-600">{{ $dt['label'] }}</span>
+                            </span>
+                            @endforeach
+                        </div>
+
+                        {{-- Links --}}
+                        <div class="flex flex-wrap gap-2 mt-3">
+                            @if($event->is_online && !$event->location)
+                            <span class="inline-flex items-center gap-1 text-xs text-zinc-500">
+                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9" />
+                                </svg>
+                                Online
+                            </span>
+                            @elseif($event->location)
+                            <span class="inline-flex items-center gap-1 text-xs text-zinc-500">
+                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                                </svg>
+                                {{ $event->location }}
+                            </span>
+                            @endif
+
+                            @foreach($event->parsedLinks() as $link)
+                            <a href="{{ $link['url'] }}" target="_blank" rel="noopener"
+                                class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium transition-opacity hover:opacity-80"
+                                style="background: {{ $link['color'] }}20; color: {{ $link['color'] }}; border: 1px solid {{ $link['color'] }}40">
+                                {{ $link['label'] ?: ucfirst($link['type']) }}
+                            </a>
+                            @endforeach
+
+                            @if($isOpen && !$isPast)
+                            <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-green-500/15 text-green-400 border border-green-500/25">
+                                <span class="w-1.5 h-1.5 rounded-full bg-green-400 inline-block"></span>
+                                Registration open
+                            </span>
+                            @endif
+                        </div>
+
+                        {{-- Edit/Delete --}}
+                        @auth
+                        @if(auth()->id() === $event->created_by || auth()->user()->canManageGames())
+                        <div class="flex items-center gap-2 mt-3 pt-3 border-t border-zinc-700/30">
+                            <button wire:click="openEditModal({{ $event->id }})" class="text-xs text-zinc-500 hover:text-zinc-300 transition-colors">Edit</button>
+                            <span class="text-zinc-700">·</span>
+                            <button wire:click="$set('confirmingDeleteId', {{ $event->id }})" class="text-xs text-zinc-500 hover:text-red-400 transition-colors">Delete</button>
+                            <span class="ml-auto text-xs text-zinc-600">by {{ $event->user?->name ?? 'unknown' }}</span>
+                        </div>
+                        @endif
+                        @endauth
+
                     </div>
-
-                    {{-- Countdown (upcoming only) --}}
-                    @if(!$isPast)
-                    <div class="text-sm font-mono font-bold shrink-0
-                        {{ $isStream ? 'text-purple-300' : 'text-amber-300' }}"
-                        x-data="{
-                            target: {{ $event->starts_at->timestamp }},
-                            d: 0, h: 0, m: 0, s: 0,
-                            init() { this.tick(); setInterval(() => this.tick(), 1000); },
-                            tick() {
-                                const diff = this.target - Math.floor(Date.now() / 1000);
-                                if (diff <= 0) { this.d = this.h = this.m = this.s = 0; return; }
-                                this.d = Math.floor(diff / 86400);
-                                this.h = Math.floor((diff % 86400) / 3600);
-                                this.m = Math.floor((diff % 3600) / 60);
-                                this.s = diff % 60;
-                            }
-                        }">
-                        <span x-show="d > 0" x-text="d + 'd '"></span><span
-                            x-text="String(h).padStart(2,'0') + 'h ' + String(m).padStart(2,'0') + 'm ' + String(s).padStart(2,'0') + 's'"></span>
-                    </div>
-                    @endif
                 </div>
-
-                {{-- Description --}}
-                @if($event->description)
-                <p class="text-sm text-zinc-400 mt-2 leading-relaxed">{{ $event->description }}</p>
-                @endif
-
-                {{-- Date/time row --}}
-                <div class="flex flex-wrap gap-x-4 gap-y-1 mt-3">
-                    @foreach($event->displayDates() as $dt)
-                    <span class="text-xs font-mono text-zinc-500 whitespace-nowrap">
-                        {{ $dt['datetime'] }} <span class="text-zinc-600">{{ $dt['label'] }}</span>
-                    </span>
-                    @endforeach
-                </div>
-
-                {{-- Links row --}}
-                <div class="flex items-center gap-3 mt-3 flex-wrap">
-                    @if($event->is_online && !$event->location)
-                    <span class="inline-flex items-center gap-1 text-xs text-zinc-500">
-                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9" />
-                        </svg>
-                        Online
-                    </span>
-                    @elseif($event->location)
-                    <span class="inline-flex items-center gap-1 text-xs text-zinc-500">
-                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                        </svg>
-                        {{ $event->location }}
-                    </span>
-                    @endif
-
-                    @foreach($event->parsedLinks() as $link)
-                    <a href="{{ $link['url'] }}" target="_blank" rel="noopener"
-                        class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium transition-opacity hover:opacity-80"
-                        style="background: {{ $link['color'] }}20; color: {{ $link['color'] }}; border: 1px solid {{ $link['color'] }}40">
-                        {{ $link['label'] ?: ucfirst($link['type']) }}
-                    </a>
-                    @endforeach
-
-                    {{-- Registration open indicator — shown for open events before start --}}
-                    @if($isOpen && !$isPast)
-                    <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium
-                        bg-green-500/15 text-green-400 border border-green-500/25">
-                        <span class="w-1.5 h-1.5 rounded-full bg-green-400 inline-block"></span>
-                        Registration open
-                    </span>
-                    @endif
-                </div>
-
-                {{-- Edit/Delete for owner or admin/mod --}}
-                @auth
-                @if(auth()->id() === $event->created_by || auth()->user()->canManageGames())
-                <div class="flex items-center gap-2 mt-3 pt-3 border-t border-zinc-700/30">
-                    <button wire:click="openEditModal({{ $event->id }})"
-                        class="text-xs text-zinc-500 hover:text-zinc-300 transition-colors">
-                        Edit
-                    </button>
-                    <span class="text-zinc-700">·</span>
-                    <button wire:click="$set('confirmingDeleteId', {{ $event->id }})"
-                        class="text-xs text-zinc-500 hover:text-red-400 transition-colors">
-                        Delete
-                    </button>
-                    <span class="ml-auto text-xs text-zinc-600">
-                        by {{ $event->user?->name ?? 'unknown' }}
-                    </span>
-                </div>
-                @endif
-                @endauth
-
-            </div>
-        </div>
-        @endforeach
+                @endforeach
         @endforeach
     </div>
     @endif

@@ -20,6 +20,15 @@
     letter-spacing: -0.01em;
 }
 
+[data-flux-brand] .truncate,
+[data-flux-sidebar-brand] .truncate {
+    font-family: 'Cinzel', serif !important;
+    font-weight: 700 !important;
+    letter-spacing: 0.05em !important;
+    font-size: 22px !important;
+    line-height: 32px !important;
+}
+
 @theme {
     --font-sans: 'DM Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
     --font-mono: 'JetBrains Mono', ui-monospace, monospace;

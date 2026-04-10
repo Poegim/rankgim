@@ -17,6 +17,7 @@
 <link href="https://fonts.bunny.net/css?family=jetbrains-mono:400,500,700&display=swap" rel="stylesheet" />
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=IM+Fell+English:ital@0;1&display=swap" rel="stylesheet">
+<link href="https://fonts.bunny.net/css?family=cinzel:700" rel="stylesheet" />
 <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 
 <!-- Google tag (gtag.js) -->
