@@ -140,22 +140,23 @@ class Index extends Component
         $this->validate([
             'name' => 'required|string|max:255',
             'type' => 'required|string|in:' . implode(',', array_keys(Event::TYPES)),
-            'description' => 'nullable|string|max:2000',
+            'description' => 'nullable|string|max:255',
             'startsAt' => 'required|date',
             'timezone' => 'required|string|in:' . implode(',', array_keys(Event::TIMEZONES)),
             'isOnline' => 'boolean',
             'location' => 'nullable|string|max:255',
             'links' => 'array|max:10',
-            'links.*.type' => 'required|string|in:' . implode(',', array_keys(Event::LINK_TYPES)),
-            'links.*.url' => 'required|url|max:500',
-            'links.*.label' => 'nullable|string|max:100',
+            'links.*.url'  => 'nullable|url|max:500',
+            'links.*.type' => 'nullable|string|in:' . implode(',', array_keys(Event::LINK_TYPES)),
+            'links.*.label' => 'nullable|string|max:25',
         ]);
 
+        
         $cleanLinks = collect($this->links)
-            ->filter(fn ($link) => !empty($link['url']))
-            ->values()
-            ->toArray();
-
+        ->filter(fn ($link) => !empty($link['url']))
+        ->values()
+        ->toArray();
+        
         // Parse the datetime in the selected timezone, then store as UTC
         $startsAtUtc = Carbon::parse($this->startsAt, $this->timezone)->utc();
 

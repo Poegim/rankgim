@@ -173,7 +173,7 @@ class Event extends Model
             $type = $link['type'] ?? 'other';
             $meta = self::LINK_TYPES[$type] ?? self::LINK_TYPES['other'];
 
-            return array_merge($link, $meta);
+            return array_merge($meta, $link); // ← link nadpisuje meta
         })->toArray();
     }
 }

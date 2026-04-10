@@ -216,7 +216,7 @@
                     <a href="{{ $link['url'] }}" target="_blank" rel="noopener"
                         class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium transition-opacity hover:opacity-80"
                         style="background: {{ $link['color'] }}20; color: {{ $link['color'] }}; border: 1px solid {{ $link['color'] }}40">
-                        {{ $link['label'] ?? ucfirst($link['type']) }}
+                        {{ $link['label'] ?: ucfirst($link['type']) }}
                     </a>
                     @endforeach
 
@@ -380,41 +380,48 @@
                     @endif
                 </div>
 
-                {{-- External links --}}
-                <div>
-                    <div class="flex items-center justify-between mb-2">
-                        <label class="text-sm text-zinc-400">External links</label>
-                        <button type="button" wire:click="addLink"
-                            class="text-xs text-amber-400 hover:text-amber-300">
-                            + Add link
-                        </button>
-                    </div>
+            {{-- External links --}}
+            <div>
+                <div class="flex items-center justify-between mb-2">
+                    <label class="text-sm text-zinc-400">External links</label>
+                    <button type="button" wire:click="addLink"
+                        class="text-xs text-amber-400 hover:text-amber-300">
+                        + Add link
+                    </button>
+                </div>
 
-                    @foreach($links as $i => $link)
-                    <div class="flex items-start gap-2 mb-2" wire:key="link-{{ $i }}">
+                @foreach($links as $i => $link)
+                <div class="flex items-start gap-2 mb-2" wire:key="link-{{ $i }}">
+                    <div class="flex flex-col gap-1">
                         <select wire:model="links.{{ $i }}.type"
                             class="w-28 shrink-0 rounded-lg bg-zinc-800 border border-zinc-700 px-2 py-1.5 text-xs text-white focus:outline-none focus:border-amber-500/50">
                             @foreach($this->linkTypes as $key => $meta)
                             <option value="{{ $key }}">{{ $meta['label'] }}</option>
                             @endforeach
                         </select>
+                        @error('links.' . $i . '.type') <p class="text-xs text-red-400">{{ $message }}</p> @enderror
+                    </div>
+                    <div class="flex flex-col gap-1 flex-1">
                         <input type="url" wire:model="links.{{ $i }}.url"
-                            class="flex-1 rounded-lg bg-zinc-800 border border-zinc-700 px-2 py-1.5 text-xs text-white focus:outline-none focus:border-amber-500/50"
+                            class="w-full rounded-lg bg-zinc-800 border border-zinc-700 px-2 py-1.5 text-xs text-white focus:outline-none focus:border-amber-500/50"
                             placeholder="https://…">
+                        @error('links.' . $i . '.url') <p class="text-xs text-red-400">{{ $message }}</p> @enderror
+                    </div>
+                    <div class="flex flex-col gap-1">
                         <input type="text" wire:model="links.{{ $i }}.label"
                             class="w-24 rounded-lg bg-zinc-800 border border-zinc-700 px-2 py-1.5 text-xs text-white focus:outline-none focus:border-amber-500/50"
-                            placeholder="Label">
-                        <button type="button" wire:click="removeLink({{ $i }})"
-                            class="text-zinc-500 hover:text-red-400 transition-colors pt-1.5">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M6 18L18 6M6 6l12 12" />
-                            </svg>
-                        </button>
+                            placeholder="Custom label (optional)">
+                        @error('links.' . $i . '.label') <p class="text-xs text-red-400">{{ $message }}</p> @enderror
                     </div>
-                    @endforeach
+                    <button type="button" wire:click="removeLink({{ $i }})"
+                        class="text-zinc-500 hover:text-red-400 transition-colors pt-1.5">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
                 </div>
-
+                @endforeach
             </div>
 
             {{-- Modal footer --}}
