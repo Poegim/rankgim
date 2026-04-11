@@ -207,8 +207,15 @@
                     {{-- Right column: date + countdown --}}
                     @if(!$isPast)
                     <div class="flex flex-col items-start sm:items-end">
-                        <p class="text-sm sm:text-lg font-mono font-bold {{ $isStream ? 'text-purple-300' : 'text-amber-300' }}">
-                            {{ $event->startsAtCET()->format('d M H:i') }} <span class="opacity-50 text-sm">CET</span>
+                        <p class="uppercase text-sm sm:text-lg font-mono font-bold {{ $isStream ? 'text-purple-300' : 'text-amber-300' }}">
+                            <span x-data x-text="new Intl.DateTimeFormat(navigator.language, {
+                                day: 'numeric',
+                                month: 'long',
+                                hour: '2-digit',
+                                minute: '2-digit',
+                                timeZone: 'Europe/Warsaw'
+                            }).format(new Date({{ $event->starts_at->timestamp }} * 1000))"></span>
+                            <span class="opacity-50 text-sm">CET</span>
                         </p>
                         <div class="text-base sm:text-lg font-mono {{ $isStream ? 'text-purple-300/60' : 'text-amber-300/60' }}"
                             x-data="{

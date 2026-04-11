@@ -77,8 +77,15 @@
 
             {{-- Right: countdown + date — inline on mobile, stacked right on desktop --}}
             <<div class="flex flex-col sm:items-end sm:shrink-0">
-                <p class="text-sm sm:text-base font-mono font-bold {{ $event->isStream() ? 'text-purple-300' : 'text-amber-300' }}">
-                    {{ $event->startsAtCET()->format('d M H:i') }} <span class="opacity-50 text-xs">CET</span>
+                <p class="uppercase text-sm sm:text-base font-mono font-bold {{ $event->isStream() ? 'text-purple-300' : 'text-amber-300' }}">
+                    <span x-data x-text="new Intl.DateTimeFormat(navigator.language, {
+                        day: 'numeric',
+                        month: 'long',
+                        hour: '2-digit',
+                        minute: '2-digit',
+                        timeZone: 'Europe/Warsaw'
+                    }).format(new Date({{ $event->starts_at->timestamp }} * 1000))"></span>
+                    <span class="opacity-50 text-xs">CET</span>
                 </p>
                 <div class="text-xs sm:text-sm font-mono {{ $event->isStream() ? 'text-purple-300/60' : 'text-amber-300/60' }} tabular-nums"
                     x-data="{
