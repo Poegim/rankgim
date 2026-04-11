@@ -36,6 +36,24 @@
                 <p class="text-xs text-zinc-500 truncate">{{ $event->description }}</p>
                 @endif
 
+                {{-- Players --}}
+                @if($event->players->isNotEmpty())
+                <div class="flex flex-wrap gap-1.5">
+                    @foreach($event->players as $p)
+                    <a
+                        href="{{ route('players.show', ['id' => $p->id, 'slug' => $p->name]) }}"
+                        wire:navigate
+                        class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-xs bg-zinc-800 border border-zinc-700 transition-colors hover:border-zinc-500
+                            {{ $p->race === 'Terran' ? 'text-blue-400 hover:text-blue-300' : ($p->race === 'Zerg' ? 'text-purple-400 hover:text-purple-300' : 'text-yellow-400 hover:text-yellow-300') }}"
+                    >
+                        <img src="{{ asset('images/country_flags/' . strtolower($p->country_code) . '.svg') }}"
+                             class="w-4 h-3 rounded-sm shrink-0">
+                        {{ $p->name }}
+                    </a>
+                    @endforeach
+                </div>
+                @endif
+
                 {{-- Links: full-width buttons on mobile, small pills on desktop --}}
                 @php $links = $event->parsedLinks(); @endphp
                 @if($links || $event->isRegistrationOpen())

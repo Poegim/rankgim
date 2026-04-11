@@ -13,6 +13,7 @@ class Dashboard extends Component
     public function upcomingEvents()
     {
         return \App\Models\Event::where('starts_at', '>=', now())
+            ->with('players')
             ->orderBy('starts_at')
             ->limit(5)
             ->get();
