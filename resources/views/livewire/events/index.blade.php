@@ -38,7 +38,7 @@
     </div>
 
     {{-- Type filter tabs: All / Stream / Open --}}
-    <div class="flex gap-2 mb-6">
+    <div class="flex gap-1.5 mb-6">
         <button wire:click="setTypeFilter('all')"
             class="px-4 py-1.5 rounded-full text-sm font-medium transition-colors border
                 {{ $typeFilter === 'all'
@@ -123,7 +123,7 @@
 
                         {{-- Badge + name + countdown --}}
                         <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1.5 sm:gap-3">
-                            <div class="flex items-center gap-2 min-w-0">
+                            <div class="flex items-center gap-1.5 min-w-0">
                                 @if($isStream)
                                 <span class="shrink-0 inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-purple-500/15 text-purple-300 border border-purple-500/25">Stream</span>
                                 @else
@@ -157,6 +157,24 @@
                         <p class="text-sm text-zinc-400 mt-2 leading-relaxed">{{ $event->description }}</p>
                         @endif
 
+                        {{-- Players --}}
+                        @if($event->players->isNotEmpty())
+                        <div class="flex flex-wrap gap-1.5 mt-2">
+                            @foreach($event->players as $p)
+                            <a
+                                href="{{ route('players.show', ['id' => $p->id, 'slug' => $p->name]) }}"
+                                wire:navigate
+                                class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-xs bg-zinc-800 border border-zinc-700 transition-colors hover:border-zinc-500
+                                {{ $p->race === 'Terran' ? 'text-blue-400 hover:text-blue-300' : ($p->race === 'Zerg' ? 'text-purple-400 hover:text-purple-300' : 'text-yellow-400 hover:text-yellow-300') }}"
+                            >
+                                <img src="{{ asset('images/country_flags/' . strtolower($p->country_code) . '.svg') }}"
+                                     class="w-4 h-3 rounded-sm shrink-0">
+                                {{ $p->name }}
+                            </a>
+                            @endforeach
+                        </div>
+                        @endif
+
                         {{-- Dates — wrap on mobile --}}
                         <div class="flex flex-wrap gap-x-3 gap-y-1 mt-3">
                             @foreach($event->displayDates() as $dt)
@@ -167,7 +185,7 @@
                         </div>
 
                         {{-- Links --}}
-                        <div class="flex flex-wrap gap-2 mt-3">
+                        <div class="flex flex-wrap gap-1.5 mt-3">
                             @if($event->is_online && !$event->location)
                             <span class="inline-flex items-center gap-1 text-xs text-zinc-500">
                                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -204,7 +222,7 @@
                         {{-- Edit/Delete --}}
                         @auth
                         @if(auth()->id() === $event->created_by || auth()->user()->canManageGames())
-                        <div class="flex items-center gap-2 mt-3 pt-3 border-t border-zinc-700/30">
+                        <div class="flex items-center gap-1.5 mt-3 pt-3 border-t border-zinc-700/30">
                             <button wire:click="openEditModal({{ $event->id }})" class="text-xs text-zinc-500 hover:text-zinc-300 transition-colors">Edit</button>
                             <span class="text-zinc-700">·</span>
                             <button wire:click="$set('confirmingDeleteId', {{ $event->id }})" class="text-xs text-zinc-500 hover:text-red-400 transition-colors">Delete</button>
@@ -271,10 +289,10 @@
                 {{-- Event type selector --}}
                 <div>
                     <label class="block text-sm text-zinc-400 mb-2">Event type</label>
-                    <div class="flex gap-2">
+                    <div class="flex gap-1.5">
                         {{-- Stream option --}}
                         <button type="button" wire:click="$set('type', 'stream')"
-                            class="flex-1 flex flex-col items-center gap-1.5 px-3 py-3 rounded-lg border text-sm transition-colors
+                            class="flex-1 flex flex-col items-center gap-1 px-2 py-2 rounded-lg border text-sm transition-colors
                                 {{ $type === 'stream'
                                     ? 'bg-purple-500/15 border-purple-500/40 text-purple-300'
                                     : 'bg-zinc-800 border-zinc-700 text-zinc-400 hover:border-zinc-600' }}">
@@ -287,7 +305,7 @@
                         </button>
                         {{-- Open tournament option --}}
                         <button type="button" wire:click="$set('type', 'open')"
-                            class="flex-1 flex flex-col items-center gap-1.5 px-3 py-3 rounded-lg border text-sm transition-colors
+                            class="flex-1 flex flex-col items-center gap-1 px-2 py-2 rounded-lg border text-sm transition-colors
                                 {{ $type === 'open'
                                     ? 'bg-amber-500/15 border-amber-500/40 text-amber-300'
                                     : 'bg-zinc-800 border-zinc-700 text-zinc-400 hover:border-zinc-600' }}">
@@ -311,14 +329,14 @@
                 </div>
 
                 {{-- Start datetime + Timezone --}}
-                <div class="grid grid-cols-2 gap-3">
-                    <div class="col-span-2">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div class="col-span-1">
                         <label class="block text-sm text-zinc-400 mb-1">Start</label>
                         <input type="datetime-local" wire:model="startsAt"
                             class="w-full rounded-lg bg-zinc-800 border border-zinc-700 px-3 py-2 text-sm text-white focus:outline-none focus:border-amber-500/50">
                         @error('startsAt') <p class="text-xs text-red-400 mt-1">{{ $message }}</p> @enderror
                     </div>
-                    <div class="col-span-2">
+                    <div class="col-span-1">
                         <label class="block text-sm text-zinc-400 mb-1">Timezone</label>
                         <select wire:model="timezone"
                             class="w-full rounded-lg bg-zinc-800 border border-zinc-700 px-3 py-2 text-sm text-white focus:outline-none focus:border-amber-500/50">
@@ -331,7 +349,7 @@
 
                 {{-- Online / Location --}}
                 <div>
-                    <label class="flex items-center gap-2 text-sm text-zinc-400 cursor-pointer">
+                    <label class="flex items-center gap-1.5 text-sm text-zinc-400 cursor-pointer">
                         <input type="checkbox" wire:model.live="isOnline"
                             class="rounded bg-zinc-800 border-zinc-600 text-amber-500 focus:ring-amber-500/30">
                         Online event
@@ -343,48 +361,136 @@
                     @endif
                 </div>
 
-            {{-- External links --}}
-            <div>
-                <div class="flex items-center justify-between mb-2">
-                    <label class="text-sm text-zinc-400">External links</label>
-                    <button type="button" wire:click="addLink"
-                        class="text-xs text-amber-400 hover:text-amber-300">
-                        + Add link
-                    </button>
+                {{-- External links --}}
+                <div>
+                    <div class="flex items-center justify-between mb-2">
+                        <label class="text-sm text-zinc-400">External links</label>
+                        <button type="button" wire:click="addLink"
+                            class="text-xs text-amber-400 hover:text-amber-300">
+                            + Add link
+                        </button>
+                    </div>
+
+                    {{-- Predefined links --}}
+                    @if(count($this->predefinedLinks) > 0)
+                    <div class="flex flex-wrap gap-1.5 mb-3">
+                        @foreach($this->predefinedLinks as $i => $pre)
+                        @php $active = !empty($predefinedLinksSelected[$i]); @endphp
+                        <button
+                            type="button"
+                            wire:click="togglePredefinedLink({{ $i }})"
+                            class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-medium border transition-colors
+                                {{ $active
+                                    ? 'bg-zinc-600 border-zinc-500 text-white'
+                                    : 'bg-zinc-800 border-zinc-700 text-zinc-400 hover:border-zinc-500 hover:text-white' }}"
+                        >
+                            @if($active)
+                            <svg class="w-3 h-3 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/>
+                            </svg>
+                            @endif
+                            {{ $pre['label'] }}
+                        </button>
+                        @endforeach
+                    </div>
+                    @endif
+
+                    @foreach($links as $i => $link)
+                    <div class="flex items-start gap-1.5 mb-2" wire:key="link-{{ $i }}">
+                        <div class="flex flex-col gap-1">
+                            <select wire:model="links.{{ $i }}.type"
+                                class="w-28 shrink-0 rounded-lg bg-zinc-800 border border-zinc-700 px-2 py-1.5 text-xs text-white focus:outline-none focus:border-amber-500/50">
+                                @foreach($this->linkTypes as $key => $meta)
+                                <option value="{{ $key }}">{{ $meta['label'] }}</option>
+                                @endforeach
+                            </select>
+                            @error('links.' . $i . '.type') <p class="text-xs text-red-400">{{ $message }}</p> @enderror
+                        </div>
+                        <div class="flex flex-col gap-1 flex-1">
+                            <input type="url" wire:model="links.{{ $i }}.url"
+                                class="w-full rounded-lg bg-zinc-800 border border-zinc-700 px-2 py-1.5 text-xs text-white focus:outline-none focus:border-amber-500/50"
+                                placeholder="https://…">
+                            @error('links.' . $i . '.url') <p class="text-xs text-red-400">{{ $message }}</p> @enderror
+                        </div>
+                        <div class="flex flex-col gap-1">
+                            <input type="text" wire:model="links.{{ $i }}.label"
+                                class="w-24 rounded-lg bg-zinc-800 border border-zinc-700 px-2 py-1.5 text-xs text-white focus:outline-none focus:border-amber-500/50"
+                                placeholder="Custom label (optional)">
+                            @error('links.' . $i . '.label') <p class="text-xs text-red-400">{{ $message }}</p> @enderror
+                        </div>
+                        <button type="button" wire:click="removeLink({{ $i }})"
+                            class="text-zinc-500 hover:text-red-400 transition-colors pt-1.5">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                        </button>
+                    </div>
+                    @endforeach
                 </div>
 
-                @foreach($links as $i => $link)
-                <div class="flex items-start gap-2 mb-2" wire:key="link-{{ $i }}">
-                    <div class="flex flex-col gap-1">
-                        <select wire:model="links.{{ $i }}.type"
-                            class="w-28 shrink-0 rounded-lg bg-zinc-800 border border-zinc-700 px-2 py-1.5 text-xs text-white focus:outline-none focus:border-amber-500/50">
-                            @foreach($this->linkTypes as $key => $meta)
-                            <option value="{{ $key }}">{{ $meta['label'] }}</option>
-                            @endforeach
-                        </select>
-                        @error('links.' . $i . '.type') <p class="text-xs text-red-400">{{ $message }}</p> @enderror
+                {{-- Players --}}
+                <div>
+                    <label class="block text-sm text-zinc-400 mb-2">Players <span class="text-zinc-600">(optional)</span></label>
+
+                    {{-- Search input with live dropdown --}}
+                    <div class="relative" x-data="{ open: false }" x-on:click.outside="open = false">
+                        <input
+                            type="text"
+                            wire:model.live.debounce.200ms="playerSearch"
+                            x-on:focus="open = true"
+                            x-on:input="open = true"
+                            autocomplete="off"
+                            placeholder="Search player…"
+                            class="w-full rounded-lg bg-zinc-800 border border-zinc-700 px-3 py-2 text-sm text-white focus:outline-none focus:border-amber-500/50"
+                        />
+
+                        @if(strlen($playerSearch) >= 2)
+                        <div x-show="open" class="absolute z-50 w-full mt-1 rounded-lg bg-zinc-900 border border-zinc-700 shadow-lg overflow-hidden">
+                            @forelse($this->playerResults as $player)
+                            <button
+                                type="button"
+                                wire:click="addPlayer({{ $player->id }})"
+                                x-on:click="open = false"
+                                class="flex items-center gap-1.5 w-full px-3 py-2 text-left hover:bg-zinc-800 transition-colors"
+                            >
+                                <img src="{{ asset('images/country_flags/' . strtolower($player->country_code) . '.svg') }}"
+                                     class="w-6 h-4 rounded-sm shrink-0">
+                                <span class="text-sm font-semibold text-white">{{ $player->name }}</span>
+                                <span class="text-xs ml-auto
+                                    {{ $player->race === 'Terran' ? 'text-blue-400' : ($player->race === 'Zerg' ? 'text-purple-400' : 'text-yellow-400') }}">
+                                    {{ $player->race }}
+                                </span>
+                            </button>
+                            @empty
+                            <div class="px-3 py-2 text-sm text-zinc-500">No players found</div>
+                            @endforelse
+                        </div>
+                        @endif
                     </div>
-                    <div class="flex flex-col gap-1 flex-1">
-                        <input type="url" wire:model="links.{{ $i }}.url"
-                            class="w-full rounded-lg bg-zinc-800 border border-zinc-700 px-2 py-1.5 text-xs text-white focus:outline-none focus:border-amber-500/50"
-                            placeholder="https://…">
-                        @error('links.' . $i . '.url') <p class="text-xs text-red-400">{{ $message }}</p> @enderror
+
+                    {{-- Selected players chips --}}
+                    @if(count($selectedPlayers) > 0)
+                    <div class="flex flex-wrap gap-1.5 mt-2">
+                        @foreach($selectedPlayers as $player)
+                        <span
+                            wire:key="selected-{{ $player['id'] }}"
+                            class="inline-flex items-center gap-1.5 pl-1.5 pr-1 py-0.5 rounded-full text-xs bg-zinc-700 border border-zinc-600 text-white"
+                        >
+                            <img src="{{ asset('images/country_flags/' . strtolower($player['country_code']) . '.svg') }}"
+                                 class="w-4 h-3 rounded-sm shrink-0">
+                            {{ $player['name'] }}
+                            <button
+                                type="button"
+                                wire:click="removePlayer({{ $player['id'] }})"
+                                class="ml-0.5 text-zinc-400 hover:text-red-400 transition-colors leading-none"
+                            >✕</button>
+                        </span>
+                        @endforeach
                     </div>
-                    <div class="flex flex-col gap-1">
-                        <input type="text" wire:model="links.{{ $i }}.label"
-                            class="w-24 rounded-lg bg-zinc-800 border border-zinc-700 px-2 py-1.5 text-xs text-white focus:outline-none focus:border-amber-500/50"
-                            placeholder="Custom label (optional)">
-                        @error('links.' . $i . '.label') <p class="text-xs text-red-400">{{ $message }}</p> @enderror
-                    </div>
-                    <button type="button" wire:click="removeLink({{ $i }})"
-                        class="text-zinc-500 hover:text-red-400 transition-colors pt-1.5">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M6 18L18 6M6 6l12 12" />
-                        </svg>
-                    </button>
+                    @endif
                 </div>
-                @endforeach
+
             </div>
 
             {{-- Modal footer --}}

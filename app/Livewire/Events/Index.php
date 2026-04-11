@@ -3,6 +3,8 @@
 namespace App\Livewire\Events;
 
 use App\Models\Event;
+use App\Models\Player;
+use App\Models\PlayerName;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Livewire\Attributes\Computed;
@@ -13,9 +15,9 @@ class Index extends Component
 {
     #[Url]
     public string $view = 'upcoming'; // upcoming | past | all
-    
+
     #[Url]
-    public string $typeFilter = 'all'; // all | stream | open   
+    public string $typeFilter = 'all'; // all | stream | open
 
     public ?int $confirmingDeleteId = null;
 
@@ -31,7 +33,13 @@ class Index extends Component
     public string $location = '';
     public array $links = [];
     public string $type = 'stream';
-    
+
+    // ── Player search state ───────────────────────────
+    /** @var string Live search query for the player picker */
+    public string $playerSearch = '';
+
+    /** @var array<int, array{id: int, name: string, country_code: string, race: string}> */
+    public array $selectedPlayers = [];
 
     // ── Computed ───────────────────────────────────────
     #[Computed]
@@ -43,7 +51,7 @@ class Index extends Component
     #[Computed]
     public function events(): Collection
     {
-        $query = Event::with('user')
+        $query = Event::with(['user', 'players'])
             ->orderBy('starts_at', $this->view === 'past' ? 'desc' : 'asc');
 
         if ($this->view === 'upcoming') {
@@ -60,11 +68,43 @@ class Index extends Component
         return $query->get();
     }
 
+    // Add to form state properties
+    public array $predefinedLinksSelected = [];
+
+    // Add new computed
+    #[Computed]
+    public function predefinedLinks(): array
+    {
+        return config('event_links', []);
+    }
+
+    // Add new action
+    public function togglePredefinedLink(int $index): void
+    {
+        $link = $this->predefinedLinks[$index] ?? null;
+        if (!$link) return;
+
+        // Check if this url is already in links — if so, remove it
+        $exists = collect($this->links)->search(fn($l) => $l['url'] === $link['url']);
+
+        if ($exists !== false) {
+            $this->removeLink($exists);
+            unset($this->predefinedLinksSelected[$index]);
+        } else {
+            $this->links[] = [
+                'type'  => $link['type'],
+                'url'   => $link['url'],
+                'label' => $link['label'],
+            ];
+            $this->predefinedLinksSelected[$index] = true;
+        }
+    }
+
     #[Computed]
     public function groupedEvents(): Collection
     {
         return $this->events->groupBy(function ($event) {
-            // use CET for grouping
+            // Use CET for grouping
             return $event->startsAtCET()->format('F Y');
         });
     }
@@ -81,6 +121,28 @@ class Index extends Component
         return Event::LINK_TYPES;
     }
 
+    /**
+     * Live search results for the player picker — excludes already selected players.
+     */
+    #[Computed]
+    public function playerResults(): Collection
+    {
+        if (strlen($this->playerSearch) < 2) {
+            return collect();
+        }
+
+        $selectedIds = collect($this->selectedPlayers)->pluck('id')->toArray();
+
+        $playerIds = PlayerName::where('name', 'like', '%' . $this->playerSearch . '%')
+            ->pluck('player_id');
+
+        return Player::whereIn('id', $playerIds)
+            ->whereNull('player_id') // main players only, no aliases
+            ->whereNotIn('id', $selectedIds)
+            ->limit(8)
+            ->get();
+    }
+
     // ── Actions ───────────────────────────────────────
 
     public function delete(): void
@@ -93,9 +155,9 @@ class Index extends Component
 
         $user = auth()->user();
         if (!$user || ($event->created_by !== $user->id && !$user->canManageGames())) {
-                $this->confirmingDeleteId = null;  // ← ADD THIS
-                return;
-            }
+            $this->confirmingDeleteId = null;
+            return;
+        }
 
         $event->delete();
 
@@ -120,7 +182,7 @@ class Index extends Component
         }
 
         $this->resetForm();
-
+        $this->predefinedLinksSelected = [];
         $this->editingId = $event->id;
         $this->name = $event->name;
         $this->type = $event->type;
@@ -131,6 +193,14 @@ class Index extends Component
         $this->isOnline = $event->is_online;
         $this->location = $event->location ?? '';
         $this->links = $event->links ?? [];
+
+        // Pre-populate selected players from existing relation
+        $this->selectedPlayers = $event->players->map(fn (Player $p) => [
+            'id'           => $p->id,
+            'name'         => $p->name,
+            'country_code' => $p->country_code,
+            'race'         => $p->race,
+        ])->toArray();
 
         $this->showModal = true;
     }
@@ -149,14 +219,15 @@ class Index extends Component
             'links.*.url'  => 'nullable|url|max:500',
             'links.*.type' => 'nullable|string|in:' . implode(',', array_keys(Event::LINK_TYPES)),
             'links.*.label' => 'nullable|string|max:25',
+            'selectedPlayers' => 'array|max:50',
+            'selectedPlayers.*.id' => 'integer|exists:players,id',
         ]);
 
-        
         $cleanLinks = collect($this->links)
-        ->filter(fn ($link) => !empty($link['url']))
-        ->values()
-        ->toArray();
-        
+            ->filter(fn ($link) => !empty($link['url']))
+            ->values()
+            ->toArray();
+
         // Parse the datetime in the selected timezone, then store as UTC
         $startsAtUtc = Carbon::parse($this->startsAt, $this->timezone)->utc();
 
@@ -171,6 +242,8 @@ class Index extends Component
             'links' => $cleanLinks ?: null,
         ];
 
+        $playerIds = collect($this->selectedPlayers)->pluck('id')->toArray();
+
         if ($this->editingId) {
             $event = Event::findOrFail($this->editingId);
             $user = auth()->user();
@@ -178,14 +251,56 @@ class Index extends Component
                 return;
             }
             $event->update($data);
+            $event->players()->sync($playerIds);
         } else {
             $data['created_by'] = auth()->id();
-            Event::create($data);
+            $event = Event::create($data);
+            $event->players()->sync($playerIds);
         }
 
         $this->showModal = false;
         $this->resetForm();
         unset($this->events, $this->groupedEvents);
+    }
+
+    /**
+     * Add a player to the selected list by their ID.
+     */
+    public function addPlayer(int $playerId): void
+    {
+        // Prevent duplicates
+        $alreadySelected = collect($this->selectedPlayers)->pluck('id')->contains($playerId);
+        if ($alreadySelected) {
+            $this->playerSearch = '';
+            unset($this->playerResults);
+            return;
+        }
+
+        $player = Player::findOrFail($playerId);
+
+        $this->selectedPlayers[] = [
+            'id'           => $player->id,
+            'name'         => $player->name,
+            'country_code' => $player->country_code,
+            'race'         => $player->race,
+        ];
+
+        // Clear the search input after selecting
+        $this->playerSearch = '';
+        unset($this->playerResults);
+    }
+
+    /**
+     * Remove a player from the selected list by their ID.
+     */
+    public function removePlayer(int $playerId): void
+    {
+        $this->selectedPlayers = collect($this->selectedPlayers)
+            ->reject(fn ($p) => $p['id'] === $playerId)
+            ->values()
+            ->toArray();
+
+        unset($this->playerResults);
     }
 
     public function addLink(): void
@@ -222,6 +337,9 @@ class Index extends Component
         $this->isOnline = true;
         $this->location = '';
         $this->links = [];
+        $this->selectedPlayers = [];
+        $this->playerSearch = '';
+        unset($this->playerResults);
     }
 
     public function render()

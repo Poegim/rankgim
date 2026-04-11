@@ -5,6 +5,7 @@ namespace App\Models;
 use Carbon\CarbonInterface;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Event extends Model
 {
@@ -82,6 +83,14 @@ class Event extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class, 'created_by');
+    }
+
+    /**
+     * Players participating in or featured at this event.
+     */
+    public function players(): BelongsToMany
+    {
+        return $this->belongsToMany(Player::class, 'event_player');
     }
 
     // ── Helpers ────────────────────────────────────────
