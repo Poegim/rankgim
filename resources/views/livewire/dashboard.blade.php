@@ -76,8 +76,11 @@
             </div>
 
             {{-- Right: countdown + date — inline on mobile, stacked right on desktop --}}
-            <div class="flex items-baseline gap-2 sm:flex-col sm:items-end sm:gap-0.5 sm:shrink-0">
-                <p class="{{ $event->isStream() ? 'text-purple-300' : 'text-amber-400' }} text-sm font-mono font-bold tabular-nums"
+            <<div class="flex flex-col sm:items-end sm:shrink-0">
+                <p class="text-sm sm:text-base font-mono font-bold {{ $event->isStream() ? 'text-purple-300' : 'text-amber-300' }}">
+                    {{ $event->startsAtCET()->format('d M H:i') }} <span class="opacity-50 text-xs">CET</span>
+                </p>
+                <div class="text-xs sm:text-sm font-mono {{ $event->isStream() ? 'text-purple-300/60' : 'text-amber-300/60' }} tabular-nums"
                     x-data="{
                         target: {{ $event->starts_at->timestamp }},
                         d: 0, h: 0, m: 0, s: 0,
@@ -92,10 +95,7 @@
                         }
                     }">
                     <span x-show="d > 0" x-text="d + 'd '"></span><span x-text="String(h).padStart(2,'0') + 'h ' + String(m).padStart(2,'0') + 'm ' + String(s).padStart(2,'0') + 's'"></span>
-                </p>
-                <p class="text-xs font-mono text-zinc-500 whitespace-nowrap">
-                    {{ $event->startsAtCET()->format('d M, H:i') }} CET
-                </p>
+                </div>
             </div>
 
         </div>
