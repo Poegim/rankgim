@@ -1,5 +1,5 @@
 @use('Illuminate\Support\Str')
-<div class="relative px-2 mb-2" x-data="{
+<div class="relative mb-2" x-data="{
     open: false,
     updatePosition() {
         const rect = this.$refs.input.getBoundingClientRect();
