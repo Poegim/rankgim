@@ -41,7 +41,7 @@
             ],
         ] as $rank => $s)
 
-        @php $players = $this->podium->get($rank, collect())->take(5); @endphp
+        @php $players = $this->podium->get($rank, collect()); @endphp
 
         <div class="rounded-xl border overflow-hidden relative"
              style="{{ $s['cardBg'] }}; {{ $s['border'] }}">

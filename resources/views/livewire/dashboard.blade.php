@@ -12,7 +12,7 @@
 
     <div class="flex flex-col gap-2 px-3 pb-3">
         @foreach($this->upcomingEvents as $event)
-        <div class="rounded-lg border border-zinc-200 dark:border-zinc-700 bg-zinc-100 dark:bg-zinc-900 p-3 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-4">
+        <div class="rounded-lg border border-zinc-200 dark:border-zinc-700 bg-zinc-100 dark:bg-zinc-900 p-3 flex flex-col sm:flex-row sm:items-start sm:justify-between gap-2 sm:gap-4">
 
             {{-- Left: name + description + links --}}
             <div class="flex flex-col gap-2 min-w-0 overflow-hidden">
@@ -28,7 +28,7 @@
                         Open
                     </span>
                     @endif
-                    <p class="text-sm font-medium text-zinc-900 dark:text-white truncate">{{ $event->name }}</p>
+                    <p class="uppercase text-sm sm:text-base font-bold text-zinc-900 dark:text-white truncate">{{ $event->name }}</p>
                 </div>
 
                 {{-- Description --}}
@@ -76,7 +76,7 @@
             </div>
 
             {{-- Right: countdown + date — inline on mobile, stacked right on desktop --}}
-            <<div class="flex flex-col sm:items-end sm:shrink-0">
+            <div class="flex flex-col items-end sm:items-start sm:shrink-0">
                 <p class="uppercase text-sm sm:text-base font-mono font-bold {{ $event->isStream() ? 'text-purple-300' : 'text-amber-300' }}">
                     <span x-data x-text="new Intl.DateTimeFormat(navigator.language, {
                         day: 'numeric',

@@ -132,7 +132,7 @@
                             <span
                                 class="shrink-0 inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-amber-500/15 text-amber-300 border border-amber-500/25">Open</span>
                             @endif
-                            <h3 class="font-semibold text-white truncate">{{ $event->name }}</h3>
+                            <h3 class="uppercase text-sm sm:text-base font-bold text-white truncate">{{ $event->name }}</h3>
                         </div>
 
                         {{-- Description --}}
@@ -206,7 +206,7 @@
 
                     {{-- Right column: date + countdown --}}
                     @if(!$isPast)
-                    <div class="flex flex-col items-start sm:items-end">
+                    <div class="flex flex-col items-end sm:items-start">
                         <p class="uppercase text-sm sm:text-lg font-mono font-bold {{ $isStream ? 'text-purple-300' : 'text-amber-300' }}">
                             <span x-data x-text="new Intl.DateTimeFormat(navigator.language, {
                                 day: 'numeric',
@@ -217,7 +217,7 @@
                             }).format(new Date({{ $event->starts_at->timestamp }} * 1000))"></span>
                             <span class="opacity-50 text-sm">CET</span>
                         </p>
-                        <div class="text-base sm:text-lg font-mono {{ $isStream ? 'text-purple-300/60' : 'text-amber-300/60' }}"
+                        <div class="text-sm sm:text-base font-mono {{ $isStream ? 'text-purple-300/60' : 'text-amber-300/60' }}"
                             x-data="{
                     target: {{ $event->starts_at->timestamp }},
                     d: 0, h: 0, m: 0, s: 0,
