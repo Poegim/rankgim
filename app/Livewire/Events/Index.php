@@ -121,6 +121,17 @@ class Index extends Component
         return Event::LINK_TYPES;
     }
 
+    #[Computed]
+    public function recentEventNames(): array
+    {
+        return Event::latest('created_at')
+            ->limit(10)
+            ->pluck('name')
+            ->unique()
+            ->values()
+            ->toArray();
+    }
+
     /**
      * Live search results for the player picker — excludes already selected players.
      */
@@ -328,11 +339,12 @@ class Index extends Component
 
     private function resetForm(): void
     {
+        $this->predefinedLinksSelected = [];
         $this->editingId = null;
         $this->type = 'stream';
         $this->name = '';
         $this->description = '';
-        $this->startsAt = '';
+        $this->startsAt = now()->format('Y-m') . '-01T00:00';
         $this->timezone = 'Europe/Warsaw';
         $this->isOnline = true;
         $this->location = '';

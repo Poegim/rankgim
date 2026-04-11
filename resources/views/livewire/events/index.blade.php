@@ -282,7 +282,13 @@
                     <label class="block text-sm text-zinc-400 mb-1">Event name</label>
                     <input type="text" wire:model="name"
                         class="w-full rounded-lg bg-zinc-800 border border-zinc-700 px-3 py-2 text-sm text-white focus:outline-none focus:border-amber-500/50"
-                        placeholder="e.g. Sunday Open #12">
+                        placeholder="e.g. Sunday Open #12"
+                        list="event-name-suggestions">
+                        <datalist id="event-name-suggestions">
+                            @foreach($this->recentEventNames as $eventName)
+                            <option value="{{ $eventName }}">
+                            @endforeach
+                        </datalist>
                     @error('name') <p class="text-xs text-red-400 mt-1">{{ $message }}</p> @enderror
                 </div>
 
