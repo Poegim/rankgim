@@ -3,7 +3,7 @@
 return [
     [
         'type'  => 'twitch',
-        'url'   => 'https://twitch.tv/zzzero',
+        'url'   => 'https://twitch.tv/zzzeropl',
         'label' => 'BSL',
     ],
     [
