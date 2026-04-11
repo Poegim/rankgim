@@ -6,7 +6,6 @@
 </head>
 
 <body class="min-h-screen bg-white dark:bg-zinc-800">
-
     @php
     $upcomingEvents = \App\Models\Event::where('starts_at', '>=', now())
     ->where('starts_at', '<=', now()->addDays(7))
@@ -140,13 +139,18 @@
                     <flux:spacer />
                     @auth
                     <flux:dropdown position="top" align="end">
-                        <flux:profile :initials="auth()->user()->initials()" icon-trailing="chevron-down" />
+                        <flux:profile :name="auth()->user()->name" :src="auth()->user()?->profilePhotoUrl()" icon-trailing="chevron-down" />
                         <flux:menu>
                             <flux:menu.radio.group>
                                 <div class="p-0 text-sm font-normal">
                                     <div class="flex items-center gap-2 px-1 py-1.5 text-start text-sm">
-                                        <flux:avatar :name="auth()->user()->name"
-                                            :initials="auth()->user()->initials()" />
+                                       <flux:avatar
+                                            size="xl"
+                                            :src="auth()->user()->fresh()->profilePhotoUrl()"
+                                            :name="auth()->user()->name"
+                                            color="auto"
+                                            :color:seed="auth()->user()->id"
+                                        />
                                         <div class="grid flex-1 text-start text-sm leading-tight">
                                             <flux:heading class="truncate">{{ auth()->user()->name }}</flux:heading>
                                             <flux:text class="truncate">{{ auth()->user()->email }}</flux:text>
@@ -172,6 +176,8 @@
                     </flux:dropdown>
                     @endauth
                 </flux:header>
+
+                
 
                 {{ $slot }}
                 @fluxScripts

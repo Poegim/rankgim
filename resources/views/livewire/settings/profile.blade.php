@@ -4,6 +4,41 @@
     <flux:heading class="sr-only">{{ __('Profile settings') }}</flux:heading>
 
     <x-settings.layout :heading="__('Profile')" :subheading="__('Update your name and email address')">
+        {{-- Profile photo --}}
+        <div class="flex items-center gap-4 my-6">
+            <flux:avatar
+                size="xl"
+                :src="auth()->user()->profilePhotoUrl()"
+                :name="auth()->user()->name"
+                color="auto"
+                :color:seed="auth()->user()->id"
+            />
+
+            <div class="flex flex-col gap-2">
+                <div class="flex items-center gap-2">
+                    <flux:input
+                        wire:model="photo"
+                        type="file"
+                        accept="image/*"
+                        size="sm"
+                    />
+                    @if(auth()->user()->profile_photo_path)
+                        <flux:button
+                            wire:click="removePhoto"
+                            wire:confirm="Remove profile photo?"
+                            variant="danger"
+                            size="sm"
+                        >
+                            Remove
+                        </flux:button>
+                    @endif
+                </div>
+                @error('photo')
+                    <p class="text-xs text-red-400">{{ $message }}</p>
+                @enderror
+                <flux:text class="text-xs">JPG, PNG or GIF · max 1MB</flux:text>
+            </div>
+        </div>
         <form wire:submit="updateProfileInformation" class="my-6 w-full space-y-6">
             <flux:input wire:model="name" :label="__('Name')" type="text" required autofocus autocomplete="name" />
 

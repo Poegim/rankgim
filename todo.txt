@@ -1,2 +1,2 @@
 Bug in country stats china is 17-5 with 5 players and like 200 games. Check why.
-Predefined links in events [asl, bsl] + automated current year.
+Visit counter to show how many ppl see player or event

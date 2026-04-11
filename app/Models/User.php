@@ -25,6 +25,7 @@ class User extends Authenticatable implements MustVerifyEmail
         'password',
         'role',
         'event_reminders',
+        'profile_photo_path',
     ];
 
     /**
@@ -72,6 +73,13 @@ class User extends Authenticatable implements MustVerifyEmail
     public function isMod(): bool
     {
         return $this->role === 'mod';
+    }
+
+    public function profilePhotoUrl(): ?string
+    {
+        return $this->profile_photo_path
+            ? asset('storage/' . $this->profile_photo_path)
+            : null;
     }
 
     public function canManageGames(): bool

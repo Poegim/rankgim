@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Concerns\Traits\HasComments;
+use App\Concerns\Traits\HasReactions;
 use Carbon\CarbonInterface;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -9,6 +11,9 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Event extends Model
 {
+    use HasReactions;
+    use HasComments;
+
     protected $fillable = [
         'name',
         'type',

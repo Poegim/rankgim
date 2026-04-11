@@ -6,18 +6,25 @@ use App\Concerns\ProfileValidationRules;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Storage;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Title;
+use Livewire\Attributes\Validate;
 use Livewire\Component;
+use Livewire\WithFileUploads;
 
 #[Title('Profile settings')]
 class Profile extends Component
 {
+    use ProfileValidationRules, WithFileUploads;
     use ProfileValidationRules;
 
     public string $name = '';
 
     public string $email = '';
+
+    #[Validate('nullable|image|max:1024')]
+    public $photo = null;
 
     /**
      * Mount the component.
@@ -26,6 +33,32 @@ class Profile extends Component
     {
         $this->name = Auth::user()->name;
         $this->email = Auth::user()->email;
+    }
+
+    public function removePhoto(): void
+    {
+        $user = Auth::user();
+
+        if ($user->profile_photo_path) {
+            Storage::disk('public')->delete($user->profile_photo_path);
+            $user->update(['profile_photo_path' => null]);
+        }
+    }
+
+    public function updatedPhoto(): void
+    {
+        $this->validateOnly('photo');
+
+        $user = Auth::user();
+
+        if ($user->profile_photo_path) {
+            Storage::disk('public')->delete($user->profile_photo_path);
+        }
+
+        $user->profile_photo_path = $this->photo->store('profile-photos', 'public');
+        $user->save();
+
+        $this->photo = null;
     }
 
     /**
@@ -41,6 +74,15 @@ class Profile extends Component
 
         if ($user->isDirty('email')) {
             $user->email_verified_at = null;
+        }
+
+        if ($this->photo) {
+            if ($user->profile_photo_path) {
+                Storage::disk('public')->delete($user->profile_photo_path);
+            }
+
+            $user->profile_photo_path = $this->photo->store('profile-photos', 'public');
+            $this->photo = null;
         }
 
         $user->save();

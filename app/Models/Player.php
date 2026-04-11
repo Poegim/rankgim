@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Concerns\Traits\HasComments;
+use App\Concerns\Traits\HasReactions;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -9,6 +11,9 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Player extends Model
 {
+
+    use HasReactions, HasComments;
+    
     protected $fillable = [
         'name',
         'country',
