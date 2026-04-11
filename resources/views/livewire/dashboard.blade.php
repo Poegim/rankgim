@@ -28,7 +28,7 @@
                         Open
                     </span>
                     @endif
-                    <p class="uppercase text-sm sm:text-base font-bold text-zinc-900 dark:text-white truncate">{{ $event->name }}</p>
+                    <p class="text-sm sm:text-base font-bold text-zinc-900 dark:text-white truncate">{{ $event->name }}</p>
                 </div>
 
                 {{-- Description --}}
@@ -77,7 +77,7 @@
 
             {{-- Right: countdown + date — inline on mobile, stacked right on desktop --}}
             <div class="flex flex-col items-end sm:items-start sm:shrink-0">
-                <p class="uppercase text-sm sm:text-base font-mono font-bold {{ $event->isStream() ? 'text-purple-300' : 'text-amber-300' }}">
+                <p class="uppercase text-xs sm:text-sm font-mono font-bold {{ $event->isStream() ? 'text-purple-300' : 'text-amber-300' }}">
                     <span x-data x-text="new Intl.DateTimeFormat(navigator.language, {
                         day: 'numeric',
                         month: 'long',

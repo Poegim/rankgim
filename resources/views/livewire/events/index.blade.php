@@ -132,7 +132,7 @@
                             <span
                                 class="shrink-0 inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-amber-500/15 text-amber-300 border border-amber-500/25">Open</span>
                             @endif
-                            <h3 class="uppercase text-sm sm:text-base font-bold text-white truncate">{{ $event->name }}</h3>
+                            <h3 class="text-xs sm:text-sm font-bold text-white truncate">{{ $event->name }}</h3>
                         </div>
 
                         {{-- Description --}}
@@ -167,13 +167,13 @@
                         {{-- Links --}}
                         <div class="flex flex-col sm:flex-row sm:flex-wrap gap-1.5 mt-3">
                             @if($event->is_online && !$event->location)
-                            <span class="flex sm:inline-flex items-center justify-center sm:justify-start gap-1 px-2.5 py-2 sm:py-0.5 rounded text-xs text-zinc-500"
+                            {{-- <span class="flex sm:inline-flex items-center justify-center sm:justify-start gap-1 px-2.5 py-2 sm:py-0.5 rounded text-xs text-zinc-500"
                                 style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08)">
                                 <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9" />
                                 </svg>
                                 Online
-                            </span>
+                            </span> --}}
                             @elseif($event->location)
                             <span class="flex sm:inline-flex items-center justify-center sm:justify-start gap-1 px-2.5 py-2 sm:py-0.5 rounded text-xs text-zinc-500"
                                 style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08)">
@@ -207,7 +207,7 @@
                     {{-- Right column: date + countdown --}}
                     @if(!$isPast)
                     <div class="flex flex-col items-end sm:items-start">
-                        <p class="uppercase text-sm sm:text-lg font-mono font-bold {{ $isStream ? 'text-purple-300' : 'text-amber-300' }}">
+                        <p class="uppercase text-xs sm:text-sm font-mono font-bold {{ $isStream ? 'text-purple-300' : 'text-amber-300' }}">
                             <span x-data x-text="new Intl.DateTimeFormat(navigator.language, {
                                 day: 'numeric',
                                 month: 'long',
@@ -217,7 +217,7 @@
                             }).format(new Date({{ $event->starts_at->timestamp }} * 1000))"></span>
                             <span class="opacity-50 text-sm">CET</span>
                         </p>
-                        <div class="text-sm sm:text-base font-mono {{ $isStream ? 'text-purple-300/60' : 'text-amber-300/60' }}"
+                        <div class="text-xs sm:text-sm font-mono {{ $isStream ? 'text-purple-300/60' : 'text-amber-300/60' }}"
                             x-data="{
                     target: {{ $event->starts_at->timestamp }},
                     d: 0, h: 0, m: 0, s: 0,
