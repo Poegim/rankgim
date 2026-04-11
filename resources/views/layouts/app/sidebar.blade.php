@@ -146,7 +146,7 @@
                                     <div class="flex items-center gap-2 px-1 py-1.5 text-start text-sm">
                                        <flux:avatar
                                             size="xl"
-                                            :src="auth()->user()->fresh()->profilePhotoUrl()"
+                                            :src="auth()->user()->profilePhotoUrl()"
                                             :name="auth()->user()->name"
                                             color="auto"
                                             :color:seed="auth()->user()->id"
