@@ -76,5 +76,20 @@ Route::middleware(['auth', 'verified',  App\Http\Middleware\EnsureUserIsAdmin::c
 });
 
 
+// TEMP: List all main players (not aliases) for duplicate detection
+Route::get('/dev/players-for-dedup', function () {
+    $players = \App\Models\Player::whereNull('player_id')
+        ->select('id', 'name', 'country', 'country_code', 'race')
+        ->orderBy('name')
+        ->get();
+
+    return response()->json([
+        'count'   => $players->count(),
+        'players' => $players,
+    ]);
+})->middleware('web');
+
+
+
 
 require __DIR__.'/settings.php';
