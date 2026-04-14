@@ -1,12 +1,13 @@
 <?php
 
+use App\Http\Controllers\PlayersIncompleteController;
 use App\Http\Controllers\HistoryController;
 use App\Livewire\AchievementsBrowser;
 use App\Livewire\Countries\Compare as CountriesCompare;
 use App\Livewire\Countries\Index;
 use App\Livewire\Players\Compare;
-use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Route;
 
 // Dashboard route
 Route::get('/', function () {
@@ -76,33 +77,8 @@ Route::middleware(['auth', 'verified',  App\Http\Middleware\EnsureUserIsAdmin::c
 
 });
 
-// TEMP: List players missing race or country (Unknown/null) sorted by games count — for cleanup
-Route::get('/dev/players-incomplete', function () {
-    $players = DB::table('players')
-        ->whereNull('players.player_id')
-        ->select('players.id', 'players.name', 'players.country', 'players.country_code', 'players.race')
-        ->selectRaw('COUNT(DISTINCT g.id) as games_count')
-        ->join(DB::raw('(
-            SELECT id, winner_id AS player_id FROM games
-            UNION ALL
-            SELECT id, loser_id AS player_id FROM games
-        ) g'), 'g.player_id', '=', 'players.id')
-        ->where(function ($q) {
-            $q->whereNull('players.race')
-              ->orWhere('players.race', 'Unknown')
-              ->orWhereNull('players.country_code')
-              ->orWhere('players.country_code', 'XX')
-              ->orWhere('players.country', 'Unknown');
-        })
-        ->groupBy('players.id', 'players.name', 'players.country', 'players.country_code', 'players.race')
-        ->orderByDesc('games_count')
-        ->get();
-
-    return response()->json([
-        'count'   => $players->count(),
-        'players' => $players,
-    ]);
-});
+// TEMP: Players missing race or country — for community cleanup
+Route::get('/dev/players-incomplete', PlayersIncompleteController::class)->name('dev.players-incomplete');
 
 // TEMP: List all main players (not aliases) with game count — for duplicate detection
 Route::get('/dev/players-for-dedup', function () {
