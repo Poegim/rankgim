@@ -6,6 +6,7 @@ use App\Livewire\Countries\Compare as CountriesCompare;
 use App\Livewire\Countries\Index;
 use App\Livewire\Players\Compare;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\DB;
 
 // Dashboard route
 Route::get('/', function () {
@@ -80,7 +81,7 @@ Route::get('/dev/players-for-dedup', function () {
     $players = \App\Models\Player::whereNull('player_id')
         ->select('players.id', 'players.name', 'players.country', 'players.country_code', 'players.race')
         ->selectRaw('COUNT(DISTINCT g.id) as games_count')
-        ->join(\DB::raw('(
+        ->join(DB::raw('(
             SELECT id, winner_id AS player_id FROM games
             UNION ALL
             SELECT id, loser_id AS player_id FROM games
