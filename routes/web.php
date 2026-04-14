@@ -78,7 +78,7 @@ Route::middleware(['auth', 'verified',  App\Http\Middleware\EnsureUserIsAdmin::c
 
 // TEMP: List all main players (not aliases) with game count — for duplicate detection
 Route::get('/dev/players-for-dedup', function () {
-    $players = \App\Models\Player::whereNull('player_id')
+    $players = \App\Models\Player::whereNull('players.player_id')
         ->select('players.id', 'players.name', 'players.country', 'players.country_code', 'players.race')
         ->selectRaw('COUNT(DISTINCT g.id) as games_count')
         ->join(DB::raw('(
@@ -94,7 +94,7 @@ Route::get('/dev/players-for-dedup', function () {
         'count'   => $players->count(),
         'players' => $players,
     ]);
-})->middleware('web');
+});
 
 
 
