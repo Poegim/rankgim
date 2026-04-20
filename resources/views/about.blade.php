@@ -136,13 +136,16 @@
                         <span class="font-semibold text-sm text-white">What counts</span>
                     </div>
                     <ul class="text-sm text-zinc-300 leading-relaxed flex flex-col gap-1.5 pl-1">
-                        <li>— Tournaments with <span class="font-medium text-emerald-300">open qualifiers</span>, free
-                            for anyone to sign up</li>
+                        <li>— Tournaments with <span class="font-medium text-emerald-300">open qualifiers</span> — anyone can sign up, no entry restrictions by region or scene. If a Korean or Chinese player wins, they win — results count regardless of who makes it through the bracket</li>
                         <li>— <span class="font-medium text-white">Tiered events</span> (e.g. <span class="italic">Pro /
                             Gosu / Main</span> divisions) — open entry, divisions assigned by skill</li>
                         <li>— <span class="font-medium text-white">Show matches and invitationals between
                             foreigners</span> — these are just matches between players already in the ranking, so the
                             results belong here</li>
+                        <li>— <span class="font-medium text-white">Regional tournaments</span> (national championships,
+                            country leagues, etc.) — counted too, as long as those players also compete outside their
+                            own league. A closed pool playing only each other for years would drift from the rest of
+                            the ranking, and may be excluded — retroactively, if needed.</li>
                     </ul>
                 </div>
 
@@ -153,10 +156,7 @@
                         <span class="font-semibold text-sm text-white">What doesn't</span>
                     </div>
                     <ul class="text-sm text-zinc-300 leading-relaxed flex flex-col gap-1.5 pl-1">
-                        <li>— <span class="font-medium text-white">Cross-scene matches</span> — any show match,
-                            invitational or exhibition involving Korean or Chinese players (e.g. <span class="italic">BSL
-                            Non-Korean Championship</span>, <span class="italic">Team-A</span> style events) — great to
-                            watch, but they import results from a scene the ranking doesn't track</li>
+                        <li>— <span class="font-medium text-white">Cross-scene matchups</span> — events built specifically to bring foreigners face-to-face with Korean or Chinese players (show matches, invitationals, exhibitions, e.g. <span class="italic">BSL Non-Korean Championship</span>, <span class="italic">Team-A</span> style events). The matchup is arranged, not earned through an open bracket, so the result isn't comparable to regular tournament play</li>
                         <li>— <span class="font-medium text-white">Skill-capped tournaments</span> with an MMR ceiling
                             (e.g. <span class="italic">max 1800 MMR</span>) — a closed bracket, even if closed from the
                             top instead of the sides</li>
