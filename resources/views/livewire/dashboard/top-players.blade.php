@@ -37,7 +37,7 @@
                 $podium = $podiumStyle[$index] ?? null;
             @endphp
 
-            <a href="..."
+            <a href="{{ route('players.show', ['id' => $row->player->id, 'slug' => Str::slug($row->player->name)]) }}"
                class="flex items-center gap-3 px-3 transition-colors group
                       bg-zinc-900
                       {{ $isPodium ? 'py-3 ' . $podium['row'] : 'py-2.5' }}
