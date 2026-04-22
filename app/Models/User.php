@@ -86,4 +86,15 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return in_array($this->role, ['admin', 'mod']);
     }
+
+    public function comments()
+    {
+        return $this->hasMany(Comment::class);
+    }
+
+    public function reactions()
+    {
+        return $this->hasMany(Reaction::class);
+    }
+    
 }

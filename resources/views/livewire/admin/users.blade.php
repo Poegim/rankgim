@@ -21,6 +21,9 @@
                 <flux:table.column>Email</flux:table.column>
                 <flux:table.column>Role</flux:table.column>
                 <flux:table.column>Joined</flux:table.column>
+                <flux:table.column>Comments</flux:table.column>
+                <flux:table.column>Reactions</flux:table.column>
+
             </flux:table.columns>
             <flux:table.rows>
                 @foreach($this->users as $user)
@@ -47,6 +50,12 @@
                     </flux:table.cell>
                     <flux:table.cell>
                         <span class="text-xs text-zinc-400">{{ $user->created_at->format('Y-m-d') }}</span>
+                    </flux:table.cell>
+                    <flux:table.cell>
+                        <span class="text-sm text-zinc-500">{{ $user->comments->count() }}</span>
+                    </flux:table.cell>
+                    <flux:table.cell>
+                        <span class="text-sm text-zinc-500">{{ $user->reactions->count() }}</span>
                     </flux:table.cell>
                 </flux:table.row>
                 @endforeach

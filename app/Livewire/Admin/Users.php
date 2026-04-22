@@ -26,7 +26,7 @@ class Users extends Component
     #[Computed]
     public function users()
     {
-        return User::orderBy('name')->paginate(20);
+        return User::orderBy('id')->with(['comments', 'reactions'])->paginate(20);
     }
 
     public function render()
