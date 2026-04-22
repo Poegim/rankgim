@@ -224,35 +224,7 @@
 
                         {{-- Right column: date + countdown --}}
                         @if(!$isPast)
-                        <div class="flex flex-col items-end sm:items-start">
-                            <p class="uppercase text-xs sm:text-sm font-mono font-bold {{ $isStream ? 'text-purple-300' : 'text-amber-300' }}">
-                                <span x-data x-text="new Intl.DateTimeFormat(navigator.language, {
-                                    day: 'numeric',
-                                    month: 'long',
-                                    hour: '2-digit',
-                                    minute: '2-digit',
-                                    timeZone: 'Europe/Warsaw'
-                                }).format(new Date({{ $event->starts_at->timestamp }} * 1000))"></span>
-                                <span class="opacity-50 text-sm">CET</span>
-                            </p>
-                            <div class="text-xs sm:text-sm font-mono {{ $isStream ? 'text-purple-300/60' : 'text-amber-300/60' }}"
-                                x-data="{
-                        target: {{ $event->starts_at->timestamp }},
-                        d: 0, h: 0, m: 0, s: 0,
-                        init() { this.tick(); setInterval(() => this.tick(), 1000); },
-                        tick() {
-                            const diff = this.target - Math.floor(Date.now() / 1000);
-                            if (diff <= 0) { this.d = this.h = this.m = this.s = 0; return; }
-                            this.d = Math.floor(diff / 86400);
-                            this.h = Math.floor((diff % 86400) / 3600);
-                            this.m = Math.floor((diff % 3600) / 60);
-                            this.s = diff % 60;
-                        }
-                    }">
-                                <span x-show="d > 0" x-text="d + 'd '"></span><span
-                                    x-text="String(h).padStart(2,'0') + 'h ' + String(m).padStart(2,'0') + 'm ' + String(s).padStart(2,'0') + 's'"></span>
-                            </div>
-                        </div>
+                            <x-event-countdown :starts-at="$event->starts_at" :is-stream="$isStream" />
                         @endif
 
                     </div>

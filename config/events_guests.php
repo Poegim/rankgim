@@ -121,4 +121,6 @@ return [
     ['name' => 'soma',          'country_code' => 'KR', 'race' => 'Zerg'],
     ['name' => 'ss1nz',         'country_code' => 'KR', 'race' => 'Protoss'],
     ['name' => 'trOt',          'country_code' => 'KR', 'race' => 'Terran'],
+    ['name' => 'ZerO',          'country_code' => 'KR', 'race' => 'Zerg'],
+
 ];

@@ -1,4 +1,5 @@
 @use('Illuminate\Support\Str')
+
 @php
     $raceColors = [
         'Terran'  => 'text-blue-400',
@@ -7,108 +8,88 @@
         'Random'  => 'text-orange-400',
         'Unknown' => 'text-zinc-400',
     ];
-    $raceBorders = [
-        'Terran'  => 'border-l-blue-500',
-        'Zerg'    => 'border-l-purple-500',
-        'Protoss' => 'border-l-yellow-500',
-        'Random'  => 'border-l-orange-500',
-        'Unknown' => 'border-l-zinc-600',
+
+    // Top 3 styling: tło wiersza + tło kółka z numerem
+    $podiumStyle = [
+        0 => ['row' => 'bg-amber-500/10',  'badge' => 'bg-amber-500/30 text-amber-200 ring-1 ring-amber-500/60'],
+        1 => ['row' => 'bg-zinc-400/10',   'badge' => 'bg-zinc-400/30 text-zinc-100 ring-1 ring-zinc-400/60'],
+        2 => ['row' => 'bg-orange-700/10', 'badge' => 'bg-orange-600/30 text-orange-200 ring-1 ring-orange-600/60'],
     ];
 @endphp
 
 <div>
+    {{-- Header --}}
     <div class="flex items-center justify-between mb-3">
         <p class="text-xs font-semibold uppercase tracking-widest text-zinc-500">🏆 Top 10</p>
-        <a href="{{ route('rankings.index') }}" class="text-xs text-zinc-400 hover:text-zinc-200 transition-colors">View full rankings →</a>
+        <a href="{{ route('rankings.index') }}"
+           class="text-xs text-zinc-400 hover:text-zinc-200 transition-colors">
+            View full →
+        </a>
     </div>
 
-    {{-- Top 3 podium cards --}}
-    <div class="flex flex-col gap-2 mb-2">
-        @foreach($this->players->take(3) as $index => $row)
-        @php
-            $winRatio = $row->games_played > 0 ? round(($row->wins / $row->games_played) * 100) : 0;
-            $change   = $row->prev_rating !== null ? $row->rating - $row->prev_rating : null;
-            $medals   = ['🥇', '🥈', '🥉'];
-            $gradients = [
-                'from-amber-500/10 to-transparent',
-                'from-zinc-400/8 to-transparent',
-                'from-orange-700/10 to-transparent',
-            ];
-            $accent = match($row->player->race) {
-                'Terran'  => '#3b82f6',
-                'Zerg'    => '#a855f7',
-                'Protoss' => '#eab308',
-                'Random'  => '#f97316',
-                default   => '#52525b',
-            };
-        @endphp
-        <a href="{{ route('players.show', ['id' => $row->player->id, 'slug' => Str::slug($row->player->name)]) }}"
-           class="group relative flex items-center px-4 py-3 rounded-xl border border-zinc-700/60 bg-gradient-to-r {{ $gradients[$index] }} hover:bg-zinc-800/60 transition-all duration-150 overflow-hidden"
-           style="border-left: 3px solid {{ $accent }};">
-            {{-- Flag watermark --}}
-            <div class="absolute inset-0 overflow-hidden rounded-xl pointer-events-none">
-                <img src="{{ asset('images/country_flags/' . strtolower($row->player->country_code) . '.svg') }}"
-                     class="absolute right-0 top-0 h-full w-auto opacity-[0.06] object-cover"
-                     style="-webkit-mask-image: linear-gradient(to left, black 20%, transparent 80%); mask-image: linear-gradient(to left, black 20%, transparent 80%);">
-            </div>
-            <div class="relative z-10 flex items-center justify-between w-full gap-3">
-                <div class="flex items-center gap-2 sm:gap-3 min-w-0">
-                    <span class="text-lg sm:text-xl shrink-0">{{ $medals[$index] }}</span>
-                    <img src="{{ asset('images/country_flags/' . strtolower($row->player->country_code) . '.svg') }}" class="w-7 h-5 rounded-sm shrink-0">
-                    <span class="font-bold text-sm sm:text-base text-white group-hover:underline truncate">{{ $row->player->name }}</span>
-                    <span class="text-xs shrink-0 hidden sm:inline {{ $raceColors[$row->player->race] ?? 'text-zinc-400' }}">{{ $row->player->race }}</span>
-                </div>
-                <div class="flex items-center gap-2 shrink-0">
-                    <span class="font-mono text-lg sm:text-xl font-black text-white">{{ $row->rating }}</span>
-                    @if($change !== null && $change != 0)
-                        <span class="hidden sm:inline font-mono text-xs font-semibold {{ $change > 0 ? 'text-green-400' : 'text-red-400' }}">
-                            {{ $change > 0 ? '▲' : '▼' }}{{ abs($change) }}
-                        </span>
-                    @endif
-                    <span class="text-xs font-semibold w-10 text-right {{ $winRatio >= 50 ? 'text-green-400' : 'text-red-400' }}">{{ $winRatio }}%</span>
-                    <div class="hidden md:flex items-center gap-1 w-20 justify-end text-xs">
-                        <span class="text-green-400">{{ $row->wins }}W</span>
-                        <span class="text-zinc-600">/</span>
-                        <span class="text-red-400">{{ $row->losses }}L</span>
-                    </div>
-                </div>
-            </div>
-        </a>
-        @endforeach
-    </div>
+    {{-- Lista: jedna gramatyka wizualna, różne rozmiary top 3 vs 4-10 --}}
+        <div class="flex flex-col rounded-xl border border-zinc-700/60 bg-zinc-800/40 divide-y divide-zinc-700/40 overflow-hidden">        @foreach($this->players as $index => $row)
+            @php
+                $rank = $index + 1;
+                $isPodium = $index < 3;
+                $winRatio = $row->games_played > 0 ? round(($row->wins / $row->games_played) * 100) : 0;
+                $change = $row->prev_rating !== null ? $row->rating - $row->prev_rating : null;
+                $podium = $podiumStyle[$index] ?? null;
+            @endphp
 
-    {{-- 4–10 compact list --}}
-    <div class="rounded-xl border border-zinc-700/60 bg-zinc-800/20 divide-y divide-zinc-700/40 overflow-hidden">
-        @foreach($this->players->slice(3) as $row)
-        @php
-            $winRatio = $row->games_played > 0 ? round(($row->wins / $row->games_played) * 100) : 0;
-            $change   = $row->prev_rating !== null ? $row->rating - $row->prev_rating : null;
-        @endphp
-        <a href="{{ route('players.show', ['id' => $row->player->id, 'slug' => Str::slug($row->player->name)]) }}"
-           class="flex items-center px-3 sm:px-4 py-2.5 hover:bg-zinc-800/60 transition-colors group border-l-4 {{ $raceBorders[$row->player->race] ?? 'border-l-zinc-600' }}">
-            <div class="flex items-center justify-between w-full gap-2">
-                <div class="flex items-center gap-2 sm:gap-3 min-w-0">
-                    <span class="font-mono text-xs text-zinc-500 w-5 text-right shrink-0">{{ $loop->iteration + 3 }}</span>
-                    <img src="{{ asset('images/country_flags/' . strtolower($row->player->country_code) . '.svg') }}" class="w-6 h-4 rounded-sm shrink-0">
-                    <span class="font-semibold text-sm text-zinc-100 group-hover:underline truncate">{{ $row->player->name }}</span>
-                    <span class="text-xs shrink-0 hidden sm:inline {{ $raceColors[$row->player->race] ?? 'text-zinc-400' }}">{{ $row->player->race }}</span>
+            <a href="..."
+               class="flex items-center gap-3 px-3 transition-colors group
+                      bg-zinc-900
+                      {{ $isPodium ? 'py-3 ' . $podium['row'] : 'py-2.5' }}
+                      hover:bg-zinc-800">
+
+                {{-- Numer / medalik --}}
+                @if($isPodium)
+                    <span class="shrink-0 w-7 h-7 rounded-full flex items-center justify-center text-sm font-bold font-mono {{ $podium['badge'] }}">
+                        {{ $rank }}
+                    </span>
+                @else
+                    <span class="shrink-0 w-7 text-center font-mono text-xs text-zinc-500">
+                        {{ $rank }}
+                    </span>
+                @endif
+
+                {{-- Flaga + nick + rasa --}}
+                <div class="flex items-center gap-2 min-w-0 flex-1">
+                    <img src="{{ asset('images/country_flags/' . strtolower($row->player->country_code) . '.svg') }}"
+                         class="w-5 h-3.5 rounded-sm shrink-0"
+                         alt="{{ $row->player->country_code }}">
+                    <span class="font-semibold truncate group-hover:underline
+                                 {{ $isPodium ? 'text-sm text-white' : 'text-sm text-zinc-100' }}">
+                        {{ $row->player->name }}
+                    </span>
+                    <span class="hidden sm:inline text-xs shrink-0 {{ $raceColors[$row->player->race] ?? 'text-zinc-400' }}">
+                        {{ Str::substr($row->player->race, 0, 1) }}
+                    </span>
                 </div>
-                <div class="flex items-center gap-2 shrink-0">
-                    <span class="font-mono text-sm font-bold text-zinc-100 w-14 text-right">{{ $row->rating }}</span>
-                    @if($change !== null && $change != 0)
-                        <span class="hidden sm:inline font-mono text-xs font-medium w-12 text-right {{ $change > 0 ? 'text-green-400' : 'text-red-400' }}">
+
+                {{-- MMR + trend (trend ma zawsze zarezerwowane miejsce) --}}
+                <div class="flex items-baseline gap-1.5 shrink-0 tabular-nums">
+                    <span class="font-mono text-white w-12 text-right
+                                 {{ $isPodium ? 'text-base font-black' : 'text-sm font-bold' }}">
+                        {{ $row->rating }}
+                    </span>
+                    <span class="font-mono text-[10px] font-semibold w-10 text-left tabular-nums
+                                 {{ $change === null || $change == 0 ? 'text-transparent' : ($change > 0 ? 'text-green-400' : 'text-red-400') }}">
+                        @if($change !== null && $change != 0)
                             {{ $change > 0 ? '▲' : '▼' }}{{ abs($change) }}
-                        </span>
-                    @endif
-                    <span class="text-xs font-semibold w-10 text-right {{ $winRatio >= 50 ? 'text-green-400' : 'text-red-400' }}">{{ $winRatio }}%</span>
-                    <div class="hidden md:flex items-center gap-1 w-20 justify-end text-xs">
-                        <span class="text-green-400">{{ $row->wins }}W</span>
-                        <span class="text-zinc-600">/</span>
-                        <span class="text-red-400">{{ $row->losses }}L</span>
-                    </div>
+                        @else
+                            ▲0
+                        @endif
+                    </span>
                 </div>
-            </div>
-        </a>
+
+                {{-- Winrate --}}
+                <span class="shrink-0 w-10 text-right text-xs font-semibold tabular-nums
+                             {{ $winRatio >= 50 ? 'text-green-400' : 'text-red-400' }}">
+                    {{ $winRatio }}%
+                </span>
+            </a>
         @endforeach
     </div>
 </div>
