@@ -136,8 +136,7 @@
                         <span class="font-semibold text-sm text-white">What counts</span>
                     </div>
                     <ul class="text-sm text-zinc-300 leading-relaxed flex flex-col gap-1.5 pl-1">
-                        <li>— Tournaments with <span class="font-medium text-emerald-300">open qualifiers</span> — anyone can sign up, no entry restrictions by region or scene. If a Korean or Chinese player wins, they win — results count regardless of who makes it through the bracket</li>
-                        <li>— <span class="font-medium text-white">Tiered events</span> (e.g. <span class="italic">Pro /
+<li>— <span class="font-medium text-emerald-300">Foreigner-scene tournaments with open qualifiers</span> — anyone can sign up, and a Korean or Chinese win counts like any other. A foreigner playing in a Korean or Chinese event is the opposite case — those results stay outside the ranking</li>                        <li>— <span class="font-medium text-white">Tiered events</span> (e.g. <span class="italic">Pro /
                             Gosu / Main</span> divisions) — open entry, divisions assigned by skill</li>
                         <li>— <span class="font-medium text-white">Show matches and invitationals between
                             foreigners</span> — these are just matches between players already in the ranking, so the
