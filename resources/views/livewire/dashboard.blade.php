@@ -70,4 +70,10 @@
     {{-- ========== DÓŁ: Achievements na pełnej szerokości ========== --}}
     <livewire:recent-achievements />
 
+    {{-- ========== Last reactions + Last comments ========== --}}
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+        <livewire:dashboard.recent-reactions />
+        <livewire:dashboard.recent-comments />
+    </div>
+
 </div>
