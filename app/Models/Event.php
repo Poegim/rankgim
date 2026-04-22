@@ -23,6 +23,7 @@ class Event extends Model
         'created_by',
         'links',
         'is_online',
+        'guest_players',
         'location',
         'reminder_sent_at',
     ];
@@ -32,6 +33,7 @@ class Event extends Model
         'reminder_sent_at' => 'datetime',
         'links' => 'array',
         'is_online' => 'boolean',
+        'guest_players' => 'array',
     ];
 
     /**
@@ -83,6 +85,8 @@ class Event extends Model
         'Australia/Sydney' => 'AEST / Sydney',
     ];
 
+    public const LIVE_WINDOW_HOURS = 3;
+
     // ── Relationships ─────────────────────────────────
 
     public function user(): BelongsTo
@@ -100,9 +104,17 @@ class Event extends Model
 
     // ── Helpers ────────────────────────────────────────
 
+    public function isLive(): bool
+    {
+        $now = now();
+        return $this->starts_at->lte($now)
+            && $this->starts_at->gt($now->copy()->subHours(self::LIVE_WINDOW_HOURS));
+    }
+
     public function isPast(): bool
     {
-        return $this->starts_at->isPast();
+        // An event is past only after the live window has expired
+        return $this->starts_at->lt(now()->subHours(self::LIVE_WINDOW_HOURS));
     }
 
     public function isUpcoming(): bool

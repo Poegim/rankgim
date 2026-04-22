@@ -21,6 +21,7 @@ class Index extends Component
 
     public ?int $confirmingDeleteId = null;
 
+
     // ── Form state ────────────────────────────────────
     public bool $showModal = false;
     public ?int $editingId = null;
@@ -37,6 +38,8 @@ class Index extends Component
     // ── Player search state ───────────────────────────
     /** @var string Live search query for the player picker */
     public string $playerSearch = '';
+    public string $guestSearch = '';
+    public array $selectedGuests = [];
 
     /** @var array<int, array{id: int, name: string, country_code: string, race: string}> */
     public array $selectedPlayers = [];
@@ -55,9 +58,11 @@ class Index extends Component
             ->orderBy('starts_at', $this->view === 'past' ? 'desc' : 'asc');
 
         if ($this->view === 'upcoming') {
-            $query->where('starts_at', '>=', now());
+            // Include events that started within the live window (still considered live)
+            $query->where('starts_at', '>=', now()->subHours(\App\Models\Event::LIVE_WINDOW_HOURS));
         } elseif ($this->view === 'past') {
-            $query->where('starts_at', '<', now());
+            // Only show events that are past the live window
+            $query->where('starts_at', '<', now()->subHours(\App\Models\Event::LIVE_WINDOW_HOURS));
         }
 
         // Filter by event type
@@ -154,6 +159,32 @@ class Index extends Component
             ->get();
     }
 
+    /**
+     * Live search results for guest players (from config/events_guests.php).
+     * Filters by name and excludes already selected guests.
+     */
+    #[Computed]
+    public function guestResults(): array
+    {
+        if (strlen($this->guestSearch) < 2) {
+            return [];
+        }
+ 
+        $query = strtolower($this->guestSearch);
+ 
+        // Names of guests already selected — used to exclude duplicates
+        $selectedNames = collect($this->selectedGuests)->pluck('name')->map('strtolower')->toArray();
+ 
+        return collect(config('events_guests', []))
+            ->filter(fn ($g) =>
+                str_contains(strtolower($g['name']), $query)
+                && !in_array(strtolower($g['name']), $selectedNames, true)
+            )
+            ->values()
+            ->take(8)
+            ->toArray();
+    }
+
     // ── Actions ───────────────────────────────────────
 
     public function delete(): void
@@ -204,6 +235,7 @@ class Index extends Component
         $this->isOnline = $event->is_online;
         $this->location = $event->location ?? '';
         $this->links = $event->links ?? [];
+        $this->selectedGuests = $event->guest_players ?? [];
 
         // Pre-populate selected players from existing relation
         $this->selectedPlayers = $event->players->map(fn (Player $p) => [
@@ -232,6 +264,11 @@ class Index extends Component
             'links.*.label' => 'nullable|string|max:25',
             'selectedPlayers' => 'array|max:50',
             'selectedPlayers.*.id' => 'integer|exists:players,id',
+            // Guest players validation — each must exist in config by name
+            'selectedGuests'             => 'array|max:50',
+            'selectedGuests.*.name'      => 'required|string|max:100',
+            'selectedGuests.*.country_code' => 'required|string|size:2',
+            'selectedGuests.*.race'      => 'required|string|in:Terran,Zerg,Protoss,Random,Unknown',
         ]);
 
         $cleanLinks = collect($this->links)
@@ -251,6 +288,14 @@ class Index extends Component
             'is_online' => $this->isOnline,
             'location' => $this->isOnline ? null : ($this->location ?: null),
             'links' => $cleanLinks ?: null,
+            // Store only the fields we need — strip any extra keys
+            'guest_players' => !empty($this->selectedGuests)
+                ? collect($this->selectedGuests)->map(fn ($g) => [
+                    'name'         => $g['name'],
+                    'country_code' => $g['country_code'],
+                    'race'         => $g['race'],
+                ])->values()->toArray()
+                : null,
         ];
 
         $playerIds = collect($this->selectedPlayers)->pluck('id')->toArray();
@@ -314,6 +359,54 @@ class Index extends Component
         unset($this->playerResults);
     }
 
+
+    /**
+     * Add a guest player (from config/events_guests.php) by their name.
+     * Guest players are not in the players table — stored as JSON on the event.
+     */
+    public function addGuest(string $name): void
+    {
+        $guest = collect(config('events_guests', []))->firstWhere('name', $name);
+ 
+        if (!$guest) {
+            return;
+        }
+ 
+        // Prevent duplicates by name
+        $alreadySelected = collect($this->selectedGuests)
+            ->pluck('name')
+            ->map('strtolower')
+            ->contains(strtolower($name));
+ 
+        if ($alreadySelected) {
+            $this->guestSearch = '';
+            unset($this->guestResults);
+            return;
+        }
+ 
+        $this->selectedGuests[] = [
+            'name'         => $guest['name'],
+            'country_code' => $guest['country_code'],
+            'race'         => $guest['race'],
+        ];
+ 
+        $this->guestSearch = '';
+        unset($this->guestResults);
+    }
+ 
+    /**
+     * Remove a guest player from the selected list by their name.
+     */
+    public function removeGuest(string $name): void
+    {
+        $this->selectedGuests = collect($this->selectedGuests)
+            ->reject(fn ($g) => $g['name'] === $name)
+            ->values()
+            ->toArray();
+ 
+        unset($this->guestResults);
+    }
+
     public function addLink(): void
     {
         $this->links[] = ['type' => 'twitch', 'url' => '', 'label' => ''];
@@ -351,6 +444,8 @@ class Index extends Component
         $this->links = [];
         $this->selectedPlayers = [];
         $this->playerSearch = '';
+        $this->selectedGuests = [];
+        $this->guestSearch  = '';
         unset($this->playerResults);
     }
 

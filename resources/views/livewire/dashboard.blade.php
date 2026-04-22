@@ -12,6 +12,7 @@
 
     <div class="flex flex-col gap-2 px-3 pb-3">
         @foreach($this->upcomingEvents as $event)
+        @php $isLive = $event->isLive(); @endphp
         <div class="rounded-lg border border-zinc-200 dark:border-zinc-700 bg-zinc-100 dark:bg-zinc-900 p-3 flex flex-col sm:flex-row sm:items-start sm:justify-between gap-2 sm:gap-4">
 
             {{-- Left: name + description + links --}}
@@ -19,6 +20,12 @@
 
                 {{-- Badge + name --}}
                 <div class="flex items-center gap-2">
+                    @if($isLive)
+                    <span class="shrink-0 inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-xs font-bold bg-red-500/20 text-red-400 border border-red-500/40 animate-pulse">
+                        <span class="w-1.5 h-1.5 rounded-full bg-red-400 shrink-0"></span>
+                        LIVE
+                    </span>
+                    @endif
                     @if($event->isStream())
                     <span class="shrink-0 px-1.5 py-0.5 rounded text-xs font-medium bg-purple-500/15 text-purple-300 border border-purple-500/25">
                         Stream

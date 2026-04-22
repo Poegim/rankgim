@@ -7,7 +7,7 @@
 
 <body class="min-h-screen bg-white dark:bg-zinc-800">
     @php
-    $upcomingEvents = \App\Models\Event::where('starts_at', '>=', now())
+    $upcomingEvents = \App\Models\Event::where('starts_at', '>=', now()->subHours(\App\Models\Event::LIVE_WINDOW_HOURS))
     ->where('starts_at', '<=', now()->addDays(7))
         ->orderBy('starts_at')
         ->get();
@@ -130,7 +130,6 @@
                     @endguest
                 </flux:sidebar>
 
-                {{-- Mobile Header — always visible on mobile --}}
                 {{-- Mobile Header — always visible on mobile --}}
                 <flux:header class="lg:hidden">
                     <flux:sidebar.toggle class="lg:hidden" icon="bars-2" inset="left" />

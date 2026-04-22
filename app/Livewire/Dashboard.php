@@ -12,7 +12,7 @@ class Dashboard extends Component
     #[Computed]
     public function upcomingEvents()
     {
-        return \App\Models\Event::where('starts_at', '>=', now())
+        return \App\Models\Event::where('starts_at', '>=', now()->subHours(\App\Models\Event::LIVE_WINDOW_HOURS))
             ->with('players')
             ->orderBy('starts_at')
             ->limit(5)
