@@ -9,7 +9,7 @@ use Livewire\Component;
 class UpcomingEvents extends Component
 {
     // How many events to show on the dashboard. Anything beyond this lives on /events.
-    public const LIMIT = 3;
+    public const LIMIT = 5;
 
     #[Computed]
     public function events()

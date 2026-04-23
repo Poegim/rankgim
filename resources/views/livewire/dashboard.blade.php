@@ -11,7 +11,7 @@
     --}}
     @php
         $hasEvents = $this->upcomingEvents->isNotEmpty();
-        $hasNextMatch = $this->nextForecastMatch !== null;
+        $hasNextMatch = $this->nextForecastMatches->isNotEmpty();
     @endphp
 
     @if($hasEvents || $hasNextMatch)

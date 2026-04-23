@@ -23,25 +23,25 @@ class Dashboard extends Component
     }
 
     /**
-     * The closest forecast match that is still open for predictions.
-     * Used by the Row 2 "Next match to predict" widget.
-     * Returns null when there is no active season or no open match — in which case
-     * the dashboard layout collapses gracefully (see dashboard.blade.php).
+     * The closest open forecast matches — used only to decide whether to render
+     * the Row 2 "Upcoming matches to predict" widget at all. The widget itself
+     * runs its own query with eager-loaded predictions.
+     * Returns an empty collection when there is no active season or no open matches.
      */
     #[Computed]
-    public function nextForecastMatch(): ?ForecastMatch
+    public function nextForecastMatches(): \Illuminate\Support\Collection
     {
         $season = ForecastSeason::current();
 
         if (! $season) {
-            return null;
+            return collect();
         }
 
-        return ForecastMatch::with(['playerA', 'playerB', 'event'])
-            ->where('season_id', $season->id)
+        return ForecastMatch::where('season_id', $season->id)
             ->open()
             ->orderBy('scheduled_at')
-            ->first();
+            ->limit(3)
+            ->get();
     }
 
     public function render()
