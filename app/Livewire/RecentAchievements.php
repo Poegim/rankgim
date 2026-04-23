@@ -16,6 +16,18 @@ class RecentAchievements extends Component
         'rookie_mistake', // every new player who loses first game
     ];
 
+    // How many cards to show by default vs. when "Show more" is toggled.
+    public const INITIAL_LIMIT  = 8;
+    public const EXPANDED_LIMIT = 16;
+
+    // Toggle for the "Show more / Show less" button on the dashboard.
+    public bool $showMore = false;
+
+    public function toggleShowMore(): void
+    {
+        $this->showMore = ! $this->showMore;
+    }
+
     #[Computed]
     public function lastSnapshotDate(): ?string
     {
@@ -78,7 +90,29 @@ class RecentAchievements extends Component
                 ->sortBy(fn($a) => array_search($a['tier'], ['s', 'a', 'b', 'c', 'd']))
                 ->values();
         });
-}
+    }
+
+    /**
+     * Slice of recent achievements limited by the current showMore state —
+     * keeps the dashboard grid bounded (8 or 16 cards) instead of dumping the full feed.
+     */
+    #[Computed]
+    public function visibleAchievements()
+    {
+        $limit = $this->showMore ? self::EXPANDED_LIMIT : self::INITIAL_LIMIT;
+
+        return $this->recentAchievements->take($limit);
+    }
+
+    /**
+     * Whether to render the Show more / Show less button at all —
+     * only when the full feed is bigger than the initial limit.
+     */
+    #[Computed]
+    public function canShowMore(): bool
+    {
+        return $this->recentAchievements->count() > self::INITIAL_LIMIT;
+    }
 
     public function render()
     {
