@@ -27,21 +27,20 @@ class ForecastWallet extends Model
     // Reset is only allowed when balance is at or below this threshold
     const RESET_THRESHOLD = 10.00;
 
-    // Available currencies with display info
     const CURRENCIES = [
         'minerals'  => [
             'label' => 'Mineral Points',
-            'icon'  => '⬡',
+            'icon'  => '💎',
             'bonus' => '+50% payout when betting on the underdog (lower ELO)',
         ],
         'khaydarin' => [
             'label' => 'Khaydarin Points',
-            'icon'  => '🔷',
+            'icon'  => '⚡',
             'bonus' => '+25% payout when betting on a Protoss player',
         ],
         'biomass'   => [
             'label' => 'Biomass Points',
-            'icon'  => '🟢',
+            'icon'  => '🧬',
             'bonus' => '+25% payout when betting on a Zerg player',
         ],
         'credits'   => [
