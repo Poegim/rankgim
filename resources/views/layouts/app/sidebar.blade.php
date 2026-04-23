@@ -75,6 +75,11 @@
                                 :current="request()->routeIs('achievements.index')" wire:navigate>
                                 {{ __('Achievements') }}
                             </flux:sidebar.item>
+
+                            <flux:sidebar.item icon="bolt" :href="route('forecast.index')"
+                                    :current="request()->routeIs('forecast.*')" wire:navigate>
+                                    {{ __('Koprulu Forecast') }}
+                                </flux:sidebar.item>
                             
                             <flux:sidebar.item icon="chart-bar" :href="route('stats.index')"
                                 :current="request()->routeIs('stats.index')" >

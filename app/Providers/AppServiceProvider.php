@@ -4,6 +4,8 @@ namespace App\Providers;
 
 use App\Models\Player;
 use App\Observers\PlayerObserver;
+use App\Models\ForecastMatch;
+use App\Observers\ForecastMatchObserver;
 use Carbon\CarbonImmutable;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
@@ -26,6 +28,7 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Player::observe(PlayerObserver::class);
+        ForecastMatch::observe(ForecastMatchObserver::class);
         $this->configureDefaults();
     }
 

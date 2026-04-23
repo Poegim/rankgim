@@ -1,3 +1,2 @@
-Bug in country stats china is 17-5 with 5 players and like 200 games. Check why.
+Bug in country stats china is 17-5 with 5 players and like 200 games. Check why (not sure it is real bug)
 Koprulu Forecast
-Nicknames withour race  / country

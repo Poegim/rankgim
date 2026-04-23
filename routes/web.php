@@ -68,6 +68,10 @@ Route::get('/events', App\Livewire\Events\Index::class)->name('events.index');
 // Achievements browser
 Route::get('/achievements', AchievementsBrowser::class)->name('achievements.index');
 
+// Forecasting routes
+Route::get('/forecast', App\Livewire\Forecast\Index::class)->name('forecast.index');
+
+
 // Admin routes with middleware for authentication and admin access
 Route::middleware(['auth', 'verified',  App\Http\Middleware\EnsureUserIsAdmin::class])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/', fn() => view('admin.index'))->name('index');
