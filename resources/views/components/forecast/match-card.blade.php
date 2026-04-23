@@ -95,7 +95,7 @@
         {{-- ═══════════════════════════════════════════════════════════════
              Players face-off — names are the star of the card
              ═══════════════════════════════════════════════════════════════ --}}
-        <div class="grid grid-cols-[1fr_auto_1fr] items-center gap-4 mb-4 py-3">
+        <div class="grid grid-cols-[1fr_auto_1fr] items-center gap-4 mb-2 py-2">
 
             {{-- Side A --}}
             <div class="flex flex-col items-end gap-2 {{ $isSettled && $winningSide !== 'a' ? 'opacity-40' : '' }}">
@@ -111,9 +111,9 @@
                 <p class="font-bold text-white text-xl sm:text-2xl leading-tight truncate tracking-tight text-right">
                     {{ $nameA }}
                 </p>
-                <span class="text-xs font-mono font-semibold px-1 py-1 rounded-md {{ $rewardPillClass }}">
+                {{-- <span class="text-xs font-mono font-semibold px-1 py-1 rounded-md {{ $rewardPillClass }}">
                     ×{{ $match->odds_a }}
-                </span>
+                </span> --}}
             </div>
 
             {{-- VS divider --}}
@@ -139,9 +139,9 @@
                 <p class="font-bold text-white text-xl sm:text-2xl leading-tight truncate tracking-tight text-left">
                     {{ $nameB }}
                 </p>
-                <span class="text-xs font-mono font-semibold px-1 py-1 rounded-md {{ $rewardPillClass }}">
+                {{-- <span class="text-xs font-mono font-semibold px-1 py-1 rounded-md {{ $rewardPillClass }}">
                     ×{{ $match->odds_b }}
-                </span>
+                </span> --}}
             </div>
         </div>
 

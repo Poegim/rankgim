@@ -11,7 +11,7 @@ use Livewire\Component;
 class NextForecastMatch extends Component
 {
     // How many closest upcoming matches to show on the dashboard.
-    public const LIMIT = 3;
+    public const LIMIT = 4;
 
     #[Computed]
     public function matches(): Collection

@@ -43,7 +43,7 @@
     </div>
 
     {{-- List of matches --}}
-    <div class="flex flex-col">
+    <div class="flex flex-col px-2 sm:px-4">
         @foreach($this->matches as $loopMatch)
             @php
                 $isForeigner = $loopMatch->match_type === 'foreigner';
@@ -80,7 +80,7 @@
                 $hasPicks   = $picksCount > 0;
             @endphp
 
-            <div class="border-t border-zinc-800/40 first:border-t-0 px-5 py-4 bg-zinc-900 mt-2">
+            <div class="border border-zinc-700 px-5 py-4 bg-zinc-900 mt-2 rounded-lg ">
 
                 {{-- Meta strip --}}
                 <div class="flex items-center gap-2 mb-3 flex-wrap">
@@ -114,50 +114,50 @@
                         {{ $loopMatch->scheduled_at->format('d M · H:i') }} CET
                     </span>
                 </div>
-{{-- Players row (clean, single line) --}}
-<div class="flex items-center justify-between gap-3 mb-2">
+                {{-- Players row (clean, single line) --}}
+                <div class="flex items-center justify-between gap-3 mb-2">
 
-    {{-- Player A --}}
-    <div class="flex items-center gap-2 min-w-0">
-        @if($countryA)
-            <img src="{{ asset('images/country_flags/' . strtolower($countryA) . '.svg') }}"
-                 class="w-5 h-3.5 rounded-sm shrink-0"
-                 alt="{{ $countryA }}">
-        @endif
+                    {{-- Player A --}}
+                    <div class="flex items-center gap-2 min-w-0">
+                        @if($countryA)
+                            <img src="{{ asset('images/country_flags/' . strtolower($countryA) . '.svg') }}"
+                                 class="w-5 h-3.5 rounded-sm shrink-0"
+                                 alt="{{ $countryA }}">
+                        @endif
 
-        <span class="text-sm font-semibold text-zinc-100 truncate uppercase">
-            {{ $nameA }}
-        </span>
+                        <span class="text-sm font-semibold text-zinc-100 truncate uppercase">
+                            {{ $nameA }}
+                        </span>
 
-        {{-- pick indicator --}}
-        @if($userPickedSide === 'a')
-            <span class="text-[10px] font-bold text-amber-400 uppercase">•</span>
-        @endif
-    </div>
+                        {{-- pick indicator --}}
+                        @if($userPickedSide === 'a')
+                            <span class="text-[10px] font-bold text-amber-400 uppercase">•</span>
+                        @endif
+                    </div>
 
-    {{-- VS --}}
-    <span class="text-[10px] font-bold text-zinc-500 uppercase tracking-widest shrink-0">
-        vs
-    </span>
+                    {{-- VS --}}
+                    <span class="text-[10px] font-bold text-zinc-500 uppercase tracking-widest shrink-0">
+                        vs
+                    </span>
 
-    {{-- Player B --}}
-    <div class="flex items-center gap-2 min-w-0 justify-end">
-        @if($userPickedSide === 'b')
-            <span class="text-[10px] font-bold text-amber-400 uppercase">•</span>
-        @endif
+                    {{-- Player B --}}
+                    <div class="flex items-center gap-2 min-w-0 justify-end">
+                        @if($userPickedSide === 'b')
+                            <span class="text-[10px] font-bold text-amber-400 uppercase">•</span>
+                        @endif
 
-        <span class="text-sm font-semibold text-zinc-100 truncate text-right uppercase">
-            {{ $nameB }}
-        </span>
+                        <span class="text-sm font-semibold text-zinc-100 truncate text-right uppercase">
+                            {{ $nameB }}
+                        </span>
 
-        @if($countryB)
-            <img src="{{ asset('images/country_flags/' . strtolower($countryB) . '.svg') }}"
-                 class="w-5 h-3.5 rounded-sm shrink-0"
-                 alt="{{ $countryB }}">
-        @endif
-    </div>
+                        @if($countryB)
+                            <img src="{{ asset('images/country_flags/' . strtolower($countryB) . '.svg') }}"
+                                 class="w-5 h-3.5 rounded-sm shrink-0"
+                                 alt="{{ $countryB }}">
+                        @endif
+                    </div>
 
-</div>
+                </div>
 
                 {{-- Community sentiment bar — money share --}}
                 <div class="my-2">

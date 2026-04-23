@@ -29,7 +29,6 @@ use Livewire\Component;
  */
 class MatchList extends Component
 {
-    #[Url]
     public string $view = 'open'; // open | settled
 
     // ── Bet modal ─────────────────────────────────────
@@ -476,6 +475,11 @@ class MatchList extends Component
             ->when(array_filter($excludeIds), fn($q) => $q->whereNotIn('id', array_filter($excludeIds)))
             ->limit(10)
             ->get();
+    }
+
+    public function updatedView()
+    {
+        unset($this->matches);
     }
 
     private function searchKorean(string $search, ?string $exclude = null): array
