@@ -95,7 +95,7 @@
         {{-- ═══════════════════════════════════════════════════════════════
              Players face-off — names are the star of the card
              ═══════════════════════════════════════════════════════════════ --}}
-        <div class="grid grid-cols-[1fr_auto_1fr] items-center gap-4 mb-2 py-2">
+        <div class="grid grid-cols-[1fr_auto_1fr] items-center gap-4 mb-2 ">
 
             {{-- Side A --}}
             <div class="flex flex-col items-end gap-2 {{ $isSettled && $winningSide !== 'a' ? 'opacity-40' : '' }}">
@@ -107,10 +107,10 @@
                         <img src="{{ asset('images/country_flags/' . strtolower($countryA) . '.svg') }}"
                             class="w-5 h-3.5 rounded-sm shrink-0" alt="">
                     @endif
+                    <p class="font-bold text-white text-xl sm:text-2xl leading-tight truncate tracking-tight text-right">
+                        {{ $nameA }}
+                    </p>
                 </div>
-                <p class="font-bold text-white text-xl sm:text-2xl leading-tight truncate tracking-tight text-right">
-                    {{ $nameA }}
-                </p>
                 {{-- <span class="text-xs font-mono font-semibold px-1 py-1 rounded-md {{ $rewardPillClass }}">
                     ×{{ $match->odds_a }}
                 </span> --}}
@@ -128,6 +128,9 @@
             {{-- Side B --}}
             <div class="flex flex-col items-start gap-2 {{ $isSettled && $winningSide !== 'b' ? 'opacity-40' : '' }}">
                 <div class="flex items-center justify-start gap-2">
+                    <p class="font-bold text-white text-xl sm:text-2xl leading-tight truncate tracking-tight text-left">
+                        {{ $nameB }}
+                    </p>
                     @if($countryB)
                         <img src="{{ asset('images/country_flags/' . strtolower($countryB) . '.svg') }}"
                             class="w-5 h-3.5 rounded-sm shrink-0" alt="">
@@ -136,9 +139,6 @@
                         <span class="text-[10px] uppercase tracking-widest font-semibold {{ $raceColor($raceB) }}">{{ $raceB }}</span>
                     @endif
                 </div>
-                <p class="font-bold text-white text-xl sm:text-2xl leading-tight truncate tracking-tight text-left">
-                    {{ $nameB }}
-                </p>
                 {{-- <span class="text-xs font-mono font-semibold px-1 py-1 rounded-md {{ $rewardPillClass }}">
                     ×{{ $match->odds_b }}
                 </span> --}}
