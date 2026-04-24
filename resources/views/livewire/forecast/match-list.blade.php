@@ -58,11 +58,11 @@
             $bCountryB = $isForeigherBet ? ($bettingMatch->playerB?->country_code ?? null) : ($bettingMatch->player_b_country ?? null);
         @endphp
         <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4"
-            wire:click.self="$set('showBetModal', false)">
+            x-on:click.self="$wire.closeBetModal()">
             <div class="bg-zinc-900 border border-zinc-700 rounded-xl w-full max-w-sm">
                 <div class="flex items-center justify-between px-5 py-3 border-b border-zinc-700/50">
                     <h2 class="text-lg font-semibold text-white">Make your call</h2>
-                    <button wire:click="$set('showBetModal', false)" class="text-zinc-400 hover:text-white">
+                    <button wire:click="closeBetModal" class="text-zinc-400 hover:text-white">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                         </svg>
@@ -145,7 +145,8 @@
                             <span class="text-orange-500 normal-case ml-1">{{ number_format($this->wallet->balance, 0) }} available</span>
                         </label>
                         <div class="flex gap-2">
-                            <input type="number" wire:model.live="stake" min="1" max="{{ floor($this->wallet->balance) }}" step="1"
+                            <input type="number" wire:model.live="stake" min="1" max="{{ $this->wallet->balance }}" step="0.01"
+                                inputmode="decimal"
                                 class="flex-1 rounded-lg bg-zinc-800 border border-zinc-700 px-3 py-2 text-sm text-white focus:outline-none focus:border-amber-500/50"
                                 placeholder="e.g. 10">
                             <button wire:click="$set('stake', {{ floor($this->wallet->balance) }})"
@@ -188,7 +189,7 @@
                     @endif
                 </div>
                 <div class="flex justify-end gap-3 px-5 py-3 border-t border-zinc-700/50">
-                    <button wire:click="$set('showBetModal', false)" class="px-4 py-2 text-sm text-zinc-400 hover:text-white transition-colors">
+                    <button wire:click="closeBetModal" class="px-4 py-2 text-sm text-zinc-400 hover:text-white transition-colors">
                         Cancel
                     </button>
                     <button wire:click="placeBet"
@@ -275,11 +276,11 @@
          ══════════════════════════════════════════════════════════════════ --}}
     @if($showMatchModal)
     <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4"
-        wire:click.self="$set('showMatchModal', false)">
+        wire:click.self="closeMatchModal">
         <div class="bg-zinc-900 border border-zinc-700 rounded-xl w-full max-w-lg overflow-y-auto max-h-[90vh]">
             <div class="flex items-center justify-between px-5 py-3 border-b border-zinc-700/50">
                 <h2 class="text-lg font-semibold text-white">{{ $editingMatchId ? 'Edit Match' : 'Add Match' }}</h2>
-                <button wire:click="$set('showMatchModal', false)" class="text-zinc-400 hover:text-white">
+                <button wire:click="closeMatchModal" class="text-zinc-400 hover:text-white">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                     </svg>
@@ -502,7 +503,7 @@
                 @endif
             </div>
             <div class="flex justify-end gap-3 px-5 py-3 border-t border-zinc-700/50">
-                <button wire:click="$set('showMatchModal', false)" class="px-4 py-2 text-sm text-zinc-400 hover:text-white transition-colors">
+                <button wire:click="closeMatchModal" class="px-4 py-2 text-sm text-zinc-400 hover:text-white transition-colors">
                     Cancel
                 </button>
                 <button wire:click="saveMatch"

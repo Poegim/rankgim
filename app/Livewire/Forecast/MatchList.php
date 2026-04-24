@@ -199,6 +199,7 @@ class MatchList extends Component
         $this->pickedSide     = null;
         $this->stake          = '';
         $this->showBetModal   = true;
+        $this->resetErrorBag();
      
         // Pre-select a side if the card told us which button the user clicked.
         if ($side === 'a' || $side === 'b') {
@@ -215,20 +216,39 @@ class MatchList extends Component
         }
     }
 
+    public function closeMatchModal(): void
+    {
+        $this->showMatchModal = false; // ← fix
+        $this->resetMatchForm();
+        $this->resetErrorBag();
+    }
+
+    public function closeBetModal(): void
+    {
+        $this->showBetModal   = false;
+        $this->bettingMatchId = null;
+        $this->stake          = '';
+        $this->pickedPlayerId = null;
+        $this->pickedSide     = null;
+        $this->resetErrorBag();
+    }
+
+
     public function placeBet(): void
     {
-    $this->validate([
-        'stake' => [
-            'required',
-            'numeric',
-            'min:1',
-            function ($attribute, $value, $fail) {
-                if ($this->wallet && $value > $this->wallet->balance) {
-                    $fail('Not enough minerals.');
-                }
-            },
-        ],
-    ]);
+        $this->validate([
+            'stake' => [
+                'required',
+                'numeric',
+                'decimal:0,2', // allows 10, 10.5, 10.50 — rejects 10.555
+                'min:1',
+                function ($attribute, $value, $fail) {
+                    if ($this->wallet && $value > $this->wallet->balance) {
+                        $fail('Not enough energy.');
+                    }
+                },
+            ],
+        ]);
         $match = ForecastMatch::findOrFail($this->bettingMatchId);
 
         if ($match->match_type === 'foreigner') {
@@ -268,6 +288,7 @@ class MatchList extends Component
     {
         abort_if(! auth()->user()?->canManageGames(), 403);
         $this->resetMatchForm();
+        $this->resetErrorBag();
         $this->showMatchModal = true;
     }
 
@@ -301,6 +322,7 @@ class MatchList extends Component
             $this->nationalBCode = $match->player_b_country ?? '';
         }
 
+        $this->resetErrorBag();
         $this->showMatchModal = true;
     }
 
