@@ -97,8 +97,11 @@
 <div class="rounded-xl border overflow-hidden transition-colors
     {{ $isSettled ? 'border-zinc-800/60 bg-zinc-900/30' : 'border-zinc-700/60 bg-zinc-900/50 hover:border-zinc-600/80' }}">
 
-    {{-- Meta strip: type · event · schedule + lock timer --}}
-    <div class="flex items-center gap-2 px-4 pt-3 pb-2 flex-wrap text-xs">
+{{-- Meta strip: type · event · schedule + lock timer --}}
+<div class="flex flex-col sm:flex-row sm:items-center gap-1.5 sm:gap-2 px-4 pt-3 pb-2">
+
+    {{-- Top row: type badge + event name --}}
+    <div class="flex items-center gap-2 text-xs">
         <span class="px-2 py-0.5 rounded-full text-[10px] font-semibold uppercase tracking-wider border {{ $typeBadge }}">
             {{ ucfirst($match->match_type) }}
         </span>
@@ -106,21 +109,66 @@
         @if($match->event)
             <span class="text-zinc-500 truncate min-w-0">{{ $match->event->name }}</span>
         @endif
-
-        <span class="ml-auto font-mono text-[11px] text-zinc-500 shrink-0">
-            {{ $match->scheduled_at->format('d M · H:i') }} CET
-        </span>
-
-        @if($isOpen)
-            <span class="font-mono text-[11px] text-zinc-600 shrink-0 flex items-center gap-1">
-                <span>⏱</span> locks {{ $match->locked_at->diffForHumans() }}
-            </span>
-        @elseif($isLocked && ! $isSettled)
-            <span class="text-[11px] text-zinc-600 shrink-0 flex items-center gap-1">
-                <span>🔒</span> picks locked
-            </span>
-        @endif
     </div>
+
+    {{-- Bottom row: timer — full width, wraps naturally --}}
+    @if($isOpen)
+        <div class="font-mono text-xs flex flex-wrap items-center gap-x-1.5 gap-y-1 text-amber-400 sm:ml-auto"
+             x-data="{
+                 target: {{ $match->locked_at->timestamp }},
+                 intervalId: null,
+                 d: 0, h: 0, m: 0, s: 0,
+                 init() {
+                     this.tick();
+                     this.intervalId = setInterval(() => this.tick(), 1000);
+                 },
+                 destroy() {
+                     if (this.intervalId) clearInterval(this.intervalId);
+                 },
+                 tick() {
+                     const diff = this.target - Math.floor(Date.now() / 1000);
+                     if (diff <= 0) { this.d = this.h = this.m = this.s = 0; return; }
+                     this.d = Math.floor(diff / 86400);
+                     this.h = Math.floor((diff % 86400) / 3600);
+                     this.m = Math.floor((diff % 3600) / 60);
+                     this.s = diff % 60;
+                 }
+             }">
+            <span>⏱</span>
+            <span class="text-zinc-400 text-[10px] uppercase tracking-wide">locks</span>
+            <span class="text-amber-300" x-data
+                  x-text="new Intl.DateTimeFormat(navigator.language, {
+                      day: 'numeric', month: 'short',
+                      hour: '2-digit', minute: '2-digit',
+                      timeZone: 'Europe/Warsaw'
+                  }).format(new Date({{ $match->locked_at->timestamp }} * 1000))"></span>
+            <span class="text-zinc-600">·</span>
+            <span class="tabular-nums text-amber-400/70"
+                  x-text="(d > 0 ? d + 'd ' : '') + String(h).padStart(2,'0') + 'h ' + String(m).padStart(2,'0') + 'm ' + String(s).padStart(2,'0') + 's'"></span>
+            <span class="text-zinc-700 mx-0.5">|</span>
+            <span>🗓</span>
+            <span class="text-zinc-400 text-[10px] uppercase tracking-wide">match</span>
+            <span class="text-zinc-200 font-semibold">{{ $match->scheduled_at->format('d M · H:i') }}</span>
+            <span class="text-zinc-500 text-[10px]">CET</span>
+        </div>
+    @elseif($isLocked && ! $isSettled)
+        <div class="font-mono text-xs flex flex-wrap items-center gap-x-1.5 gap-y-1 sm:ml-auto">
+            <span>🗓</span>
+            <span class="text-zinc-400 text-[10px] uppercase tracking-wide">match</span>
+            <span class="text-zinc-200 font-semibold">{{ $match->scheduled_at->format('d M · H:i') }}</span>
+            <span class="text-zinc-500 text-[10px]">CET</span>
+            <span class="text-zinc-700 mx-0.5">|</span>
+            <span>🔒</span>
+            <span class="text-zinc-400 font-semibold">picks locked</span>
+        </div>
+    @else
+        <div class="font-mono text-xs text-zinc-500 sm:ml-auto">
+            {{ $match->scheduled_at->format('d M · H:i') }}
+            <span class="text-zinc-700 text-[10px]">CET</span>
+        </div>
+    @endif
+
+</div>
 
     {{-- ═══════════════════════════════════════════════════════════════════
          Pick row — the hero of the card.

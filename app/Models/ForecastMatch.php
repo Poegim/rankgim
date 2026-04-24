@@ -89,21 +89,26 @@ class ForecastMatch extends Model
 
     public function scopeOpen($query)
     {
-        // Matches that are not yet settled and still accepting bets
         return $query->whereNull('winner_id')
+            ->whereNull('winner_side')          // ← add this
             ->where('locked_at', '>', now());
     }
 
     public function scopeLocked($query)
     {
-        // Matches past lock time but not yet settled
         return $query->whereNull('winner_id')
+            ->whereNull('winner_side')          // ← add this
             ->where('locked_at', '<=', now());
     }
 
     public function scopeSettled($query)
     {
-        return $query->whereNotNull('winner_id');
+        // A match is settled when either a winner player (foreigner)
+        // or a winner side (korean/clan/national) has been recorded.
+        return $query->where(function ($q) {
+            $q->whereNotNull('winner_id')
+              ->orWhereNotNull('winner_side');
+        });
     }
 
     // ── Helpers ───────────────────────────────────────
@@ -120,7 +125,7 @@ class ForecastMatch extends Model
 
     public function isSettled(): bool
     {
-        return ! is_null($this->winner_id);
+        return ! is_null($this->winner_id) || ! is_null($this->winner_side);
     }
 
     public function isForeigner(): bool
