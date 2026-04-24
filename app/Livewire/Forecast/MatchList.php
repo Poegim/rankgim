@@ -167,21 +167,52 @@ class MatchList extends Component
         unset($this->wallet);
     }
 
-    // ── Bet modal ─────────────────────────────────────
-
-    public function openBetModal(int $matchId): void
+    // NOTE: Only showing the patch for openBetModal — the rest of the class is unchanged.
+    // Apply ONLY the body of openBetModal below to your existing MatchList.php.
+    // Everything else (placeBet, settleMatch, add/edit/delete, computed props) stays as-is.
+     
+    /**
+     * openBetModal — now accepts an optional pre-selected side.
+     *
+     * Called from the match card's per-side pick buttons:
+     *   <button wire:click="openBetModal({id}, 'a')">Pick NameA</button>
+     *
+     * When $side is provided, we pre-fill pickedSide (non-foreigner) or pickedPlayerId
+     * (foreigner) so the bet modal opens directly on the stake step — the user already
+     * declared WHO, only needs to declare HOW MUCH.
+     *
+     * When $side is null (legacy call path or programmatic open), the modal falls back
+     * to the original "pick side first" flow.
+     */
+    public function openBetModal(int $matchId, ?string $side = null): void
     {
+        abort_unless(auth()->check(), 403);
+     
         if (! $this->wallet) {
             // Bubble up to parent to show the currency modal
             $this->dispatch('request-currency-modal');
             return;
         }
-
+     
         $this->bettingMatchId = $matchId;
         $this->pickedPlayerId = null;
         $this->pickedSide     = null;
         $this->stake          = '';
         $this->showBetModal   = true;
+     
+        // Pre-select a side if the card told us which button the user clicked.
+        if ($side === 'a' || $side === 'b') {
+            $match = ForecastMatch::findOrFail($matchId);
+     
+            if ($match->match_type === 'foreigner') {
+                // Foreigner matches use pick_player_id (not pick_side)
+                $this->pickedPlayerId = $side === 'a'
+                    ? $match->player_a_id
+                    : $match->player_b_id;
+            } else {
+                $this->pickedSide = $side;
+            }
+        }
     }
 
     public function placeBet(): void

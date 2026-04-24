@@ -5,5 +5,7 @@
         </div>
     </flux:main>
 
+    <x-forecast.guest-wallet-modal />
+
     <livewire:comments.comment-section />
 </x-layouts::app.sidebar>
