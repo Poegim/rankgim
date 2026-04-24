@@ -142,10 +142,10 @@
                     <div>
                         <label class="block text-xs text-zinc-500 mb-2 uppercase tracking-wide">
                             How many points?
-                            <span class="text-zinc-700 normal-case ml-1">{{ number_format($this->wallet->balance, 0) }} available</span>
+                            <span class="text-orange-500 normal-case ml-1">{{ number_format($this->wallet->balance, 0) }} available</span>
                         </label>
                         <div class="flex gap-2">
-                            <input type="number" wire:model.live="stake" min="1" step="1"
+                            <input type="number" wire:model.live="stake" min="1" max="{{ floor($this->wallet->balance) }}" step="1"
                                 class="flex-1 rounded-lg bg-zinc-800 border border-zinc-700 px-3 py-2 text-sm text-white focus:outline-none focus:border-amber-500/50"
                                 placeholder="e.g. 10">
                             <button wire:click="$set('stake', {{ floor($this->wallet->balance) }})"
@@ -192,6 +192,7 @@
                         Cancel
                     </button>
                     <button wire:click="placeBet"
+                    
                         class="px-4 py-2 text-sm font-medium rounded-lg bg-amber-500/10 text-amber-400 border border-amber-500/20 hover:bg-amber-500/20 transition-colors">
                         Confirm call
                     </button>

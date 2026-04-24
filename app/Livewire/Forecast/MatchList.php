@@ -217,8 +217,18 @@ class MatchList extends Component
 
     public function placeBet(): void
     {
-        $this->validate(['stake' => 'required|numeric|min:1']);
-
+    $this->validate([
+        'stake' => [
+            'required',
+            'numeric',
+            'min:1',
+            function ($attribute, $value, $fail) {
+                if ($this->wallet && $value > $this->wallet->balance) {
+                    $fail('Not enough minerals.');
+                }
+            },
+        ],
+    ]);
         $match = ForecastMatch::findOrFail($this->bettingMatchId);
 
         if ($match->match_type === 'foreigner') {
