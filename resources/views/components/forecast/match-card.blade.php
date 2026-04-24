@@ -31,8 +31,8 @@
     };
 
     // Odds — lower odds = favorite. Equal odds = no favorite.
-    $oddsA = (float) $match->odds_a;
-    $oddsB = (float) $match->odds_b;
+    $oddsA = round((float) $match->odds_a * (float) $match->multiplier, 2);
+    $oddsB = round((float) $match->odds_b * (float) $match->multiplier, 2);
     $favoriteSide = $oddsA < $oddsB ? 'a' : ($oddsB < $oddsA ? 'b' : null);
 
     // Winner for settled matches — local variable name ≠ Livewire property name.
@@ -333,8 +333,9 @@
             <span class="min-w-0 truncate">
                 Your pick: <strong>{{ $pickedName }}</strong>
                 · {{ number_format($userPrediction->stake, 0) }} pts
+                · ×{{ number_format($userPrediction->odds_at_time, 2) }}
                 @if($userPrediction->bonus_multiplier > 1)
-                    <span class="opacity-70">(×{{ $userPrediction->bonus_multiplier }} perk)</span>
+                    <span class="opacity-70">(×{{ number_format($userPrediction->bonus_multiplier, 2) }} perk)</span>
                 @endif
             </span>
             @if($userPrediction->result === 'won')
