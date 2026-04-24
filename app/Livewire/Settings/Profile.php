@@ -5,6 +5,7 @@ namespace App\Livewire\Settings;
 use App\Concerns\ProfileValidationRules;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Storage;
 use Livewire\Attributes\Computed;
@@ -17,22 +18,120 @@ use Livewire\WithFileUploads;
 class Profile extends Component
 {
     use ProfileValidationRules, WithFileUploads;
-    use ProfileValidationRules;
 
-    public string $name = '';
+    public string $name        = '';
+    public string $email       = '';
+    public string $countryCode = '';
+    public string $city        = '';
+    public string $bio         = '';
+    public ?float $lat         = null;
+    public ?float $lng         = null;
 
-    public string $email = '';
+    public string $citySearch      = '';
+    public array  $citySuggestions = [];
+    public bool   $citySelected    = false;
 
     #[Validate('nullable|image|max:1024')]
     public $photo = null;
 
-    /**
-     * Mount the component.
-     */
     public function mount(): void
     {
-        $this->name = Auth::user()->name;
-        $this->email = Auth::user()->email;
+        $user = Auth::user();
+
+        $this->name        = $user->name;
+        $this->email       = $user->email;
+        $this->countryCode = $user->country_code ?? '';
+        $this->city        = $user->city ?? '';
+        $this->bio         = $user->bio ?? '';
+        $this->lat         = $user->lat ? (float) $user->lat : null;
+        $this->lng         = $user->lng ? (float) $user->lng : null;
+        $this->citySearch  = $user->city ?? '';
+        $this->citySelected = (bool) $user->city;
+    }
+
+    public function searchCity(): void
+    {
+        $this->citySelected    = false;
+        $this->citySuggestions = [];
+
+        $query = trim($this->citySearch);
+
+        if (strlen($query) < 2) {
+            return;
+        }
+
+        try {
+            $response = Http::withHeaders([
+                'User-Agent' => 'Rankgim/1.0',
+            ])->timeout(3)->get('https://photon.komoot.io/api/', [
+                'q'    => $query,
+                'limit' => 6,
+                'lang'  => 'en',
+            ]);
+
+            if ($response->successful()) {
+                $this->citySuggestions = collect($response->json()['features'] ?? [])
+                    ->filter(fn($f) => in_array($f['properties']['type'] ?? '', [
+                        'city', 'town', 'village', 'municipality',
+                    ]))
+                    ->take(5)
+                    ->map(fn($f) => [
+                        'label'   => $this->buildLabel($f['properties']),
+                        'lat'     => (float) $f['geometry']['coordinates'][1],
+                        'lng'     => (float) $f['geometry']['coordinates'][0],
+                        'country' => strtoupper($f['properties']['countrycode'] ?? ''),                    ])
+                    ->values()
+                    ->all();
+            }
+        } catch (\Throwable) {
+            $this->citySuggestions = [];
+        }
+
+    }
+
+    private function buildLabel(array $props): string
+    {
+        $city    = $props['name'] ?? null;
+        $country = $props['country'] ?? null;
+        $state   = $props['state'] ?? null;
+
+        if ($city && $country) {
+            return $state ? "{$city}, {$state}, {$country}" : "{$city}, {$country}";
+        }
+
+        return $city ?? '';
+    }
+
+public function selectCity(int $index): void
+{
+    $suggestion = $this->citySuggestions[$index] ?? null;
+
+    if (! $suggestion) {
+        return;
+    }
+
+    $this->city       = $suggestion['label'];
+    $this->citySearch = $suggestion['label'];
+    $this->lat        = $suggestion['lat'];
+    $this->lng        = $suggestion['lng'];
+
+    if (! $this->countryCode && $suggestion['country']) {
+        $this->countryCode = strtoupper($suggestion['country']);
+    }
+
+    $this->citySuggestions = [];
+    $this->citySelected    = true;
+
+}
+
+    public function clearCity(): void
+    {
+        $this->city            = '';
+        $this->citySearch      = '';
+        $this->lat             = null;
+        $this->lng             = null;
+        $this->citySelected    = false;
+        $this->citySuggestions = [];
     }
 
     public function removePhoto(): void
@@ -61,16 +160,28 @@ class Profile extends Component
         $this->photo = null;
     }
 
-    /**
-     * Update the profile information for the currently authenticated user.
-     */
     public function updateProfileInformation(): void
     {
         $user = Auth::user();
 
-        $validated = $this->validate($this->profileRules($user->id));
+        $validated = $this->validate(array_merge(
+            $this->profileRules($user->id),
+            [
+                'countryCode' => 'nullable|string|size:2',
+                'city'        => 'nullable|string|max:150',
+                'bio'         => 'nullable|string|max:280',
+                'lat'         => 'nullable|numeric|between:-90,90',
+                'lng'         => 'nullable|numeric|between:-180,180',
+            ]
+        ));
 
-        $user->fill($validated);
+        $user->name         = $validated['name'];
+        $user->email        = $validated['email'];
+        $user->country_code = $validated['countryCode'] ?: null;
+        $user->city         = $validated['city'] ?: null;
+        $user->bio          = $validated['bio'] ?: null;
+        $user->lat          = $validated['lat'];
+        $user->lng          = $validated['lng'];
 
         if ($user->isDirty('email')) {
             $user->email_verified_at = null;
@@ -80,7 +191,6 @@ class Profile extends Component
             if ($user->profile_photo_path) {
                 Storage::disk('public')->delete($user->profile_photo_path);
             }
-
             $user->profile_photo_path = $this->photo->store('profile-photos', 'public');
             $this->photo = null;
         }
@@ -90,21 +200,16 @@ class Profile extends Component
         $this->dispatch('profile-updated', name: $user->name);
     }
 
-    /**
-     * Send an email verification notification to the current user.
-     */
     public function resendVerificationNotification(): void
     {
         $user = Auth::user();
 
         if ($user->hasVerifiedEmail()) {
             $this->redirectIntended(default: route('dashboard', absolute: false));
-
             return;
         }
 
         $user->sendEmailVerificationNotification();
-
         Session::flash('status', 'verification-link-sent');
     }
 
@@ -117,7 +222,20 @@ class Profile extends Component
     #[Computed]
     public function showDeleteUser(): bool
     {
-        return ! Auth::user() instanceof MustVerifyEmail
-            || (Auth::user() instanceof MustVerifyEmail && Auth::user()->hasVerifiedEmail());
+        return ! config('app.demo_mode', false);
+    }
+
+    #[Computed]
+    public function countries(): array
+    {
+        return collect(config('countries'))
+            ->sortBy('name')
+            ->values()
+            ->all();
+    }
+
+    public function render()
+    {
+        return view('livewire.settings.profile');
     }
 }

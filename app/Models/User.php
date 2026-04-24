@@ -26,6 +26,11 @@ class User extends Authenticatable implements MustVerifyEmail
         'role',
         'event_reminders',
         'profile_photo_path',
+        'country_code',   
+        'city',           
+        'bio',            
+        'lat',
+        'lng',
     ];
 
     /**
@@ -104,5 +109,21 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->hasMany(\App\Models\ForecastWallet::class);
     }
+     
+     
+    public function countryName(): ?string
+    {
+        if (! $this->country_code) return null;
+        return collect(config('countries'))->firstWhere('code', $this->country_code)['name'] ?? null;
+    }
+
+    public function flagUrl(): ?string
+    {
+        if (! $this->country_code) return null;
+        return asset('images/country_flags/' . strtolower($this->country_code) . '.svg');
+    }
+
+
+
     
 }
