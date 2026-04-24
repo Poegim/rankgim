@@ -96,5 +96,13 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->hasMany(Reaction::class);
     }
+
+    /**
+     * A user can have multiple forecast wallets, one per season.
+     */
+    public function forecastWallets(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(\App\Models\ForecastWallet::class);
+    }
     
 }
