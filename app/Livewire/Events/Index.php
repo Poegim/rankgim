@@ -38,8 +38,11 @@ class Index extends Component
     // ── Player search state ───────────────────────────
     /** @var string Live search query for the player picker */
     public string $playerSearch = '';
-    public string $guestSearch = '';
     public array $selectedGuests = [];
+
+    public string $newGuestName = '';
+    public string $newGuestRace = 'Unknown';
+    public string $newGuestCountry = 'KR';
 
     /** @var array<int, array{id: int, name: string, country_code: string, race: string}> */
     public array $selectedPlayers = [];
@@ -157,32 +160,6 @@ class Index extends Component
             ->whereNotIn('id', $selectedIds)
             ->limit(8)
             ->get();
-    }
-
-    /**
-     * Live search results for guest players (from config/events_guests.php).
-     * Filters by name and excludes already selected guests.
-     */
-    #[Computed]
-    public function guestResults(): array
-    {
-        if (strlen($this->guestSearch) < 2) {
-            return [];
-        }
- 
-        $query = strtolower($this->guestSearch);
- 
-        // Names of guests already selected — used to exclude duplicates
-        $selectedNames = collect($this->selectedGuests)->pluck('name')->map('strtolower')->toArray();
- 
-        return collect(config('events_guests', []))
-            ->filter(fn ($g) =>
-                str_contains(strtolower($g['name']), $query)
-                && !in_array(strtolower($g['name']), $selectedNames, true)
-            )
-            ->values()
-            ->take(8)
-            ->toArray();
     }
 
     // ── Actions ───────────────────────────────────────
@@ -361,38 +338,39 @@ class Index extends Component
 
 
     /**
-     * Add a guest player (from config/events_guests.php) by their name.
-     * Guest players are not in the players table — stored as JSON on the event.
+     * Add a manually entered guest player to the selected list.
      */
-    public function addGuest(string $name): void
+    public function addGuestManually(): void
     {
-        $guest = collect(config('events_guests', []))->firstWhere('name', $name);
- 
-        if (!$guest) {
-            return;
-        }
- 
-        // Prevent duplicates by name
+        $this->validate([
+            'newGuestName'    => 'required|string|max:100',
+            'newGuestRace'    => 'required|in:Terran,Zerg,Protoss,Random,Unknown',
+            'newGuestCountry' => 'required|string|size:2',
+        ]);
+
+        $name = trim($this->newGuestName);
+
+        // Prevent duplicates by name (case-insensitive)
         $alreadySelected = collect($this->selectedGuests)
             ->pluck('name')
             ->map('strtolower')
             ->contains(strtolower($name));
- 
+
         if ($alreadySelected) {
-            $this->guestSearch = '';
-            unset($this->guestResults);
+            $this->newGuestName = '';
             return;
         }
- 
+
         $this->selectedGuests[] = [
-            'name'         => $guest['name'],
-            'country_code' => $guest['country_code'],
-            'race'         => $guest['race'],
+            'name'         => $name,
+            'country_code' => strtoupper($this->newGuestCountry),
+            'race'         => $this->newGuestRace,
         ];
- 
-        $this->guestSearch = '';
-        unset($this->guestResults);
+
+        $this->newGuestName = '';
     }
+
+
  
     /**
      * Remove a guest player from the selected list by their name.
@@ -445,7 +423,10 @@ class Index extends Component
         $this->selectedPlayers = [];
         $this->playerSearch = '';
         $this->selectedGuests = [];
-        $this->guestSearch  = '';
+        $this->newGuestName    = '';
+        $this->newGuestRace    = 'Unknown';
+        $this->newGuestCountry = 'KR';
+
         unset($this->playerResults);
     }
 

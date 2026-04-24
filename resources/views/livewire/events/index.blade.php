@@ -526,40 +526,48 @@
                                 </div>
                             @endif
                         </div>
-
+                        
                         {{-- Korean guests tab --}}
                         <div x-show="tab === 'guests'" x-cloak>
-                            <div class="relative" x-data="{ open: false }" x-on:click.outside="open = false">
-                                <input type="text" wire:model.live="guestSearch"
-                                    x-on:focus="open = true" x-on:input="open = true"
-                                    autocomplete="off" placeholder="Search Korean player (e.g. Flash, Jaedong…)"
-                                    class="w-full rounded-lg bg-zinc-800 border border-zinc-700 px-3 py-2 text-sm text-white focus:outline-none focus:border-amber-500/50" />
-
-                                @if(strlen($guestSearch) >= 2)
-                                    <div x-show="open"
-                                        class="absolute z-50 w-full mt-1 rounded-lg bg-zinc-900 border border-zinc-700 shadow-lg overflow-hidden max-h-52 overflow-y-auto">
-                                        @forelse($this->guestResults as $guest)
-                                            <button type="button"
-                                                wire:click="addGuest('{{ addslashes($guest['name']) }}')"
-                                                x-on:click="open = false"
-                                                class="w-full flex items-center gap-1.5 px-3 py-1.5 text-left hover:bg-zinc-800 transition-colors">
-                                                <img src="{{ asset('images/country_flags/' . strtolower($guest['country_code']) . '.svg') }}"
-                                                    class="w-5 h-3.5 rounded-sm shrink-0">
-                                                <span class="text-sm font-semibold text-white truncate">{{ $guest['name'] }}</span>
-                                                <span class="text-xs ml-auto shrink-0
-                                                    {{ $guest['race'] === 'Terran'  ? 'text-blue-400'   :
-                                                      ($guest['race'] === 'Zerg'    ? 'text-purple-400' :
-                                                      ($guest['race'] === 'Protoss' ? 'text-yellow-400' : 'text-zinc-400')) }}">
-                                                    {{ $guest['race'] }}
-                                                </span>
-                                            </button>
-                                        @empty
-                                            <div class="px-3 py-2 text-sm text-zinc-500">No Korean players found</div>
-                                        @endforelse
-                                    </div>
-                                @endif
+                            {{-- Inline form to add a guest player manually --}}
+                            <div class="flex gap-2 items-end">
+                                <div class="flex-1">
+                                    <input type="text"
+                                        wire:model="newGuestName"
+                                        wire:keydown.enter.prevent="addGuestManually"
+                                        autocomplete="off"
+                                        placeholder="e.g. Flash, Jaedong…"
+                                        class="w-full rounded-lg bg-zinc-800 border border-zinc-700 px-3 py-2 text-sm text-white focus:outline-none focus:border-amber-500/50" />
+                                </div>
+                                <div>
+                                    <select wire:model="newGuestRace"
+                                        class="rounded-lg bg-zinc-800 border border-zinc-700 px-2 py-2 text-sm text-white focus:outline-none focus:border-amber-500/50">
+                                        <option value="Terran">Terran</option>
+                                        <option value="Zerg">Zerg</option>
+                                        <option value="Protoss">Protoss</option>
+                                        <option value="Random">Random</option>
+                                        <option value="Unknown">Unknown</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <input type="text"
+                                        wire:model="newGuestCountry"
+                                        maxlength="2"
+                                        placeholder="KR"
+                                        class="w-16 rounded-lg bg-zinc-800 border border-zinc-700 px-3 py-2 text-sm text-white uppercase focus:outline-none focus:border-amber-500/50" />
+                                </div>
+                                <button type="button"
+                                    wire:click="addGuestManually"
+                                    class="px-3 py-2 rounded-lg bg-amber-500/20 hover:bg-amber-500/30 text-amber-400 text-sm font-medium transition-colors whitespace-nowrap">
+                                    + Add
+                                </button>
                             </div>
 
+                            @error('newGuestName')
+                                <p class="mt-1 text-xs text-red-400">{{ $message }}</p>
+                            @enderror
+
+                            {{-- Selected guests chips — unchanged --}}
                             @if(count($selectedGuests) > 0)
                                 <div class="flex flex-wrap gap-1 mt-2">
                                     @foreach($selectedGuests as $i => $guest)
@@ -567,15 +575,17 @@
                                             class="inline-flex items-center gap-1.5 pl-1.5 pr-1 py-0.5 rounded-full text-xs bg-zinc-700 border border-zinc-600 text-white">
                                             <img src="{{ asset('images/country_flags/' . strtolower($guest['country_code']) . '.svg') }}"
                                                 class="w-4 h-3 rounded-sm shrink-0">
-                                            {{ $guest['name'] }}
-                                            <button type="button"
-                                                wire:click="removeGuest('{{ addslashes($guest['name']) }}')"
-                                                class="ml-0.5 text-zinc-400 hover:text-red-400 transition-colors leading-none">✕</button>
+                                            <span class="{{ $guest['race'] === 'Terran' ? 'text-blue-400' : ($guest['race'] === 'Zerg' ? 'text-purple-400' : 'text-yellow-400') }}">
+                                                {{ $guest['name'] }}
+                                            </span>
+                                            <button type="button" wire:click="removeGuest('{{ $guest['name'] }}')"
+                                                class="ml-0.5 text-zinc-500 hover:text-red-400 transition-colors">✕</button>
                                         </span>
                                     @endforeach
                                 </div>
                             @endif
                         </div>
+
                     </div>
 
                 </div>
