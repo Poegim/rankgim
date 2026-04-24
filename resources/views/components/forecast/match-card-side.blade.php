@@ -16,7 +16,6 @@
 
     $isSideA = $side === 'a';
 @endphp
-
 {{-- Side A: flag → name → odds (left-aligned)
      Side B: odds → name → flag (right-aligned)
      The parent button/div already handles alignment — we just order children. --}}

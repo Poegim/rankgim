@@ -41,6 +41,7 @@
                      keep per-side buttons that route to the forecast page via
                      wire:click -- but on the dashboard we don't have openBetModal
                      wired in, so we wrap the card in an anchor to /forecast. --}}
+                @auth
                 <a href="{{ route('forecast.index') }}" wire:navigate
                    class="block group"
                    wire:key="dash-match-{{ $loopMatch->id }}">
@@ -50,6 +51,23 @@
                         :can-manage-games="false"
                         :compact="true" />
                 </a>
+                @endauth
+                @guest
+
+                <a href=""
+                     x-data
+                    x-on:click.stop.prevent="$dispatch('open-guest-wallet-modal')"
+                   class="block group"
+                   wire:key="dash-match-{{ $loopMatch->id }}">
+                    <x-forecast.match-card
+                        :match="$loopMatch"
+                        :user-prediction="$userPrediction"
+                        :can-manage-games="false"
+                        :compact="true" />
+                </a>
+
+
+                @endguest
             @endforeach
         </div>
     @endif
