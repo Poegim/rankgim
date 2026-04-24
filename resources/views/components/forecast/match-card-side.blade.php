@@ -59,7 +59,7 @@
 @else
     {{-- Side B: reverse order --}}
     {{-- Odds / CTA --}}
-    <div class="flex flex-col items-start shrink-0 order-3">
+    <div class="flex flex-col items-start shrink-0 order-1">
         <span class="font-mono font-bold text-sm {{ $oddsColor }} tabular-nums">
             ×{{ number_format((float) $odds, 2) }}
         </span>
@@ -71,7 +71,7 @@
     </div>
 
     {{-- Name + race --}}
-    <div class="flex flex-col min-w-0 flex-1 items-end order-2">
+    <div class="flex flex-col min-w-0 flex-1 items-end order-3">
         <span class="text-sm font-bold text-zinc-100 truncate leading-tight text-right">
             @if($isWinner)
                 <span class="text-[9px] font-mono text-emerald-400 mr-1">WIN •</span>
@@ -91,6 +91,6 @@
     {{-- Flag --}}
     @if($country)
         <img src="{{ asset('images/country_flags/' . strtolower($country) . '.svg') }}"
-             class="w-5 h-3.5 rounded-sm shrink-0 order-1" alt="{{ $country }}">
+             class="w-5 h-3.5 rounded-sm shrink-0 order-3" alt="{{ $country }}">
     @endif
 @endif
