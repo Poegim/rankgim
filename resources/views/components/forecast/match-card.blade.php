@@ -18,8 +18,12 @@
     $raceA = $match->player_a_race;
     $raceB = $match->player_b_race;
 
-    $countryA = $isForeigner ? ($match->playerA?->country_code ?? null) : ($match->player_a_country ?? null);
-    $countryB = $isForeigner ? ($match->playerB?->country_code ?? null) : ($match->player_b_country ?? null);
+    $countryA = $isForeigner
+        ? ($match->playerA?->country_code ?? null)
+        : ($match->match_type === 'korean' ? 'kr' : ($match->player_a_country ?? null));
+    $countryB = $isForeigner
+        ? ($match->playerB?->country_code ?? null)
+        : ($match->match_type === 'korean' ? 'kr' : ($match->player_b_country ?? null));
 
     // Race hex — inline-style only, Tailwind JIT can't see dynamic classes.
     $raceHex = fn($race) => match($race) {

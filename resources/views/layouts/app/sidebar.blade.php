@@ -25,6 +25,33 @@
                 default              => 'bg-zinc-600 text-zinc-300',
             };
         }
+    
+        // Compute upcoming open forecast matches and urgency badge color for the Forecast item.
+        // Uses scheduled_at: red < 2h, orange < 24h, grey <= 7 days.
+        $season = \App\Models\ForecastSeason::current();
+
+        $upcomingForecasts    = collect();
+        $nextForecast         = null;
+        $forecastBadgeColor   = null;
+
+        if ($season) {
+            $upcomingForecasts = \App\Models\ForecastMatch::where('season_id', $season->id)
+                ->open()
+                ->where('scheduled_at', '<=', now()->addDays(7))
+                ->orderBy('scheduled_at')
+                ->get();
+
+            $nextForecast = $upcomingForecasts->first();
+
+            if ($nextForecast) {
+                $minutesLeft = now()->diffInMinutes($nextForecast->scheduled_at, false);
+                $forecastBadgeColor = match (true) {
+                    $minutesLeft <= 120  => 'bg-red-500 text-white',
+                    $minutesLeft <= 1440 => 'bg-amber-400 text-black',
+                    default              => 'bg-zinc-600 text-zinc-300',
+                };
+            }
+        }
     @endphp
 
     <flux:sidebar sticky collapsible="mobile"
@@ -57,7 +84,7 @@
             </flux:sidebar.group>
 
             {{-- ── Group: Community ──────────────────────────────── --}}
-            <flux:sidebar.group heading="Community">
+            <flux:sidebar.group heading="Briefing">
                 <flux:sidebar.item icon="calendar-days"
                     :href="route('events.index')"
                     :current="request()->routeIs('events.*')"
@@ -76,7 +103,14 @@
                     :href="route('forecast.index')"
                     :current="request()->routeIs('forecast.*')"
                     wire:navigate>
-                    {{ __('Koprulu Forecast') }}
+                    <div class="flex items-center justify-between w-full">
+                        <span>{{ __('Koprulu Forecast') }}</span>
+                        @if($nextForecast && $forecastBadgeColor)
+                            <span class="text-xs font-bold px-1.5 py-0.5 rounded-full {{ $forecastBadgeColor }}">
+                                {{ $upcomingForecasts->count() }}
+                            </span>
+                        @endif
+                    </div>
                 </flux:sidebar.item>
             </flux:sidebar.group>
 
