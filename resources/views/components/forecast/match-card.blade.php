@@ -136,12 +136,9 @@
              }">
             <span>⏱</span>
             <span class="text-zinc-400 text-[10px] uppercase tracking-wide">locks</span>
-            <span class="text-amber-300" x-data
-                  x-text="new Intl.DateTimeFormat(navigator.language, {
-                      day: 'numeric', month: 'short',
-                      hour: '2-digit', minute: '2-digit',
-                      timeZone: 'Europe/Warsaw'
-                  }).format(new Date({{ $match->locked_at->timestamp }} * 1000))"></span>
+            <span class="text-amber-300">
+    {{ $match->locked_at->format('d M, H:i') }}
+</span>
             <span class="text-zinc-600">·</span>
             <span class="tabular-nums text-amber-400/70"
                   x-text="(d > 0 ? d + 'd ' : '') + String(h).padStart(2,'0') + 'h ' + String(m).padStart(2,'0') + 'm ' + String(s).padStart(2,'0') + 's'"></span>
