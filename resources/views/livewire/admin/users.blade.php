@@ -250,6 +250,27 @@
 
                                     {{-- ── Stat cards row ──────────────────────────── --}}
                                     <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-3 mb-5">
+                                        
+                                    {{-- Country flag --}}
+                                    @if($user->country_code)
+                                        <div class="rounded-lg bg-zinc-800/60 border border-zinc-700/40 p-3">
+                                            <p class="text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Flag</p>
+                                            <img
+                                                src="{{ asset('images/country_flags/' . strtolower($user->country_code) . '.svg') }}"
+                                                alt="{{ $user->country_code }}"
+                                                class="w-8 h-5 rounded-sm mb-1"
+                                            >
+                                            <p class="text-[10px] text-zinc-500">{{ $user->country_code }}</p>
+                                        </div>
+                                    @endif
+
+                                    {{-- City --}}
+                                    @if($user->city)
+                                        <div class="rounded-lg bg-zinc-800/60 border border-zinc-700/40 p-3">
+                                            <p class="text-[10px] uppercase tracking-wider text-zinc-500 mb-1">City</p>
+                                            <p class="text-xs font-semibold text-zinc-200 mt-1">{{ $user->city }}</p>
+                                        </div>
+                                    @endif
 
                                         {{-- Faction / Perk --}}
                                         <div class="rounded-lg bg-zinc-800/60 border border-zinc-700/40 p-3">
