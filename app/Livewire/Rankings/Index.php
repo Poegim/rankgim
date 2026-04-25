@@ -76,7 +76,7 @@ class Index extends Component
                 $q->whereHas('player', fn($q) => $q->whereIn('country_code', $codes));
             })
             ->orderBy($this->sortBy, $this->sortDirection)
-            ->paginate(100);
+            ->paginate(1000);
 
         $prevDate = \App\Models\SystemStat::get('previous_snapshot_date');
 
