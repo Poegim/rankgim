@@ -80,11 +80,8 @@ class MatchList extends Component
 
     public function mount(): void
     {
-        $this->scheduledAt = now()->addHour()->format('Y-m-d\TH:i');
-        // Lock defaults to DEFAULT_LOCK_MINUTES before scheduled_at
-        $this->lockedAt = now()->addHour()
-            ->subMinutes(ForecastMatch::DEFAULT_LOCK_MINUTES)
-            ->format('Y-m-d\TH:i');
+        $this->scheduledAt = now()->format('Y-m-d\TH:i');
+        $this->lockedAt    = now()->subHour()->format('Y-m-d\TH:i');
     }
 
     // ── Computed ──────────────────────────────────────
@@ -546,19 +543,6 @@ class MatchList extends Component
     public function updatedView()
     {
         unset($this->matches);
-    }
-
-    public function updatedScheduledAt(string $value): void
-    {
-        // Auto-update lockedAt when scheduledAt changes,
-        // keeping it DEFAULT_LOCK_MINUTES before the match
-        try {
-            $this->lockedAt = \Carbon\Carbon::parse($value)
-                ->subMinutes(ForecastMatch::DEFAULT_LOCK_MINUTES)
-                ->format('Y-m-d\TH:i');
-        } catch (\Exception) {
-            // Leave lockedAt as-is if date is invalid
-        }
     }
 
     private function searchKorean(string $search, ?string $exclude = null): array
