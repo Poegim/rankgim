@@ -31,22 +31,22 @@ class ForecastWallet extends Model
         'minerals'  => [
             'label' => 'Mineral Points',
             'icon'  => '💎',
-            'bonus' => '+50% payout when betting on the underdog (lower ELO)',
+            'bonus' => '+50% payout when picking the underdog',
         ],
         'khaydarin' => [
             'label' => 'Khaydarin Points',
             'icon'  => '⚡',
-            'bonus' => '+25% payout when betting on a Protoss player',
+            'bonus' => '+25% payout when picking a Protoss player',
         ],
         'biomass'   => [
             'label' => 'Biomass Points',
             'icon'  => '🧬',
-            'bonus' => '+25% payout when betting on a Zerg player',
+            'bonus' => '+25% payout when picking a Zerg player',
         ],
         'credits'   => [
             'label' => 'Credit Points',
             'icon'  => '💳',
-            'bonus' => '+25% payout when betting on a Terran player',
+            'bonus' => '+25% payout when picking a Terran player',
         ],
     ];
 
