@@ -136,7 +136,7 @@ class ForecastMatch extends Model
     // Calculate ELO-based odds for a foreigner match
     public static function calculateOdds(int $eloA, int $eloB): array
     {
-        $probA = 1 / (1 + pow(10, ($eloB - $eloA) / 800));
+        $probA = 1 / (1 + pow(10, ($eloB - $eloA) / 400));
         $probB = 1 - $probA;
 
         return [
