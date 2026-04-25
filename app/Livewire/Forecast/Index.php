@@ -31,7 +31,7 @@ class Index extends Component
      * Kept in the URL so refreshing / sharing a link preserves the view.
      */
     #[Url]
-    public string $tab = 'forecasts'; // forecasts | standings | history
+    public string $tab = 'forecasts'; // forecasts | standings | history | archive
 
     // Sub-view inside the Forecasts tab: 'open' or 'settled'.
     // Stays in the URL for the same reason as $tab.

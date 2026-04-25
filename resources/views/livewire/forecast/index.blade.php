@@ -40,15 +40,22 @@
     </div>
 
     {{-- No active season --}}
-    @if(! $this->season)
-        <div class="text-center py-16 text-zinc-500">
-            <p class="text-lg">No active season</p>
-            @if(auth()->user()?->canManageGames())
-                <button wire:click="openSeasonModal" class="mt-3 text-sm text-amber-400 hover:text-amber-300">
-                    Start the first season
-                </button>
-            @endif
-        </div>
+    @if(!$this->season)
+        {{-- Show archive if past seasons exist, otherwise show "start season" --}}
+        @php $hasPastSeasons = \App\Models\ForecastSeason::where('is_active', false)->exists(); @endphp
+
+        @if($hasPastSeasons)
+            <livewire:forecast.season-archive />
+        @else
+            <div class="text-center py-16 text-zinc-500">
+                <p class="text-lg">No active season</p>
+                @if(auth()->user()?->canManageGames())
+                    <button wire:click="openSeasonModal" class="mt-3 text-sm text-amber-400 hover:text-amber-300">
+                        Start the first season
+                    </button>
+                @endif
+            </div>
+        @endif
     @else
 
     {{-- ══════════════════════════════════════════════════════════════════
@@ -83,6 +90,18 @@
             <span>My History</span>
         </button>
         @endauth
+
+        {{-- Archive tab — always visible if past seasons exist --}}
+        @if(\App\Models\ForecastSeason::where('is_active', false)->exists())
+        <button wire:click="switchTab('archive')"
+            class="flex items-center gap-2 px-5 py-3 rounded-xl text-sm font-semibold transition-all border
+                {{ $tab === 'archive'
+                    ? 'bg-zinc-500/15 border-zinc-500/40 text-zinc-200 shadow-lg shadow-zinc-500/10'
+                    : 'bg-zinc-900/40 border-zinc-800 text-zinc-400 hover:border-zinc-600 hover:text-zinc-200' }}">
+            <span class="text-lg">📦</span>
+            <span>Archive</span>
+        </button>
+        @endif
 
         <span class="ml-auto text-xs text-zinc-600 hidden sm:block">
             {{ $this->season->name }}
@@ -139,7 +158,12 @@
                 <p>Log in to see your forecast history.</p>
             </div>
         @endauth
+
+    @elseif($tab === 'archive')
+        <livewire:forecast.season-archive :key="'archive'" />
     @endif
+
+    
 
     @endif {{-- end season check --}}
 
