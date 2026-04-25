@@ -21,21 +21,6 @@
         {{-- Spread chart --}}
         <livewire:dashboard.spread-chart />
 
-        {{-- Risers + Fallers + Hot streaks --}}
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div class="md:col-span-2">
-                <livewire:dashboard.risers-and-fallers />
-            </div>
-            <livewire:dashboard.hot-streaks />
-        </div>
-
-        {{-- Most active + Biggest upsets + Most dominant --}}
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <livewire:dashboard.most-active />
-            <livewire:dashboard.biggest-upsets />
-            <livewire:dashboard.most-dominant />
-        </div>
-
         {{-- Top rivalries --}}
         <livewire:dashboard.top-rivalries />
 

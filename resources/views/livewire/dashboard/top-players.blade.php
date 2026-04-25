@@ -36,7 +36,7 @@
         </a>
     </div>
 
-    <div class="rounded-xl border border-zinc-700/60 bg-zinc-800/40 overflow-hidden divide-y divide-zinc-700/40">
+    <div class="rounded-xl border border-zinc-700/60 bg-zinc-900 overflow-hidden divide-y divide-zinc-700/40">
 
         @foreach($this->players as $index => $row)
             @php
