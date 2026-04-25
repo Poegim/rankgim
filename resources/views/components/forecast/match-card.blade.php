@@ -351,10 +351,13 @@
             @if($crowdEmpty)
                 <div class="w-full h-full bg-[repeating-linear-gradient(45deg,#3f3f46,#3f3f46_4px,#27272a_4px,#27272a_8px)] opacity-50"></div>
             @else
-                <div class="h-full transition-all duration-500"
-                    style="width: {{ $crowdA }}%; background: {{ $isSettled && $winningSide === 'a' ? '#10b981' : ($isSettled ? '#3f3f46' : $raceHex($raceA)) }};"></div>
-                <div class="h-full transition-all duration-500"
-                    style="width: {{ $crowdB }}%; background: {{ $isSettled && $winningSide === 'b' ? '#10b981' : ($isSettled ? '#3f3f46' : $raceHex($raceB)) }};"></div>
+                {{-- Side A = blue (#3b82f6), side B = red (#ef4444).
+     Fixed colors avoid ambiguity when both players share the same race.
+     Settled states override: winner gets green, loser gets grey. --}}
+            <div class="h-full transition-all duration-500"
+                style="width: {{ $crowdA }}%; background: {{ $isSettled && $winningSide === 'a' ? '#10b981' : ($isSettled ? '#3f3f46' : '#3b82f6') }};"></div>
+            <div class="h-full transition-all duration-500"
+                style="width: {{ $crowdB }}%; background: {{ $isSettled && $winningSide === 'b' ? '#10b981' : ($isSettled ? '#3f3f46' : '#ef4444') }};"></div>
             @endif
         </div>
     </div>
