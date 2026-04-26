@@ -47,6 +47,20 @@
     --color-accent: var(--color-neutral-800);
     --color-accent-content: var(--color-neutral-800);
     --color-accent-foreground: var(--color-white);
+
+    /* Race colors — used in match-card, rankings, profiles, achievements */
+    --color-race-terran: #3b82f6;
+    --color-race-terran-soft: #60a5fa;
+    --color-race-zerg: #f43f5e;
+    --color-race-zerg-soft: #fb7185;
+    --color-race-protoss: #d4af37;
+    --color-race-protoss-soft: #e8c66b;
+    --color-race-random: #f97316;
+    --color-race-random-soft: #fb923c;
+    --color-race-unknown: #71717a;
+    --color-race-unknown-soft: #a1a1aa;
+
+
 }
 
 @layer theme {

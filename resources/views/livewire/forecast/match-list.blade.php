@@ -10,6 +10,7 @@
     @endphp
 
     <div class="space-y-3">
+        
         @forelse($this->matches as $match)
             @php
                 $userPrediction = auth()->check()
