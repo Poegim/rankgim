@@ -136,7 +136,7 @@
         @if($isOpen)
             <div class="font-mono text-[11px] flex items-center gap-1.5 ml-auto shrink-0 text-amber-400"
                  x-data="{
-                     target: {{ $match->scheduled_at->timezone('Europe/Warsaw')->timestamp }},
+                     target: {{ $match->scheduled_at->timestamp }},
                      intervalId: null,
                      d: 0, h: 0, m: 0, s: 0,
                      init() {
@@ -165,7 +165,7 @@
             </span>
         @else
             <span class="font-mono text-[11px] text-zinc-500 ml-auto shrink-0">
-                {{ $match->scheduled_at->format('d M · H:i') }} CET
+                {{ $match->scheduled_at->utc()->format('d M · H:i') }} CET
             </span>
         @endif
     </div>
@@ -426,26 +426,26 @@
                 <span class="flex items-center gap-1.5">
                     <span class="text-zinc-600">🔒</span>
                     <span>Locks</span>
-                    <span class="text-zinc-300">{{ $match->locked_at->timezone('Europe/Warsaw')->format('d M, H:i') }}</span>
+                    <span class="text-zinc-300">{{ $match->locked_at->utc()->format('d M, H:i') }}</span>
                     <span class="text-zinc-600">CET</span>
                 </span>
                 <span class="flex items-center gap-1.5">
                     <span class="text-zinc-600">🗓</span>
                     <span>Match</span>
-                    <span class="text-zinc-300">{{ $match->scheduled_at->format('d M, H:i') }}</span>
+                    <span class="text-zinc-300">{{ $match->scheduled_at->utc()->format('d M, H:i') }}</span>
                     <span class="text-zinc-600">CET</span>
                 </span>
             @elseif($isLocked)
                 <span class="flex items-center gap-1.5">
                     <span class="text-zinc-600">🔒</span>
                     <span>Locked</span>
-                    <span class="text-zinc-300">{{ $match->locked_at->timezone('Europe/Warsaw')->format('d M, H:i') }}</span>
+                    <span class="text-zinc-300">{{ $match->locked_at->utc()->format('d M, H:i') }}</span>
                     <span class="text-zinc-600">CET</span>
                 </span>
                 <span class="flex items-center gap-1.5">
                     <span class="text-zinc-600">🗓</span>
                     <span>Match</span>
-                    <span class="text-zinc-300">{{ $match->scheduled_at->format('d M, H:i') }}</span>
+                    <span class="text-zinc-300">{{ $match->scheduled_at->utc()->format('d M, H:i') }}</span>
                     <span class="text-zinc-600">CET</span>
                 </span>
             @else
@@ -460,7 +460,7 @@
                 </span>
                 <span class="flex items-center gap-1.5">
                     <span class="text-zinc-600">🗓</span>
-                    <span class="text-zinc-300">{{ $match->scheduled_at->format('d M, H:i') }}</span>
+                    <span class="text-zinc-300">{{ $match->scheduled_at->utc()->format('d M, H:i') }}</span>
                     <span class="text-zinc-600">CET</span>
                 </span>
             @endif
