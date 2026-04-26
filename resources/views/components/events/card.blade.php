@@ -27,8 +27,7 @@
             ? '0 0 0 3px rgba(192,132,252,0.15)'
             : '0 0 0 3px rgba(251,191,36,0.15)'));
 
-    // Race color resolver — used in both registered and guest player lists.
-    // Mirrors what's defined in app.css @theme: --color-race-{race}-soft.
+    // Race color resolver — mirrors --color-race-{race}-soft from app.css.
     $raceColor = fn($race) => match($race) {
         'Terran'  => '#60a5fa',
         'Zerg'    => '#fb7185',
@@ -37,8 +36,13 @@
         default   => '#a1a1aa',
     };
 
-    // ISO timestamp for client-side timezone formatting.
+    // Countdown color matches the type accent.
+    $countdownColor  = $isStream ? '#c084fc' : '#fbbf24';
+    $countdownBg     = $isStream ? 'rgba(168,85,247,0.10)' : 'rgba(245,158,11,0.10)';
+    $countdownBorder = $isStream ? 'rgba(168,85,247,0.25)' : 'rgba(245,158,11,0.25)';
+
     $iso = $event->starts_at?->toIso8601String();
+    $showCountdown = ! $isPast && ! $isLive && $iso;
 @endphp
 
 <div class="relative sm:pl-14 mb-3" wire:key="event-{{ $event->id }}">
@@ -57,8 +61,8 @@
             'opacity-75' => $isPast,
         ])>
 
-        {{-- ─── Header strip ──────────────────────────────────────────── --}}
-        <div class="flex items-center gap-2 px-4 py-2.5 border-b border-zinc-800/60 text-xs">
+        {{-- ─── Header strip — minimal: just type + status chip ──────── --}}
+        <div class="flex items-center gap-2 px-3 sm:px-4 py-2 sm:py-2.5 border-b border-zinc-800/60 text-xs">
             @if($isLive)
                 <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-bold bg-red-500/20 text-red-300 border border-red-500/40 animate-pulse">
                     <span class="w-1.5 h-1.5 rounded-full bg-red-400"></span>
@@ -74,128 +78,191 @@
             <span class="flex-1"></span>
 
             @if($isOpen && ! $isPast)
-                <span class="hidden sm:inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-medium bg-emerald-500/15 text-emerald-300 border border-emerald-500/25 shrink-0">
-                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
-                    Registration open
+                <span class="inline-flex items-center gap-1 sm:gap-1.5 px-1.5 sm:px-2 py-0.5 rounded-full text-[9px] sm:text-[10px] font-medium bg-emerald-500/15 text-emerald-300 border border-emerald-500/25 shrink-0">
+                    <span class="w-1 h-1 sm:w-1.5 sm:h-1.5 rounded-full bg-emerald-400"></span>
+                    <span class="hidden sm:inline">Registration open</span>
+                    <span class="sm:hidden">Reg open</span>
                 </span>
             @elseif($isPast)
                 <span class="font-mono text-[11px] text-zinc-500 shrink-0">ended</span>
             @endif
         </div>
 
-        {{-- ─── Body ──────────────────────────────────────────────────── --}}
-        <div class="px-4 py-3">
-            <h3 class="font-semibold text-white text-base sm:text-lg leading-tight mb-2">{{ $event->name }}</h3>
+        {{-- ─── Body: content left, countdown top-right on desktop ───── --}}
+        <div class="px-3 sm:px-4 py-3 sm:grid sm:grid-cols-[1fr_auto] sm:gap-4">
+            <div class="min-w-0">
+                {{-- Title (h3) + description = the only two strings from DB --}}
+                <h3 class="font-semibold text-white text-base sm:text-lg leading-tight mb-1.5">
+                    {{ $event->name }}
+                </h3>
 
-            @if($event->description)
-                <p class="text-sm text-zinc-400 leading-relaxed mb-3">{{ $event->description }}</p>
-            @endif
-
-            {{-- Players list (registered + guests) --}}
-            @if($event->players->isNotEmpty() || ! empty($event->guest_players))
-                <div class="flex flex-wrap gap-x-3 gap-y-2 mb-3">
-                    @foreach($event->players as $p)
-                        <a href="{{ route('players.show', ['id' => $p->id, 'slug' => \Illuminate\Support\Str::slug($p->name)]) }}"
-                           wire:navigate
-                           class="inline-flex items-center gap-1.5 text-xs sm:text-sm hover:opacity-80 transition-opacity"
-                           style="color: {{ $raceColor($p->race) }};">
-                            <img src="{{ asset('images/country_flags/' . strtolower($p->country_code) . '.svg') }}"
-                                 class="w-4 h-3 rounded-sm shrink-0" alt="{{ $p->country_code }}">
-                            <span class="font-medium">{{ $p->name }}</span>
-                        </a>
-                    @endforeach
-
-                    @if(! empty($event->guest_players))
-                        @foreach($event->guest_players as $g)
-                            <span class="inline-flex items-center gap-1.5 text-xs sm:text-sm"
-                                  style="color: {{ $raceColor($g['race'] ?? 'Unknown') }};">
-                                <img src="{{ asset('images/country_flags/' . strtolower($g['country_code'] ?? 'kr') . '.svg') }}"
-                                     class="w-4 h-3 rounded-sm shrink-0">
-                                <span class="font-medium">{{ $g['name'] }}</span>
-                            </span>
-                        @endforeach
-                    @endif
-                </div>
-            @endif
-
-            {{-- ─── Meta row: date + location + links ─────────────────── --}}
-            <div class="flex flex-wrap items-center gap-x-3 gap-y-2">
-                @if($iso)
-                    <span class="font-mono text-[11px] text-zinc-400 inline-flex items-center gap-1.5 whitespace-nowrap">
-                        <span class="text-zinc-600">🗓</span>
-                        {{-- Server-rendered fallback (CET). Alpine x-text overrides
-                             when the parent's $showLocal flips to true. --}}
-                        <span class="text-zinc-300"
-                              x-text="showLocal
-                                  ? formatTime('{{ $iso }}', userTz)
-                                  : formatTime('{{ $iso }}', 'Europe/Warsaw')"
-                              x-cloak>{{ $event->starts_at->format('d M, H:i') }}</span>
-                        <span class="text-zinc-600 text-[10px] uppercase"
-                              x-text="showLocal
-                                  ? tzAbbr('{{ $iso }}', userTz)
-                                  : 'CET'"
-                              x-cloak>CET</span>
-                    </span>
+                @if($event->description)
+                    <p class="text-xs sm:text-sm text-zinc-400 leading-relaxed mb-2.5 sm:mb-3">
+                        {{ $event->description }}
+                    </p>
                 @endif
 
-                @if($event->location)
-                    <span class="font-mono text-[11px] text-zinc-400 inline-flex items-center gap-1.5">
-                        <span class="text-zinc-600">📍</span>
-                        <span>{{ $event->location }}</span>
-                    </span>
-                @endif
-
-                {{-- Mobile-only registration chip (desktop has it in header) --}}
-                @if($isOpen && ! $isPast)
-                    <span class="sm:hidden inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-medium bg-emerald-500/15 text-emerald-300 border border-emerald-500/25">
-                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
-                        Registration open
-                    </span>
-                @endif
-
-                {{-- Links pushed to the right --}}
-                @if(count($event->parsedLinks()) > 0)
-                    <span class="ml-auto flex flex-wrap items-center gap-1.5">
-                        @foreach($event->parsedLinks() as $link)
-                            <a href="{{ $link['url'] }}" target="_blank" rel="noopener"
-                               class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-medium transition-opacity hover:opacity-80"
-                               style="background: {{ $link['color'] }}20; color: {{ $link['color'] }}; border: 0.5px solid {{ $link['color'] }}40;">
-                                {{ $link['label'] ?: ucfirst($link['type']) }} ↗
+                {{-- Players --}}
+                @if($event->players->isNotEmpty() || ! empty($event->guest_players))
+                    <div class="flex flex-wrap gap-x-3 gap-y-1.5 mb-2.5 sm:mb-3">
+                        @foreach($event->players as $p)
+                            <a href="{{ route('players.show', ['id' => $p->id, 'slug' => \Illuminate\Support\Str::slug($p->name)]) }}"
+                               wire:navigate
+                               class="inline-flex items-center gap-1.5 text-xs sm:text-sm hover:opacity-80 transition-opacity"
+                               style="color: {{ $raceColor($p->race) }};">
+                                <img src="{{ asset('images/country_flags/' . strtolower($p->country_code) . '.svg') }}"
+                                     class="w-3.5 h-2.5 sm:w-4 sm:h-3 rounded-sm shrink-0" alt="{{ $p->country_code }}">
+                                <span class="font-medium">{{ $p->name }}</span>
                             </a>
                         @endforeach
-                    </span>
+
+                        @if(! empty($event->guest_players))
+                            @foreach($event->guest_players as $g)
+                                <span class="inline-flex items-center gap-1.5 text-xs sm:text-sm"
+                                      style="color: {{ $raceColor($g['race'] ?? 'Unknown') }};">
+                                    <img src="{{ asset('images/country_flags/' . strtolower($g['country_code'] ?? 'kr') . '.svg') }}"
+                                         class="w-3.5 h-2.5 sm:w-4 sm:h-3 rounded-sm shrink-0">
+                                    <span class="font-medium">{{ $g['name'] }}</span>
+                                </span>
+                            @endforeach
+                        @endif
+                    </div>
+                @endif
+
+                {{-- Date + location chips --}}
+                <div class="flex flex-wrap gap-1.5 mb-2.5 sm:mb-3">
+                    @if($iso)
+                        <span class="font-mono inline-flex items-center gap-1.5 px-2 sm:px-2.5 py-1 sm:py-1.5 rounded-md bg-zinc-800/60 border border-zinc-700/60 text-[11px] sm:text-xs text-zinc-100">
+                            <span class="text-zinc-500">🗓</span>
+                            <span class="font-medium"
+                                  x-text="showLocal
+                                      ? formatTime('{{ $iso }}', userTz)
+                                      : formatTime('{{ $iso }}', 'Europe/Warsaw')"
+                                  x-cloak>{{ $event->starts_at->format('d M H:i') }}</span>
+                            <span class="text-zinc-500 text-[9px] sm:text-[10px] uppercase"
+                                  x-text="showLocal
+                                      ? tzAbbr('{{ $iso }}', userTz)
+                                      : 'CET'"
+                                  x-cloak>CET</span>
+                        </span>
+                    @endif
+
+                    @if($event->location)
+                        <span class="font-mono inline-flex items-center gap-1.5 px-2 sm:px-2.5 py-1 sm:py-1.5 rounded-md bg-zinc-800/60 border border-zinc-700/60 text-[11px] sm:text-xs text-zinc-100">
+                            <span class="text-zinc-500">📍</span>
+                            <span>{{ $event->location }}</span>
+                        </span>
+                    @endif
+                </div>
+
+                {{-- External links --}}
+                @if(count($event->parsedLinks()) > 0)
+                    <div class="flex flex-wrap gap-1.5">
+                        @foreach($event->parsedLinks() as $link)
+                            <a href="{{ $link['url'] }}" target="_blank" rel="noopener"
+                               class="inline-flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 sm:py-2 rounded-md text-[11px] sm:text-xs font-semibold transition-opacity hover:opacity-80"
+                               style="background: {{ $link['color'] }}25; color: {{ $link['color'] }}; border: 0.5px solid {{ $link['color'] }}50;">
+                                {{ $link['label'] ?: ucfirst($link['type']) }}
+                                <span class="opacity-60">↗</span>
+                            </a>
+                        @endforeach
+                    </div>
                 @endif
             </div>
+
+            {{-- Countdown blocks — top-right on desktop, full-width below on mobile --}}
+            @if($showCountdown)
+                <div class="mt-3 sm:mt-0 self-start"
+                     x-data="{
+                         target: {{ $event->starts_at->timestamp }},
+                         intervalId: null,
+                         d: 0, h: 0, m: 0, s: 0,
+                         init() {
+                             this.tick();
+                             this.intervalId = setInterval(() => this.tick(), 1000);
+                         },
+                         destroy() {
+                             if (this.intervalId) clearInterval(this.intervalId);
+                         },
+                         tick() {
+                             const diff = this.target - Math.floor(Date.now() / 1000);
+                             if (diff <= 0) { this.d = this.h = this.m = this.s = 0; return; }
+                             this.d = Math.floor(diff / 86400);
+                             this.h = Math.floor((diff % 86400) / 3600);
+                             this.m = Math.floor((diff % 3600) / 60);
+                             this.s = diff % 60;
+                         }
+                     }">
+                    <div class="grid grid-cols-4 sm:flex gap-1 sm:gap-1">
+                        <div class="text-center px-1.5 sm:px-2.5 py-1.5 sm:py-2 rounded-md sm:rounded-lg border min-w-0 sm:min-w-[50px]"
+                             style="background: {{ $countdownBg }}; border-color: {{ $countdownBorder }};">
+                            <div class="font-mono text-base sm:text-xl font-bold leading-none tabular-nums"
+                                 style="color: {{ $countdownColor }};"
+                                 x-text="d"></div>
+                            <div class="text-[8px] sm:text-[9px] uppercase tracking-wider text-zinc-400 font-medium mt-0.5 sm:mt-1">
+                                <span class="hidden sm:inline">Days</span><span class="sm:hidden">D</span>
+                            </div>
+                        </div>
+                        <div class="text-center px-1.5 sm:px-2.5 py-1.5 sm:py-2 rounded-md sm:rounded-lg border min-w-0 sm:min-w-[50px]"
+                             style="background: {{ $countdownBg }}; border-color: {{ $countdownBorder }};">
+                            <div class="font-mono text-base sm:text-xl font-bold leading-none tabular-nums"
+                                 style="color: {{ $countdownColor }};"
+                                 x-text="String(h).padStart(2,'0')"></div>
+                            <div class="text-[8px] sm:text-[9px] uppercase tracking-wider text-zinc-400 font-medium mt-0.5 sm:mt-1">
+                                <span class="hidden sm:inline">Hours</span><span class="sm:hidden">H</span>
+                            </div>
+                        </div>
+                        <div class="text-center px-1.5 sm:px-2.5 py-1.5 sm:py-2 rounded-md sm:rounded-lg border min-w-0 sm:min-w-[50px]"
+                             style="background: {{ $countdownBg }}; border-color: {{ $countdownBorder }};">
+                            <div class="font-mono text-base sm:text-xl font-bold leading-none tabular-nums"
+                                 style="color: {{ $countdownColor }};"
+                                 x-text="String(m).padStart(2,'0')"></div>
+                            <div class="text-[8px] sm:text-[9px] uppercase tracking-wider text-zinc-400 font-medium mt-0.5 sm:mt-1">
+                                <span class="hidden sm:inline">Min</span><span class="sm:hidden">M</span>
+                            </div>
+                        </div>
+                        <div class="text-center px-1.5 sm:px-2.5 py-1.5 sm:py-2 rounded-md sm:rounded-lg border min-w-0 sm:min-w-[50px]"
+                             style="background: {{ $countdownBg }}; border-color: {{ $countdownBorder }};">
+                            <div class="font-mono text-base sm:text-xl font-bold leading-none tabular-nums"
+                                 style="color: {{ $countdownColor }};"
+                                 x-text="String(s).padStart(2,'0')"></div>
+                            <div class="text-[8px] sm:text-[9px] uppercase tracking-wider text-zinc-400 font-medium mt-0.5 sm:mt-1">
+                                <span class="hidden sm:inline">Sec</span><span class="sm:hidden">S</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            @endif
         </div>
 
-        {{-- ─── Footer: reactions / comments / admin actions ─────────── --}}
-        <div class="px-4 py-2 border-t border-zinc-800/60 flex items-center gap-3 text-xs">
+        {{-- ─── Footer: reactions + comments — visible, chunky ────────── --}}
+        <div class="px-3 sm:px-4 py-2 sm:py-2.5 border-t border-zinc-800/60 flex items-center gap-1.5 sm:gap-2 flex-wrap">
             <livewire:reactions.reaction-bar :model="$event" :key="'reactions-' . $event->id" />
 
+            @php $commentCount = $event->comments()->whereNull('parent_id')->count(); @endphp
             <button
                 wire:click="$dispatch('open-comments', { modelType: 'App\\Models\\Event', modelId: {{ $event->id }} })"
-                class="flex items-center gap-1.5 text-zinc-500 hover:text-zinc-300 transition-colors">
-                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                class="ml-auto inline-flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-1.5 rounded-md bg-blue-500/10 border border-blue-500/30 text-blue-300 hover:bg-blue-500/15 transition-colors text-[11px] sm:text-xs font-medium">
+                <svg class="w-3 h-3 sm:w-3.5 sm:h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
                 </svg>
-                @php $commentCount = $event->comments()->whereNull('parent_id')->count(); @endphp
-                {{ $commentCount }} {{ \Illuminate\Support\Str::plural('comment', $commentCount) }}
+                <span><strong>{{ $commentCount }}</strong> <span class="hidden sm:inline">{{ \Illuminate\Support\Str::plural('comment', $commentCount) }}</span></span>
             </button>
-
-            @auth
-                @if(auth()->id() === $event->created_by || $canManage)
-                    <span class="ml-auto flex items-center gap-2 text-[11px] text-zinc-600">
-                        <span>by {{ $event->user?->name ?? 'unknown' }}</span>
-                        <span class="text-zinc-700">·</span>
-                        <button wire:click="openEditModal({{ $event->id }})"
-                            class="text-zinc-500 hover:text-zinc-300 transition-colors">Edit</button>
-                        <span class="text-zinc-700">·</span>
-                        <button wire:click="$set('confirmingDeleteId', {{ $event->id }})"
-                            class="text-zinc-500 hover:text-red-400 transition-colors">Delete</button>
-                    </span>
-                @endif
-            @endauth
         </div>
+
+        {{-- ─── Admin row (only for owner / mods) ─────────────────────── --}}
+        @auth
+            @if(auth()->id() === $event->created_by || $canManage)
+                <div class="px-3 sm:px-4 py-1.5 border-t border-zinc-800/40 flex items-center gap-2 text-[10px] sm:text-[11px] text-zinc-600">
+                    <span>by {{ $event->user?->name ?? 'unknown' }}</span>
+                    <span class="text-zinc-700">·</span>
+                    <button wire:click="openEditModal({{ $event->id }})"
+                        class="text-zinc-500 hover:text-zinc-300 transition-colors">Edit</button>
+                    <span class="text-zinc-700">·</span>
+                    <button wire:click="$set('confirmingDeleteId', {{ $event->id }})"
+                        class="text-zinc-500 hover:text-red-400 transition-colors">Delete</button>
+                </div>
+            @endif
+        @endauth
     </div>
 </div>
