@@ -136,7 +136,7 @@
         @if($isOpen)
             <div class="font-mono text-[11px] flex items-center gap-1.5 ml-auto shrink-0 text-amber-400"
                  x-data="{
-                     target: {{ $match->scheduled_at->timestamp }},
+                     target: {{ $match->scheduled_at->timezone('Europe/Warsaw')->timestamp }},
                      intervalId: null,
                      d: 0, h: 0, m: 0, s: 0,
                      init() {
@@ -426,7 +426,7 @@
                 <span class="flex items-center gap-1.5">
                     <span class="text-zinc-600">🔒</span>
                     <span>Locks</span>
-                    <span class="text-zinc-300">{{ $match->locked_at->format('d M, H:i') }}</span>
+                    <span class="text-zinc-300">{{ $match->locked_at->timezone('Europe/Warsaw')->format('d M, H:i') }}</span>
                     <span class="text-zinc-600">CET</span>
                 </span>
                 <span class="flex items-center gap-1.5">
@@ -439,7 +439,7 @@
                 <span class="flex items-center gap-1.5">
                     <span class="text-zinc-600">🔒</span>
                     <span>Locked</span>
-                    <span class="text-zinc-300">{{ $match->locked_at->format('d M, H:i') }}</span>
+                    <span class="text-zinc-300">{{ $match->locked_at->timezone('Europe/Warsaw')->format('d M, H:i') }}</span>
                     <span class="text-zinc-600">CET</span>
                 </span>
                 <span class="flex items-center gap-1.5">
