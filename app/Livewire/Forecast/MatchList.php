@@ -299,6 +299,7 @@ class MatchList extends Component
 
         $this->editingMatchId = $match->id;
         $this->matchType      = $match->match_type;
+        // Display in CET/CEST so the admin sees the same time he typed in.
         $this->scheduledAt    = $match->scheduled_at->format('Y-m-d\TH:i');
         $this->lockedAt       = $match->locked_at->format('Y-m-d\TH:i');
         $this->multiplier     = (float) $match->multiplier;
@@ -337,6 +338,8 @@ class MatchList extends Component
             'multiplier'  => 'required|numeric|min:0.1',
         ]);
 
+        // datetime-local sends naive strings (no timezone). Treat them as
+        // CET/CEST local time, then convert to UTC for DB storage.
         $data = [
             'season_id'    => $this->season->id,
             'match_type'   => $this->matchType,
