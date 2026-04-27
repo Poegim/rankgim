@@ -60,6 +60,22 @@
     --color-race-unknown: #71717a;
     --color-race-unknown-soft: #a1a1aa;
 
+    /* icc like ranks */
+    --color-rank-starter: #c8179b;
+    --color-rank-d-minus: #ce1e25;
+    --color-rank-d:       #b51c23;
+    --color-rank-d-plus:  #d11b1f;
+    --color-rank-c-minus: #c2d34e;
+    --color-rank-c:       #bfd245;
+    --color-rank-c-plus:  #c1d43d;
+    --color-rank-b-minus: #6988c0;
+    --color-rank-b:       #5c7cc5;
+    --color-rank-b-plus:  #6a8dd1;
+    --color-rank-a-minus: #3ec133;
+    --color-rank-a:       #3cc431;
+    --color-rank-a-plus:  #7ec43b;
+    --color-rank-olympic: #d4a832;
+
 
 }
 
