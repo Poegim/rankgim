@@ -254,8 +254,8 @@ class Index extends Component
             ->toArray();
 
         // Parse the datetime in the selected timezone, then store as UTC
-        $startsAtUtc = Carbon::parse($this->startsAt, $this->timezone)->utc();
-
+        $startsAtUtc = Carbon::parse($this->startsAt, $this->timezone);
+        
         $data = [
             'name' => $this->name,
             'type' => $this->type,
