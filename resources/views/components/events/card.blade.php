@@ -43,6 +43,23 @@
 
     $iso = $event->starts_at?->toIso8601String();
     $showCountdown = ! $isPast && ! $isLive && $iso;
+
+    // Merge registered players and guest players into one flat list
+    // so the 2-column grid always fills evenly regardless of player source.
+    $allPlayers = collect($event->players->map(fn($p) => [
+        'type'         => 'registered',
+        'id'           => $p->id,
+        'name'         => $p->name,
+        'race'         => $p->race,
+        'country_code' => $p->country_code,
+    ]))->concat(
+        collect($event->guest_players ?? [])->map(fn($g) => [
+            'type'         => 'guest',
+            'name'         => $g['name'],
+            'race'         => $g['race'] ?? 'Unknown',
+            'country_code' => $g['country_code'] ?? 'kr',
+        ])
+    );
 @endphp
 
 <div class="relative sm:pl-14 mb-3" wire:key="event-{{ $event->id }}">
@@ -91,7 +108,7 @@
         {{-- ─── Body: content left, countdown top-right on desktop ───── --}}
         <div class="px-3 sm:px-4 py-3 sm:grid sm:grid-cols-[1fr_auto] sm:gap-4">
             <div class="min-w-0">
-                {{-- Title (h3) + description = the only two strings from DB --}}
+                {{-- Title + description --}}
                 <h3 class="font-semibold text-white text-base sm:text-lg leading-tight mb-1.5">
                     {{ $event->name }}
                 </h3>
@@ -102,49 +119,48 @@
                     </p>
                 @endif
 
-                {{-- Players --}}
-                @if($event->players->isNotEmpty() || ! empty($event->guest_players))
-                    <div class="flex flex-wrap gap-2 mb-3">
-                @foreach($event->players as $p)
-                    <a href="{{ route('players.show', ['id' => $p->id, 'slug' => \Illuminate\Support\Str::slug($p->name)]) }}"
-                       wire:navigate
-                       class="inline-flex items-stretch h-7 rounded-md overflow-hidden border border-zinc-700/60 hover:border-zinc-600 transition-colors">
-                        {{-- Flag flush left, like in match-card --}}
-                        <span class="block w-9 shrink-0 bg-cover bg-center"
-                              style="background-image: url('{{ asset('images/country_flags/' . strtolower($p->country_code) . '.svg') }}');"
-                              aria-label="{{ $p->country_code }}"></span>
-                        {{-- Race name in race-tinted block --}}
-                        <span class="flex items-center px-2 text-[10px] font-bold uppercase tracking-wider"
-                              style="background: {{ $raceColor($p->race) }}33; color: {{ $raceColor($p->race) }};">
-                            {{ strtoupper(substr($p->race, 0, 1)) }}
-                        </span>
-                        {{-- Nick on the right --}}
-                        <span class="flex items-center px-3 bg-zinc-800/50 text-zinc-100 font-semibold text-sm">
-                            {{ $p->name }}
-                        </span>
-                    </a>
-                @endforeach
-
-                @if(! empty($event->guest_players))
-                    @foreach($event->guest_players as $g)
-                        @php $gRace = $g['race'] ?? 'Unknown'; @endphp
-                        <span class="inline-flex items-stretch h-7 rounded-md overflow-hidden border border-zinc-700/60">
-                            <span class="block w-9 shrink-0 bg-cover bg-center"
-                                  style="background-image: url('{{ asset('images/country_flags/' . strtolower($g['country_code'] ?? 'kr') . '.svg') }}');"></span>
-                            <span class="flex items-center px-2 text-[10px] font-bold uppercase tracking-wider"
-                                  style="background: {{ $raceColor($gRace) }}33; color: {{ $raceColor($gRace) }};">
-                                {{ strtoupper(substr($gRace, 0, 1)) }}
-                            </span>
-                            <span class="flex items-center px-3 bg-zinc-800/50 text-zinc-100 font-semibold text-sm">
-                                {{ $g['name'] }}
-                            </span>
-                        </span>
-                    @endforeach
-                @endif
+                {{-- Players — symmetric 2-column grid so odd players don't dangle on a new row --}}
+                @if($allPlayers->isNotEmpty())
+                <div class="grid gap-x-3 gap-y-2 mb-3
+                    {{ $allPlayers->count() > 1 ? 'grid-cols-2 xl:grid-cols-4' : 'grid-cols-1' }}">
+                        @foreach($allPlayers as $p)
+                            @if($p['type'] === 'registered')
+                                <a href="{{ route('players.show', ['id' => $p['id'], 'slug' => \Illuminate\Support\Str::slug($p['name'])]) }}"
+                                   wire:navigate
+                                   class="inline-flex items-stretch h-7 rounded-md overflow-hidden border border-zinc-700/60 hover:border-zinc-600 transition-colors min-w-0">
+                                    {{-- Country flag --}}
+                                    <span class="block w-9 shrink-0 bg-cover bg-center"
+                                          style="background-image: url('{{ asset('images/country_flags/' . strtolower($p['country_code']) . '.svg') }}');"
+                                          aria-label="{{ $p['country_code'] }}"></span>
+                                    {{-- Race initial, tinted --}}
+                                    <span class="flex items-center px-2 text-[10px] font-bold uppercase tracking-wider shrink-0"
+                                          style="background: {{ $raceColor($p['race']) }}33; color: {{ $raceColor($p['race']) }};">
+                                        {{ strtoupper(substr($p['race'], 0, 1)) }}
+                                    </span>
+                                    {{-- Nick — truncated so long names don't break the grid --}}
+                                    <span class="flex items-center px-3 bg-zinc-800/50 text-zinc-100 font-semibold text-sm truncate">
+                                        {{ $p['name'] }}
+                                    </span>
+                                </a>
+                            @else
+                                {{-- Guest player — same pill shape but not a link --}}
+                                <span class="inline-flex items-stretch h-7 rounded-md overflow-hidden border border-zinc-700/60 min-w-0">
+                                    <span class="block w-9 shrink-0 bg-cover bg-center"
+                                          style="background-image: url('{{ asset('images/country_flags/' . strtolower($p['country_code']) . '.svg') }}');"></span>
+                                    <span class="flex items-center px-2 text-[10px] font-bold uppercase tracking-wider shrink-0"
+                                          style="background: {{ $raceColor($p['race']) }}33; color: {{ $raceColor($p['race']) }};">
+                                        {{ strtoupper(substr($p['race'], 0, 1)) }}
+                                    </span>
+                                    <span class="flex items-center px-3 bg-zinc-800/50 text-zinc-100 font-semibold text-sm truncate">
+                                        {{ $p['name'] }}
+                                    </span>
+                                </span>
+                            @endif
+                        @endforeach
                     </div>
                 @endif
-               
-                {{-- Location chip — date moved into the countdown card on the right --}}
+
+                {{-- Location chip --}}
                 @if($event->location)
                     <div class="flex flex-wrap gap-1.5 mb-2.5 sm:mb-3">
                         <span class="font-mono inline-flex items-center gap-1.5 px-2 sm:px-2.5 py-1 sm:py-1.5 rounded-md bg-zinc-800/60 border border-zinc-700/60 text-[11px] sm:text-xs text-zinc-100">
@@ -169,7 +185,7 @@
                 @endif
             </div>
 
-            {{-- Countdown card — blocks + start date in one container --}}
+            {{-- Countdown card — date prominently on top, digit blocks below --}}
             @if($showCountdown)
                 <div class="mt-3 sm:mt-0 self-start"
                      x-data="{
@@ -195,8 +211,28 @@
                     <div class="rounded-lg border p-2 sm:p-2.5"
                          style="background: rgba(245,158,11,0.05); border-color: {{ $countdownBorder }};">
 
-                        {{-- Time blocks --}}
-                        <div class="grid grid-cols-4 sm:flex gap-1 mb-2">
+                        {{-- Date — large and prominent above the digit blocks --}}
+                        <div class="text-center pb-2 mb-2 border-b font-mono"
+                             style="border-color: {{ $countdownBorder }};">
+                            <div class="text-[15px] sm:text-[17px] font-bold tracking-wide"
+                                 style="color: {{ $countdownColor }};">
+                                {{ $event->starts_at->format('d M') }}
+                            </div>
+                            <div class="text-[12px] sm:text-[13px] font-semibold mt-0.5"
+                                 style="color: {{ $countdownColor }}; opacity: 0.85;"
+                                 x-cloak
+                                 x-text="showLocal
+                                     ? formatTime('{{ $iso }}', userTz)
+                                     : '{{ $event->starts_at->format('H:i') }}'">
+                                {{ $event->starts_at->format('H:i') }}
+                            </div>
+                            <span class="text-[10px] text-zinc-400"
+                                  x-cloak
+                                  x-text="showLocal ? tzAbbr('{{ $iso }}', userTz) : 'CET'">CET</span>
+                        </div>
+
+                        {{-- Digit blocks: D / H / M / S --}}
+                        <div class="grid grid-cols-4 sm:flex gap-1">
                             <div class="text-center px-1.5 sm:px-2 py-1.5 rounded-md border min-w-0 sm:min-w-[46px]"
                                  style="background: {{ $countdownBg }}; border-color: {{ $countdownBorder }};">
                                 <div class="font-mono text-base sm:text-xl font-bold leading-none tabular-nums"
@@ -234,28 +270,12 @@
                                 </div>
                             </div>
                         </div>
-
-                        {{-- Start date — under the blocks, separated by a thin line --}}
-                        <div class="text-center pt-2 border-t font-mono"
-                             style="border-color: {{ $countdownBorder }};">
-                            <span class="text-[12px] sm:text-[13px] font-semibold"
-                                  style="color: {{ $countdownColor }};"
-                                  x-text="showLocal
-                                      ? formatTime('{{ $iso }}', userTz)
-                                      : formatTime('{{ $iso }}', 'Europe/Warsaw')"
-                                  x-cloak>{{ $event->starts_at->format('d M H:i') }}</span>
-                            <span class="text-[10px] text-zinc-400 ml-1"
-                                  x-text="showLocal
-                                      ? tzAbbr('{{ $iso }}', userTz)
-                                      : 'CET'"
-                                  x-cloak>CET</span>
-                        </div>
                     </div>
                 </div>
             @endif
         </div>
 
-        {{-- ─── Footer: reactions + comments — visible, chunky ────────── --}}
+        {{-- ─── Footer: reactions + comments ──────────────────────────── --}}
         <div class="px-3 sm:px-4 py-2 sm:py-2.5 border-t border-zinc-800/60 flex items-center gap-1.5 sm:gap-2 flex-wrap">
             <livewire:reactions.reaction-bar :model="$event" :key="'reactions-' . $event->id" />
 
