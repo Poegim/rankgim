@@ -9,7 +9,7 @@
             </span>
         </div>
         <span class="text-xs text-zinc-500">
-            {{ $this->players->count() }} players · inactive &gt; {{ config('rankgim.inactive_months') }} months
+            {{ $this->totalCount }} players · inactive &gt; {{ config('rankgim.inactive_months') }} months
         </span>
     </div>
 
@@ -22,12 +22,33 @@
             <table class="w-full text-sm text-left">
                 <thead>
                     <tr class="border-b border-zinc-700/40 text-xs text-zinc-500 uppercase tracking-wider">
+
+                        {{-- Non-sortable rank column --}}
                         <th class="px-4 py-3 w-10">#</th>
+
+                        {{-- Non-sortable player name column --}}
                         <th class="px-4 py-3">Player</th>
-                        <th class="px-4 py-3 text-right">Rating</th>
-                        <th class="px-4 py-3 text-right">W / L</th>
-                        <th class="px-4 py-3 text-right">Games</th>
-                        <th class="px-4 py-3 text-right">Last played</th>
+
+                        {{-- Sortable columns --}}
+                        @foreach([
+                            'rating'       => 'Rating',
+                            'wins'         => 'W',
+                            'losses'       => 'L',
+                            'games_played' => 'Games',
+                            'last_played'  => 'Last played',
+                        ] as $col => $label)
+                            <th class="px-4 py-3 text-right">
+                                <button
+                                    wire:click="sort('{{ $col }}')"
+                                    class="inline-flex items-center gap-1 ml-auto transition-colors
+                                        {{ $sortBy === $col ? 'text-amber-400' : 'text-zinc-500 hover:text-zinc-300' }}"
+                                >
+                                    {{ $label }}
+                                    <span class="text-[10px] opacity-70">{{ $this->sortIcon($col) }}</span>
+                                </button>
+                            </th>
+                        @endforeach
+
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-zinc-700/30">
@@ -39,47 +60,51 @@
                                 {{ $row->rank }}
                             </td>
 
-                            {{-- Player name + flag + race --}}
+                            {{-- Player name + flag --}}
                             <td class="px-4 py-2.5">
-                                @if($row->player)
-                                    <a
-                                        href="{{ route('players.show', ['id' => $row->player->id, 'slug' => \Illuminate\Support\Str::slug($row->player->name)]) }}"
-                                        class="flex items-center gap-2 text-zinc-200 hover:text-white transition-colors"
-                                        target="_blank"
-                                    >
-                                        @if($row->player->country_code)
-                                            <img
-                                                src="https://flagcdn.com/w40/{{ strtolower($row->player->country_code) }}.png"
-                                                alt="{{ $row->player->country_code }}"
-                                                class="w-5 h-3.5 rounded-sm object-cover shrink-0"
-                                            >
-                                        @endif
-                                        <span>{{ $row->player->name }}</span>
-                                    </a>
-                                @else
-                                    <span class="text-zinc-500 italic">Unknown</span>
-                                @endif
+                                <a
+                                    href="{{ route('players.show', ['id' => $row->player_id, 'slug' => \Illuminate\Support\Str::slug($row->name)]) }}"
+                                    class="flex items-center gap-2 text-zinc-200 hover:text-white transition-colors"
+                                    target="_blank"
+                                >
+                                    @if($row->country_code)
+                                        <img
+                                            src="https://flagcdn.com/w40/{{ strtolower($row->country_code) }}.png"
+                                            alt="{{ $row->country_code }}"
+                                            class="w-5 h-3.5 rounded-sm object-cover shrink-0"
+                                        >
+                                    @endif
+                                    <span>{{ $row->name }}</span>
+                                </a>
                             </td>
 
                             {{-- Rating --}}
-                            <td class="px-4 py-2.5 text-right tabular-nums font-mono text-amber-300">
+                            <td class="px-4 py-2.5 text-right tabular-nums font-mono
+                                {{ $sortBy === 'rating' ? 'text-amber-300' : 'text-zinc-300' }}">
                                 {{ number_format($row->rating) }}
                             </td>
 
-                            {{-- W / L --}}
-                            <td class="px-4 py-2.5 text-right tabular-nums text-xs">
-                                <span class="text-emerald-400">{{ $row->wins }}</span>
-                                <span class="text-zinc-600 mx-0.5">/</span>
-                                <span class="text-red-400">{{ $row->losses }}</span>
+                            {{-- Wins --}}
+                            <td class="px-4 py-2.5 text-right tabular-nums text-xs
+                                {{ $sortBy === 'wins' ? 'text-emerald-300' : 'text-emerald-400' }}">
+                                {{ $row->wins }}
+                            </td>
+
+                            {{-- Losses --}}
+                            <td class="px-4 py-2.5 text-right tabular-nums text-xs
+                                {{ $sortBy === 'losses' ? 'text-red-300' : 'text-red-400' }}">
+                                {{ $row->losses }}
                             </td>
 
                             {{-- Games played --}}
-                            <td class="px-4 py-2.5 text-right tabular-nums text-zinc-400">
+                            <td class="px-4 py-2.5 text-right tabular-nums
+                                {{ $sortBy === 'games_played' ? 'text-zinc-200' : 'text-zinc-400' }}">
                                 {{ $row->games_played }}
                             </td>
 
                             {{-- Last played --}}
-                            <td class="px-4 py-2.5 text-right text-zinc-500 text-xs tabular-nums">
+                            <td class="px-4 py-2.5 text-right tabular-nums text-xs
+                                {{ $sortBy === 'last_played' ? 'text-zinc-300' : 'text-zinc-500' }}">
                                 {{ $row->last_played ? \Carbon\Carbon::parse($row->last_played)->format('d M Y') : '—' }}
                             </td>
 
@@ -88,6 +113,74 @@
                 </tbody>
             </table>
         </div>
+
+        {{-- Pagination --}}
+        @if($this->totalPages > 1)
+            <div class="flex items-center justify-between px-5 py-3 border-t border-zinc-700/40 text-xs text-zinc-500">
+
+                <span>
+                    Page {{ $this->getPage() }} of {{ $this->totalPages }}
+                </span>
+
+                <div class="flex items-center gap-1">
+
+                    {{-- Previous --}}
+                    @if($this->getPage() > 1)
+                        <button
+                            wire:click="previousPage"
+                            class="px-2.5 py-1 rounded bg-zinc-700/50 hover:bg-zinc-600/60 text-zinc-300 transition-colors"
+                        >
+                            ← Prev
+                        </button>
+                    @endif
+
+                    {{-- Page numbers — show up to 7 around current page --}}
+                    @php
+                        $current = $this->getPage();
+                        $total   = $this->totalPages;
+                        $window  = collect(range(max(1, $current - 3), min($total, $current + 3)));
+                    @endphp
+
+                    @if($window->first() > 1)
+                        <button wire:click="gotoPage(1)" class="px-2.5 py-1 rounded hover:bg-zinc-700/50 transition-colors">1</button>
+                        @if($window->first() > 2)
+                            <span class="px-1 text-zinc-600">…</span>
+                        @endif
+                    @endif
+
+                    @foreach($window as $p)
+                        <button
+                            wire:click="gotoPage({{ $p }})"
+                            class="px-2.5 py-1 rounded transition-colors
+                                {{ $p === $current
+                                    ? 'bg-amber-500/20 text-amber-300 border border-amber-500/30'
+                                    : 'hover:bg-zinc-700/50 text-zinc-400 hover:text-zinc-200' }}"
+                        >
+                            {{ $p }}
+                        </button>
+                    @endforeach
+
+                    @if($window->last() < $total)
+                        @if($window->last() < $total - 1)
+                            <span class="px-1 text-zinc-600">…</span>
+                        @endif
+                        <button wire:click="gotoPage({{ $total }})" class="px-2.5 py-1 rounded hover:bg-zinc-700/50 transition-colors">{{ $total }}</button>
+                    @endif
+
+                    {{-- Next --}}
+                    @if($this->getPage() < $this->totalPages)
+                        <button
+                            wire:click="nextPage"
+                            class="px-2.5 py-1 rounded bg-zinc-700/50 hover:bg-zinc-600/60 text-zinc-300 transition-colors"
+                        >
+                            Next →
+                        </button>
+                    @endif
+
+                </div>
+            </div>
+        @endif
+
     @endif
 
 </div>
