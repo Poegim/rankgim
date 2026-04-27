@@ -116,7 +116,7 @@
                         {{-- Race name in race-tinted block --}}
                         <span class="flex items-center px-2 text-[10px] font-bold uppercase tracking-wider"
                               style="background: {{ $raceColor($p->race) }}33; color: {{ $raceColor($p->race) }};">
-                            {{ $p->race }}
+                            {{ strtoupper(substr($p->race, 0, 1)) }}
                         </span>
                         {{-- Nick on the right --}}
                         <span class="flex items-center px-3 bg-zinc-800/50 text-zinc-100 font-semibold text-sm">
@@ -133,7 +133,7 @@
                                   style="background-image: url('{{ asset('images/country_flags/' . strtolower($g['country_code'] ?? 'kr') . '.svg') }}');"></span>
                             <span class="flex items-center px-2 text-[10px] font-bold uppercase tracking-wider"
                                   style="background: {{ $raceColor($gRace) }}33; color: {{ $raceColor($gRace) }};">
-                                {{ $gRace }}
+                                {{ strtoupper(substr($gRace, 0, 1)) }}
                             </span>
                             <span class="flex items-center px-3 bg-zinc-800/50 text-zinc-100 font-semibold text-sm">
                                 {{ $g['name'] }}
