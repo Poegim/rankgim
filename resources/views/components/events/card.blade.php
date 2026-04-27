@@ -104,56 +104,55 @@
 
                 {{-- Players --}}
                 @if($event->players->isNotEmpty() || ! empty($event->guest_players))
-                    <div class="flex flex-wrap gap-x-3 gap-y-1.5 mb-2.5 sm:mb-3">
-                        @foreach($event->players as $p)
-                            <a href="{{ route('players.show', ['id' => $p->id, 'slug' => \Illuminate\Support\Str::slug($p->name)]) }}"
-                               wire:navigate
-                               class="inline-flex items-center gap-1.5 text-xs sm:text-sm hover:opacity-80 transition-opacity"
-                               style="color: {{ $raceColor($p->race) }};">
-                                <img src="{{ asset('images/country_flags/' . strtolower($p->country_code) . '.svg') }}"
-                                     class="w-3.5 h-2.5 sm:w-4 sm:h-3 rounded-sm shrink-0" alt="{{ $p->country_code }}">
-                                <span class="font-medium">{{ $p->name }}</span>
-                            </a>
-                        @endforeach
+                    <div class="flex flex-wrap gap-2 mb-3">
+                @foreach($event->players as $p)
+                    <a href="{{ route('players.show', ['id' => $p->id, 'slug' => \Illuminate\Support\Str::slug($p->name)]) }}"
+                       wire:navigate
+                       class="inline-flex items-stretch h-7 rounded-md overflow-hidden border border-zinc-700/60 hover:border-zinc-600 transition-colors">
+                        {{-- Flag flush left, like in match-card --}}
+                        <span class="block w-9 shrink-0 bg-cover bg-center"
+                              style="background-image: url('{{ asset('images/country_flags/' . strtolower($p->country_code) . '.svg') }}');"
+                              aria-label="{{ $p->country_code }}"></span>
+                        {{-- Race name in race-tinted block --}}
+                        <span class="flex items-center px-2 text-[10px] font-bold uppercase tracking-wider"
+                              style="background: {{ $raceColor($p->race) }}33; color: {{ $raceColor($p->race) }};">
+                            {{ $p->race }}
+                        </span>
+                        {{-- Nick on the right --}}
+                        <span class="flex items-center px-3 bg-zinc-800/50 text-zinc-100 font-semibold text-sm">
+                            {{ $p->name }}
+                        </span>
+                    </a>
+                @endforeach
 
-                        @if(! empty($event->guest_players))
-                            @foreach($event->guest_players as $g)
-                                <span class="inline-flex items-center gap-1.5 text-xs sm:text-sm"
-                                      style="color: {{ $raceColor($g['race'] ?? 'Unknown') }};">
-                                    <img src="{{ asset('images/country_flags/' . strtolower($g['country_code'] ?? 'kr') . '.svg') }}"
-                                         class="w-3.5 h-2.5 sm:w-4 sm:h-3 rounded-sm shrink-0">
-                                    <span class="font-medium">{{ $g['name'] }}</span>
-                                </span>
-                            @endforeach
-                        @endif
+                @if(! empty($event->guest_players))
+                    @foreach($event->guest_players as $g)
+                        @php $gRace = $g['race'] ?? 'Unknown'; @endphp
+                        <span class="inline-flex items-stretch h-7 rounded-md overflow-hidden border border-zinc-700/60">
+                            <span class="block w-9 shrink-0 bg-cover bg-center"
+                                  style="background-image: url('{{ asset('images/country_flags/' . strtolower($g['country_code'] ?? 'kr') . '.svg') }}');"></span>
+                            <span class="flex items-center px-2 text-[10px] font-bold uppercase tracking-wider"
+                                  style="background: {{ $raceColor($gRace) }}33; color: {{ $raceColor($gRace) }};">
+                                {{ $gRace }}
+                            </span>
+                            <span class="flex items-center px-3 bg-zinc-800/50 text-zinc-100 font-semibold text-sm">
+                                {{ $g['name'] }}
+                            </span>
+                        </span>
+                    @endforeach
+                @endif
                     </div>
                 @endif
-
-                {{-- Date + location chips --}}
-                <div class="flex flex-wrap gap-1.5 mb-2.5 sm:mb-3">
-                    @if($iso)
-                        <span class="font-mono inline-flex items-center gap-1.5 px-2 sm:px-2.5 py-1 sm:py-1.5 rounded-md bg-zinc-800/60 border border-zinc-700/60 text-[11px] sm:text-xs text-zinc-100">
-                            <span class="text-zinc-500">🗓</span>
-                            <span class="font-medium"
-                                  x-text="showLocal
-                                      ? formatTime('{{ $iso }}', userTz)
-                                      : formatTime('{{ $iso }}', 'Europe/Warsaw')"
-                                  x-cloak>{{ $event->starts_at->format('d M H:i') }}</span>
-                            <span class="text-zinc-500 text-[9px] sm:text-[10px] uppercase"
-                                  x-text="showLocal
-                                      ? tzAbbr('{{ $iso }}', userTz)
-                                      : 'CET'"
-                                  x-cloak>CET</span>
-                        </span>
-                    @endif
-
-                    @if($event->location)
+               
+                {{-- Location chip — date moved into the countdown card on the right --}}
+                @if($event->location)
+                    <div class="flex flex-wrap gap-1.5 mb-2.5 sm:mb-3">
                         <span class="font-mono inline-flex items-center gap-1.5 px-2 sm:px-2.5 py-1 sm:py-1.5 rounded-md bg-zinc-800/60 border border-zinc-700/60 text-[11px] sm:text-xs text-zinc-100">
                             <span class="text-zinc-500">📍</span>
                             <span>{{ $event->location }}</span>
                         </span>
-                    @endif
-                </div>
+                    </div>
+                @endif
 
                 {{-- External links --}}
                 @if(count($event->parsedLinks()) > 0)
@@ -170,7 +169,7 @@
                 @endif
             </div>
 
-            {{-- Countdown blocks — top-right on desktop, full-width below on mobile --}}
+            {{-- Countdown card — blocks + start date in one container --}}
             @if($showCountdown)
                 <div class="mt-3 sm:mt-0 self-start"
                      x-data="{
@@ -193,42 +192,63 @@
                              this.s = diff % 60;
                          }
                      }">
-                    <div class="grid grid-cols-4 sm:flex gap-1 sm:gap-1">
-                        <div class="text-center px-1.5 sm:px-2.5 py-1.5 sm:py-2 rounded-md sm:rounded-lg border min-w-0 sm:min-w-[50px]"
-                             style="background: {{ $countdownBg }}; border-color: {{ $countdownBorder }};">
-                            <div class="font-mono text-base sm:text-xl font-bold leading-none tabular-nums"
-                                 style="color: {{ $countdownColor }};"
-                                 x-text="d"></div>
-                            <div class="text-[8px] sm:text-[9px] uppercase tracking-wider text-zinc-400 font-medium mt-0.5 sm:mt-1">
-                                <span class="hidden sm:inline">Days</span><span class="sm:hidden">D</span>
+                    <div class="rounded-lg border p-2 sm:p-2.5"
+                         style="background: rgba(245,158,11,0.05); border-color: {{ $countdownBorder }};">
+
+                        {{-- Time blocks --}}
+                        <div class="grid grid-cols-4 sm:flex gap-1 mb-2">
+                            <div class="text-center px-1.5 sm:px-2 py-1.5 rounded-md border min-w-0 sm:min-w-[46px]"
+                                 style="background: {{ $countdownBg }}; border-color: {{ $countdownBorder }};">
+                                <div class="font-mono text-base sm:text-xl font-bold leading-none tabular-nums"
+                                     style="color: {{ $countdownColor }};"
+                                     x-text="d"></div>
+                                <div class="text-[8px] sm:text-[9px] uppercase tracking-wider text-zinc-400 font-medium mt-0.5 sm:mt-1">
+                                    <span class="hidden sm:inline">Days</span><span class="sm:hidden">D</span>
+                                </div>
+                            </div>
+                            <div class="text-center px-1.5 sm:px-2 py-1.5 rounded-md border min-w-0 sm:min-w-[46px]"
+                                 style="background: {{ $countdownBg }}; border-color: {{ $countdownBorder }};">
+                                <div class="font-mono text-base sm:text-xl font-bold leading-none tabular-nums"
+                                     style="color: {{ $countdownColor }};"
+                                     x-text="String(h).padStart(2,'0')"></div>
+                                <div class="text-[8px] sm:text-[9px] uppercase tracking-wider text-zinc-400 font-medium mt-0.5 sm:mt-1">
+                                    <span class="hidden sm:inline">Hours</span><span class="sm:hidden">H</span>
+                                </div>
+                            </div>
+                            <div class="text-center px-1.5 sm:px-2 py-1.5 rounded-md border min-w-0 sm:min-w-[46px]"
+                                 style="background: {{ $countdownBg }}; border-color: {{ $countdownBorder }};">
+                                <div class="font-mono text-base sm:text-xl font-bold leading-none tabular-nums"
+                                     style="color: {{ $countdownColor }};"
+                                     x-text="String(m).padStart(2,'0')"></div>
+                                <div class="text-[8px] sm:text-[9px] uppercase tracking-wider text-zinc-400 font-medium mt-0.5 sm:mt-1">
+                                    <span class="hidden sm:inline">Min</span><span class="sm:hidden">M</span>
+                                </div>
+                            </div>
+                            <div class="text-center px-1.5 sm:px-2 py-1.5 rounded-md border min-w-0 sm:min-w-[46px]"
+                                 style="background: {{ $countdownBg }}; border-color: {{ $countdownBorder }};">
+                                <div class="font-mono text-base sm:text-xl font-bold leading-none tabular-nums"
+                                     style="color: {{ $countdownColor }};"
+                                     x-text="String(s).padStart(2,'0')"></div>
+                                <div class="text-[8px] sm:text-[9px] uppercase tracking-wider text-zinc-400 font-medium mt-0.5 sm:mt-1">
+                                    <span class="hidden sm:inline">Sec</span><span class="sm:hidden">S</span>
+                                </div>
                             </div>
                         </div>
-                        <div class="text-center px-1.5 sm:px-2.5 py-1.5 sm:py-2 rounded-md sm:rounded-lg border min-w-0 sm:min-w-[50px]"
-                             style="background: {{ $countdownBg }}; border-color: {{ $countdownBorder }};">
-                            <div class="font-mono text-base sm:text-xl font-bold leading-none tabular-nums"
-                                 style="color: {{ $countdownColor }};"
-                                 x-text="String(h).padStart(2,'0')"></div>
-                            <div class="text-[8px] sm:text-[9px] uppercase tracking-wider text-zinc-400 font-medium mt-0.5 sm:mt-1">
-                                <span class="hidden sm:inline">Hours</span><span class="sm:hidden">H</span>
-                            </div>
-                        </div>
-                        <div class="text-center px-1.5 sm:px-2.5 py-1.5 sm:py-2 rounded-md sm:rounded-lg border min-w-0 sm:min-w-[50px]"
-                             style="background: {{ $countdownBg }}; border-color: {{ $countdownBorder }};">
-                            <div class="font-mono text-base sm:text-xl font-bold leading-none tabular-nums"
-                                 style="color: {{ $countdownColor }};"
-                                 x-text="String(m).padStart(2,'0')"></div>
-                            <div class="text-[8px] sm:text-[9px] uppercase tracking-wider text-zinc-400 font-medium mt-0.5 sm:mt-1">
-                                <span class="hidden sm:inline">Min</span><span class="sm:hidden">M</span>
-                            </div>
-                        </div>
-                        <div class="text-center px-1.5 sm:px-2.5 py-1.5 sm:py-2 rounded-md sm:rounded-lg border min-w-0 sm:min-w-[50px]"
-                             style="background: {{ $countdownBg }}; border-color: {{ $countdownBorder }};">
-                            <div class="font-mono text-base sm:text-xl font-bold leading-none tabular-nums"
-                                 style="color: {{ $countdownColor }};"
-                                 x-text="String(s).padStart(2,'0')"></div>
-                            <div class="text-[8px] sm:text-[9px] uppercase tracking-wider text-zinc-400 font-medium mt-0.5 sm:mt-1">
-                                <span class="hidden sm:inline">Sec</span><span class="sm:hidden">S</span>
-                            </div>
+
+                        {{-- Start date — under the blocks, separated by a thin line --}}
+                        <div class="text-center pt-2 border-t font-mono"
+                             style="border-color: {{ $countdownBorder }};">
+                            <span class="text-[12px] sm:text-[13px] font-semibold"
+                                  style="color: {{ $countdownColor }};"
+                                  x-text="showLocal
+                                      ? formatTime('{{ $iso }}', userTz)
+                                      : formatTime('{{ $iso }}', 'Europe/Warsaw')"
+                                  x-cloak>{{ $event->starts_at->format('d M H:i') }}</span>
+                            <span class="text-[10px] text-zinc-400 ml-1"
+                                  x-text="showLocal
+                                      ? tzAbbr('{{ $iso }}', userTz)
+                                      : 'CET'"
+                                  x-cloak>CET</span>
                         </div>
                     </div>
                 </div>

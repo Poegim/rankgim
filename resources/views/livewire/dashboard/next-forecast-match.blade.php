@@ -7,7 +7,7 @@
      what a match "looks like" across the app.
      ══════════════════════════════════════════════════════════════════════ --}}
 
-<div class="rounded-xl border border-zinc-700/60 bg-zinc-800/40 p-5">
+<div class="rounded-xl border border-zinc-700/60 bg-zinc-800/40 p-3 sm:p-5">
 
     {{-- Widget header — matches the dashboard widget contract
          (text-xs uppercase label + "View all →" link on the right) --}}

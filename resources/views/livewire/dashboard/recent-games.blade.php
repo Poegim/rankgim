@@ -1,5 +1,5 @@
 @use('Illuminate\Support\Str')
-<div class="rounded-xl border border-zinc-700/60 bg-zinc-800/40 p-5">
+<div class="rounded-xl border border-zinc-700/60 bg-zinc-800/40 p-3 sm:p-5">
     <p class="text-xs font-semibold uppercase tracking-widest text-zinc-500 mb-4">🎮 Recent games</p>
 
     <div class="flex flex-col divide-y divide-zinc-700/50">

@@ -2,7 +2,7 @@
 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
 
     {{-- Risers --}}
-    <div class="rounded-xl border border-zinc-700/60 bg-zinc-800/40 border-l-4 border-l-green-500 p-4">
+    <div class="rounded-xl border border-zinc-700/60 bg-zinc-800/40 border-l-4 border-l-green-500 p-3 sm:p-4">
         <p class="text-xs font-semibold uppercase tracking-widest text-green-500 mb-3">
             📈 Biggest risers
             <span class="text-zinc-500 font-normal normal-case ml-1">last month</span>
@@ -20,7 +20,7 @@
     </div>
 
     {{-- Fallers --}}
-    <div class="rounded-xl border border-zinc-700/60 bg-zinc-800/40 border-l-4 border-l-red-500 p-4">
+    <div class="rounded-xl border border-zinc-700/60 bg-zinc-800/40 border-l-4 border-l-red-500 p-3 sm:p-4">
         <p class="text-xs font-semibold uppercase tracking-widest text-red-500 mb-3">
             📉 Biggest fallers
             <span class="text-zinc-500 font-normal normal-case ml-1">last month</span>

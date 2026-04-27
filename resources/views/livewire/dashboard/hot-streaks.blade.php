@@ -1,5 +1,5 @@
 @use('Illuminate\Support\Str')
-<div class="rounded-xl border border-zinc-700/60 bg-zinc-800/40 border-l-4 border-l-orange-500 p-4">
+<div class="rounded-xl border border-zinc-700/60 bg-zinc-800/40 border-l-4 border-l-orange-500 p-3 sm:p-4">
     <p class="text-xs font-semibold uppercase tracking-widest text-orange-500 mb-3">🔥 Hot streaks</p>
     <div class="flex flex-col divide-y divide-zinc-700/50">
         @foreach($this->streaks as $row)

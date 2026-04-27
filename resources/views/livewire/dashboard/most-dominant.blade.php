@@ -1,5 +1,5 @@
 @use('Illuminate\Support\Str')
-<div class="rounded-xl border border-zinc-700/60 bg-zinc-800/40 border-l-4 border-l-yellow-500 p-4">
+<div class="rounded-xl border border-zinc-700/60 bg-zinc-800/40 border-l-4 border-l-yellow-500 p-3 sm:p-4">
     <p class="text-xs font-semibold uppercase tracking-widest text-yellow-400 mb-3">
         👑 Most dominant
         <span class="text-zinc-500 font-normal normal-case ml-1">last year</span>

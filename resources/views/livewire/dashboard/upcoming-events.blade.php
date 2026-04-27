@@ -1,4 +1,4 @@
-<div class="rounded-xl border border-zinc-700/60 bg-zinc-800/40 p-5">
+<div class="rounded-xl border border-zinc-700/60 bg-zinc-800/40 p-3 sm:p-5">
 
     {{-- Header — same pattern as every other dashboard widget --}}
     <div class="flex items-center justify-between mb-4">
