@@ -203,6 +203,58 @@
             </a>
         </div>
 
+
+        {{-- Load forecast wallet data inline — View Composer doesn't fire reliably on included partials --}}
+        @auth
+            @php
+                $_forecastSeason = \App\Models\ForecastSeason::current();
+                $sidebarWallet   = null;
+                $sidebarPendingBets = 0;
+
+                if ($_forecastSeason) {
+                    $sidebarWallet = \App\Models\ForecastWallet::where('user_id', auth()->id())
+                        ->where('season_id', $_forecastSeason->id)
+                        ->withCount([
+                            'predictions as pending_bets_count' => fn ($q) => $q->where('result', 'pending'),
+                        ])
+                        ->first();
+
+                    $sidebarPendingBets = $sidebarWallet?->pending_bets_count ?? 0;
+                }
+            @endphp
+
+            @if($sidebarWallet)
+                @php
+                    $sidebarIcon = \App\Models\ForecastWallet::CURRENCIES[$sidebarWallet->currency]['icon'] ?? '💠';
+                @endphp
+                <div class="mx-3 mb-1 px-3 py-2 rounded-lg bg-zinc-800/60 border border-zinc-700/30 flex items-center justify-between gap-2">
+                    <div class="flex items-center gap-1.5 min-w-0">
+                        <span class="text-base leading-none shrink-0">{{ $sidebarIcon }}</span>
+                        <span class="text-xs font-mono font-bold text-amber-300 leading-none">
+                            {{ number_format($sidebarWallet->balance, 0) }}
+                        </span>
+                        <span class="text-[10px] text-zinc-600 leading-none">energy</span>
+                    </div>
+
+                    <span class="text-zinc-700 text-xs shrink-0">·</span>
+
+                    <div class="flex items-center gap-1 shrink-0">
+                        @if($sidebarPendingBets > 0)
+                            <span class="inline-flex items-center justify-center w-4 h-4 rounded-full bg-amber-500/20 text-amber-400 text-[10px] font-bold leading-none">
+                                {{ $sidebarPendingBets }}
+                            </span>
+                            <span class="text-[10px] text-zinc-400 leading-none">
+                                active {{ Str::plural('bet', $sidebarPendingBets) }}
+                            </span>
+                        @else
+                            <span class="text-[10px] text-zinc-600 leading-none">no active bets</span>
+                        @endif
+                    </div>
+                </div>
+            @endif
+        @endauth
+
+
         @auth
             <x-desktop-user-menu class="hidden lg:block" :name="auth()->user()->name" />
         @endauth

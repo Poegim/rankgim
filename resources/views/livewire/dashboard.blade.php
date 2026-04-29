@@ -42,7 +42,7 @@
     </div>
 
     {{-- Most active + Biggest upsets + Most dominant --}}
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
         <livewire:dashboard.most-active />
         <livewire:dashboard.biggest-upsets />
         <livewire:dashboard.most-dominant />
