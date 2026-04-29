@@ -54,6 +54,8 @@
                     <th class="text-left px-4 py-3 text-xs font-semibold uppercase tracking-wider text-zinc-500">Joined</th>
                     <th class="text-center px-4 py-3 text-xs font-semibold uppercase tracking-wider text-zinc-500">Comments</th>
                     <th class="text-center px-4 py-3 text-xs font-semibold uppercase tracking-wider text-zinc-500">Reactions</th>
+                    <th class="text-left px-4 py-3 text-xs font-semibold uppercase tracking-wider text-zinc-500">Last Login</th>
+                    <th class="text-center px-4 py-3 text-xs font-semibold uppercase tracking-wider text-zinc-500">Logins</th>
                     {{-- Forecast summary columns (only shown when season active) --}}
                     @if($this->currentSeason)
                         <th class="text-center px-4 py-3 text-xs font-semibold uppercase tracking-wider text-zinc-500">Faction</th>
@@ -143,6 +145,13 @@
                         {{-- Reactions --}}
                         <td class="px-4 py-3 text-center">
                             <span class="text-xs font-mono text-zinc-400">{{ $user->reactions_count }}</span>
+                        </td>
+
+                        <td class="px-4 py-3 text-sm text-zinc-400">
+                            {{ $user->last_login_at?->diffForHumans() ?? '—' }}
+                        </td>
+                        <td class="px-4 py-3 text-center text-sm text-zinc-300">
+                            {{ $user->login_count ?: '—' }}
                         </td>
 
                         @if($this->currentSeason)

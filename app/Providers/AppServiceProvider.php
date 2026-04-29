@@ -11,6 +11,9 @@ use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Validation\Rules\Password;
+use Illuminate\Auth\Events\Login;
+use App\Listeners\TrackUserLogin;
+use Illuminate\Support\Facades\Event;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -27,6 +30,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        Event::listen(Login::class, TrackUserLogin::class);
         Player::observe(PlayerObserver::class);
         ForecastMatch::observe(ForecastMatchObserver::class);
         $this->configureDefaults();
