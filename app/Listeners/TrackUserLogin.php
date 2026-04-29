@@ -11,8 +11,15 @@ class TrackUserLogin
      */
     public function handle(Login $event): void
     {
-        $event->user->increment('login_count');
-        $event->user->last_login_at = now();
-        $event->user->saveQuietly(); // Skip model events / timestamps update
+        $user = $event->user;
+
+        // Skip if this user already logged in within the last 60 seconds
+        if ($user->last_login_at && $user->last_login_at->diffInSeconds(now()) < 60) {
+            return;
+        }
+
+        $user->increment('login_count');
+        $user->last_login_at = now();
+        $user->saveQuietly();
     }
 }
