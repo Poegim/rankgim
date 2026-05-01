@@ -437,9 +437,7 @@ class RecalculationReportService
 
     private function getPreviousRecalculatedAt(): ?CarbonInterface
     {
-        $previous = RecalculationReport::orderByDesc('recalculated_at')
-            ->where('id', '!=', optional(RecalculationReport::orderByDesc('id')->first())->id ?? 0)
-            ->first();
+        $previous = RecalculationReport::orderByDesc('recalculated_at')->first();
         return $previous?->recalculated_at;
     }
 
