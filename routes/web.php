@@ -1,11 +1,11 @@
 <?php
 
-use App\Http\Controllers\PlayersIncompleteController;
+use App\Http\Controllers\ArticleController;
 use App\Http\Controllers\HistoryController;
+use App\Http\Controllers\PlayersIncompleteController;
 use App\Livewire\AchievementsBrowser;
 use App\Livewire\Countries\Compare as CountriesCompare;
 use App\Livewire\Countries\Index;
-use App\Livewire\Players\Compare;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
 
@@ -48,7 +48,6 @@ Route::get('/countries/{code1}-vs-{code2}', CountriesCompare::class)->name('coun
 // Stats route (previously History)
 Route::get('/stats', [HistoryController::class, 'index'])->name('stats.index');
 
-
 // Games route
 Route::get('/games', fn() => view('games.index'))->name('games.index');
 
@@ -61,6 +60,21 @@ Route::get('/about', function () {
         'totalPlayers' => \App\Models\PlayerRating::count(),
     ]);
 })->name('about');
+// News & updates routes — order matters: literal segments before {slug} placeholders
+Route::get('/news', fn() => view('articles.index'))->name('articles.index');
+
+// Admin-only article CRUD (must come before /news/{slug} so /news/create matches first)
+Route::middleware(['auth', 'verified', \App\Http\Middleware\EnsureUserIsAdmin::class])->group(function () {
+    Route::get('/news/create', fn() => view('articles.create'))->name('articles.create');
+    Route::get('/news/{slug}/edit', function (string $slug) {
+        $article = \App\Models\Article::where('slug', $slug)->firstOrFail();
+        return view('articles.edit', ['article' => $article]);
+    })->name('articles.edit');
+    Route::delete('/news/{slug}', [ArticleController::class, 'destroy'])->name('articles.destroy');
+});
+
+// Public article view (after admin routes so /news/create is matched first)
+Route::get('/news/{slug}', [ArticleController::class, 'show'])->name('articles.show');
 
 // Events route using Livewire component
 Route::get('/events', App\Livewire\Events\Index::class)->name('events.index');

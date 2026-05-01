@@ -30,6 +30,7 @@ class RecentComments extends Component
         return match (true) {
             $model instanceof \App\Models\Event  => $model->name,
             $model instanceof \App\Models\Player => $model->name,
+            $model instanceof \App\Models\Article => $model->title,
             default                              => class_basename($model) . ' #' . $model->getKey(),
         };
     }
@@ -47,6 +48,7 @@ class RecentComments extends Component
                 'id'   => $model->id,
                 'slug' => \Illuminate\Support\Str::slug($model->name),
             ]),
+            $model instanceof \App\Models\Article => route('articles.show', $model->slug),
             default => null,
         };
     }

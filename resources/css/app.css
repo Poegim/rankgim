@@ -112,6 +112,215 @@ select:focus[data-flux-control] {
     @apply outline-hidden ring-2 ring-accent ring-offset-2 ring-offset-accent-foreground;
 }
 
+
+/* ─── Article rendered markdown styles ───────────────────────────── */
+/*
+ * Targets <article class="article-content"> wrapping markdown HTML output.
+ * Self-contained — does not extend Tailwind Typography (prose).
+ */
+
+ /* Achievement tier badge */
+.article-content .tier-badge {
+    display: inline-block;
+    font-family: var(--font-mono);
+    font-weight: 700;
+    font-size: 0.7rem;
+    padding: 0.0625rem 0.375rem;
+    border-radius: 0.25rem;
+    vertical-align: middle;
+    line-height: 1.4;
+}
+
+ /* Numeric delta chips */
+.article-content .delta-positive {
+    margin-left: auto;
+    font-family: var(--font-mono);
+    font-weight: 600;
+    color: var(--color-emerald-400);
+    font-variant-numeric: tabular-nums;
+}
+
+.article-content .delta-negative {
+    margin-left: auto;
+    font-family: var(--font-mono);
+    font-weight: 600;
+    color: var(--color-red-400);
+    font-variant-numeric: tabular-nums;
+}
+
+.article-content {
+    color: var(--color-zinc-300);
+    font-size: 0.95rem;
+    line-height: 1.7;
+}
+
+/* Headings */
+.article-content h2 {
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--color-zinc-500);
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid color-mix(in srgb, var(--color-zinc-700) 60%, transparent);
+}
+
+.article-content h3 {
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: var(--color-zinc-200);
+    margin-top: 1.5rem;
+    margin-bottom: 0.75rem;
+}
+
+/* Paragraphs */
+.article-content p {
+    margin-bottom: 1rem;
+}
+
+.article-content p:last-child {
+    margin-bottom: 0;
+}
+
+/* Strong (bold) — cleaner white instead of yellow accent */
+.article-content strong {
+    color: var(--color-white);
+    font-weight: 600;
+}
+
+/* Inline links — subtle underline on hover, no aggressive yellow */
+.article-content a:not(.player-pill):not(.tournament-link) {
+    color: var(--color-zinc-200);
+    text-decoration: underline;
+    text-decoration-color: color-mix(in srgb, var(--color-zinc-500) 50%, transparent);
+    text-underline-offset: 2px;
+    transition: color 0.15s, text-decoration-color 0.15s;
+}
+
+.article-content a:not(.player-pill):not(.tournament-link):hover {
+    color: var(--color-white);
+    text-decoration-color: var(--color-zinc-300);
+}
+
+/* Lists — vertical stack of separated rows, no bullets */
+.article-content ul {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 1.25rem 0;
+    border: 1px solid color-mix(in srgb, var(--color-zinc-700) 60%, transparent);
+    border-radius: 0.5rem;
+    overflow: hidden;
+    background: color-mix(in srgb, var(--color-zinc-800) 40%, transparent);
+}
+
+.article-content ul li {
+    padding: 0.625rem 1rem;
+    border-bottom: 1px solid color-mix(in srgb, var(--color-zinc-700) 40%, transparent);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.article-content ul li:last-child {
+    border-bottom: none;
+}
+
+/* Top-level intro list (right after first paragraph) — no card style */
+.article-content > ul:first-of-type {
+    border: none;
+    background: transparent;
+    border-radius: 0;
+}
+
+.article-content > ul:first-of-type li {
+    padding: 0.25rem 0;
+    border-bottom: none;
+}
+
+/* ─── Player pill ─────────────────────────────────────────────── */
+.player-pill {
+    display: inline-flex;
+    align-items: stretch;
+    height: 1.75rem;
+    border-radius: 0.375rem;
+    overflow: hidden;
+    border: 1px solid color-mix(in srgb, var(--color-zinc-700) 60%, transparent);
+    background: color-mix(in srgb, var(--color-zinc-800) 50%, transparent);
+    font-size: 0.8125rem;
+    line-height: 1;
+    text-decoration: none !important;
+    transition: border-color 0.15s, transform 0.15s;
+    vertical-align: middle;
+}
+
+.player-pill:hover {
+    border-color: var(--color-zinc-500);
+    transform: translateY(-1px);
+}
+
+.player-pill__flag {
+    display: block;
+    width: 2rem;
+    flex-shrink: 0;
+    background-size: cover;
+    background-position: center;
+}
+
+.player-pill__race {
+    display: flex;
+    align-items: center;
+    padding: 0 0.5rem;
+    font-size: 0.625rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    flex-shrink: 0;
+}
+
+.player-pill__name {
+    display: flex;
+    align-items: center;
+    padding: 0 0.75rem;
+    color: var(--color-zinc-100);
+    font-weight: 600;
+}
+
+.player-pill:hover .player-pill__name {
+    color: var(--color-white);
+}
+
+/* ─── Tournament link ─────────────────────────────────────────── */
+.tournament-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    color: var(--color-zinc-200);
+    font-weight: 600;
+    text-decoration: none !important;
+    transition: color 0.15s;
+}
+
+.tournament-link:hover {
+    color: var(--color-white);
+}
+
+.tournament-link__icon {
+    font-size: 0.9rem;
+}
+
+.tournament-link__name {
+    border-bottom: 1px dashed color-mix(in srgb, var(--color-zinc-600) 80%, transparent);
+    padding-bottom: 1px;
+    transition: border-color 0.15s;
+}
+
+.tournament-link:hover .tournament-link__name {
+    border-bottom-color: var(--color-zinc-300);
+}
+
 /* \[:where(&)\]:size-4 {
     @apply size-4;
 } */

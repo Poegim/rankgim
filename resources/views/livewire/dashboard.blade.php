@@ -1,7 +1,11 @@
 <div class="w-full flex flex-col gap-6">
 
     {{-- ========== Row 1: Top 10 (full width) ========== --}}
-    <livewire:dashboard.top-players />
+    <div class="grid lg:grid-cols-2 space-x-2">
+        <livewire:dashboard.top-players />
+        <livewire:dashboard.latest-update />
+        
+    </div>
 
     {{-- ========== Row 2: Events + Next match to predict ==========
          Layout adapts:
