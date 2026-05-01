@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\Article;
 use App\Models\Player;
 use App\Models\RecalculationReport;
+use App\Models\SystemStat;
 use Carbon\CarbonInterface;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
@@ -48,6 +49,8 @@ class RecalculationReportService
             'new_players'  => $this->buildNewPlayers($previous),
             'risers'       => $this->buildRisers($previous),
             'fallers'      => $this->buildFallers($previous),
+            'climbers'     => $this->buildRankMovers('desc'),
+            'slippers'     => $this->buildRankMovers('asc'),
             'achievements' => $this->buildAchievements($previous),
             'totals'       => [],
         ];
@@ -74,6 +77,86 @@ class RecalculationReportService
 
         return $report;
 
+    }
+
+    /**
+     * Players who moved up or down in the ranking compared to the previous monthly snapshot.
+     * Direction:
+     *   'desc' = biggest climbers (gained positions)
+     *   'asc'  = biggest slippers (lost positions)
+     *
+     * Current rank is computed on the fly from player_ratings (no rank column there),
+     * matching the same qualification rules as Rankings/Index: 15+ games, active in last 12 months.
+     *
+     * Previous rank comes from rating_snapshots at SystemStat('previous_snapshot_date').
+     *
+     * Returns at most 5 players with non-zero rank delta. New entries (no previous rank)
+     * are excluded — they're already covered by the "new players" section.
+     */
+    private function buildRankMovers(string $direction): array
+    {
+        $previousSnapshotDate = SystemStat::get('previous_snapshot_date');
+        if (!$previousSnapshotDate) {
+            return [];
+        }
+
+        $lastGameDate = SystemStat::get('last_game_date');
+        if (!$lastGameDate) {
+            return [];
+        }
+
+        $activeCutoff = \Carbon\Carbon::parse($lastGameDate)
+            ->subMonths(config('rankgim.inactive_months'))
+            ->toDateString();
+
+        // Compute current rank by ordering qualified players by rating DESC.
+        // Window function ROW_NUMBER() is supported in MySQL 8+ (RANKGIM uses MySQL 8).
+        $currentRanksSubquery = DB::table('player_ratings as pr')
+            ->join('players as p', 'p.id', '=', 'pr.player_id')
+            ->join('player_stats as ps', 'ps.player_id', '=', 'pr.player_id')
+            ->whereNull('p.player_id')
+            ->where('pr.games_played', '>=', 15)
+            ->where('ps.last_played_at', '>=', $activeCutoff)
+            ->selectRaw('
+                pr.player_id,
+                pr.rating,
+                ROW_NUMBER() OVER (ORDER BY pr.rating DESC) as current_rank
+            ');
+
+        $sortDir = $direction === 'desc' ? 'DESC' : 'ASC';
+
+        return DB::query()
+            ->fromSub($currentRanksSubquery, 'cr')
+            ->join('rating_snapshots as rs', function ($join) use ($previousSnapshotDate) {
+                $join->on('rs.player_id', '=', 'cr.player_id')
+                     ->where('rs.snapshot_date', $previousSnapshotDate);
+            })
+            ->join('players as p', 'p.id', '=', 'cr.player_id')
+            ->selectRaw('
+                p.id,
+                p.name,
+                p.country_code,
+                p.race,
+                cr.rating as current_rating,
+                cr.current_rank,
+                rs.rank as previous_rank,
+                (CAST(rs.rank AS SIGNED) - CAST(cr.current_rank AS SIGNED)) as rank_change
+            ')
+            ->whereRaw('rs.rank != cr.current_rank')
+            ->orderByRaw("rank_change {$sortDir}")
+            ->limit(5)
+            ->get()
+            ->map(fn($row) => [
+                'id'             => (int) $row->id,
+                'name'           => $row->name,
+                'country_code'   => $row->country_code,
+                'race'           => $row->race,
+                'current_rating' => (int) $row->current_rating,
+                'current_rank'   => (int) $row->current_rank,
+                'previous_rank'  => (int) $row->previous_rank,
+                'rank_change'    => (int) $row->rank_change,
+            ])
+            ->all();
     }
 
     /**
@@ -231,6 +314,29 @@ class RecalculationReportService
             $lines[] = '';
         }
 
+        // Position changes vs previous monthly snapshot
+            $snapshotLabel = $this->formatSnapshotLabel();
+
+            if (count($report->summary['climbers']) > 0) {
+                $lines[] = "## Biggest climbers (vs {$snapshotLabel})";
+                $lines[] = '';
+                foreach ($report->summary['climbers'] as $p) {
+                    $playerLink = $this->renderPlayerLink($p['id'], $p['name'], $p['country_code'], $p['race']);
+                    $lines[] = "- {$playerLink} <span class=\"rank-pill\">#{$p['previous_rank']} → #{$p['current_rank']}</span> <span class=\"delta-positive\">+{$p['rank_change']}</span>";
+                }
+                $lines[] = '';
+            }
+
+            if (count($report->summary['slippers']) > 0) {
+                $lines[] = "## Biggest slippers (vs {$snapshotLabel})";
+                $lines[] = '';
+                foreach ($report->summary['slippers'] as $p) {
+                    $playerLink = $this->renderPlayerLink($p['id'], $p['name'], $p['country_code'], $p['race']);
+                    $lines[] = "- {$playerLink} <span class=\"rank-pill\">#{$p['previous_rank']} → #{$p['current_rank']}</span> <span class=\"delta-negative\">{$p['rank_change']}</span>";
+                }
+                $lines[] = '';
+            }
+
         // Achievements section.
         if (count($report->summary['achievements']) > 0) {
             $lines[] = '## Achievements unlocked';
@@ -242,8 +348,23 @@ class RecalculationReportService
             }
             $lines[] = '';
         }
+        
 
         return implode("\n", $lines);
+    }
+
+    /**
+     * Human-readable label for the previous monthly snapshot, e.g. "March 2026".
+     * Used in section headings to make the comparison context obvious.
+     */
+    private function formatSnapshotLabel(): string
+    {
+        $date = SystemStat::get('previous_snapshot_date');
+        if (!$date) {
+            return 'last month';
+        }
+
+        return \Carbon\Carbon::parse($date)->format('F Y');
     }
 
     /**
