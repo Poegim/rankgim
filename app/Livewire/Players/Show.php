@@ -62,9 +62,29 @@ class Show extends Component
         $lastPlayedAt = $ps?->last_played_at;
 
         // Calculate current live rank — only if the player qualifies for the ranking
+        // $currentRank = null;
+        // if (!$tooFewGames && !$isInactive) {
+        //     $currentRank = \App\Models\PlayerRating::where('rating', '>', $rating->rating)
+        //         ->where('games_played', '>=', 15)
+        //         ->when($since, fn($q) => $q->whereHas(
+        //             'playerStat',
+        //             fn($q2) => $q2->where('last_played_at', '>=', $since)
+        //         ))
+        //         ->count() + 1;
+        // }
+
+        // Calculate current live rank — only if the player qualifies for the ranking
         $currentRank = null;
         if (!$tooFewGames && !$isInactive) {
-            $currentRank = \App\Models\PlayerRating::where('rating', '>', $rating->rating)
+            $query = \App\Models\PlayerRating::query(); // Inicjalizacja query ułatwia życie edytorowi
+
+            $currentRank = $query->where(function($q) use ($rating) {
+                    $q->where('rating', '>', $rating->rating)
+                      ->orWhere(function($q2) use ($rating) {
+                          $q2->where('rating', $rating->rating)
+                             ->where('player_id', '<', $rating->player_id);
+                      });
+                })
                 ->where('games_played', '>=', 15)
                 ->when($since, fn($q) => $q->whereHas(
                     'playerStat',
