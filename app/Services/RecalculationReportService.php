@@ -106,8 +106,7 @@ class RecalculationReportService
         }
 
         $activeCutoff = \Carbon\Carbon::parse($lastGameDate)
-            ->subMonths(config('rankgim.inactive_months'))
-            ->toDateString();
+            ->subMonths(config('rankgim.inactive_months'));
 
         // Compute current rank by ordering qualified players by rating DESC.
         // Window function ROW_NUMBER() is supported in MySQL 8+ (RANKGIM uses MySQL 8).
