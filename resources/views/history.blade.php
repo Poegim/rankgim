@@ -12,6 +12,10 @@
         {{-- Yearly charts --}}
         <livewire:dashboard.yearly-charts />
 
+        <div>
+            <livewire:history.ranked-players-chart />
+        </div>
+
         {{-- Recent games + Recent tournaments --}}
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <livewire:dashboard.recent-games />
