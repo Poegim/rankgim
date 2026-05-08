@@ -5,6 +5,7 @@ namespace App\Livewire\Tournaments;
 use App\Models\Game;
 use App\Models\Player;
 use App\Models\Tournament;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Livewire\Attributes\Computed;
 use Livewire\Component;
 use Livewire\WithPagination;
@@ -12,6 +13,7 @@ use Livewire\WithPagination;
 class Show extends Component
 {
     use WithPagination;
+    use AuthorizesRequests;
 
     public int $tournamentId;
     
@@ -59,6 +61,22 @@ class Show extends Component
             ->orderByDesc('date_time')
             ->orderByDesc('id')
             ->paginate(20);
+    }
+
+    public function toggleDraw(int $gameId): void
+    {
+        $game = Game::findOrFail($gameId);
+
+        // Authorize via the same policy used for editing
+        $this->authorize('update', $game);
+
+        // Flip between draw (3) and win (1). winner_id stays as-is —
+        // when unsetting a draw, the existing winner_id becomes the actual winner.
+        $newResult = (int) $game->result === 3 ? 1 : 3;
+
+        $game->update(['result' => $newResult]);
+
+        $this->dispatch('game-updated');
     }
 
     public function updated($property)

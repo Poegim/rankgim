@@ -1,12 +1,13 @@
 @use('Illuminate\Support\Str')
 <div>
     @php
+        // Race text colors — resolved from CSS custom properties defined in app.css
         $raceColors = [
-            'Terran'  => 'text-blue-500',
-            'Zerg'    => 'text-purple-500',
-            'Protoss' => 'text-yellow-500',
-            'Random'  => 'text-orange-400',
-            'Unknown' => 'text-zinc-400',
+            'Terran'  => 'var(--color-race-terran-soft)',
+            'Zerg'    => 'var(--color-race-zerg-soft)',
+            'Protoss' => 'var(--color-race-protoss-soft)',
+            'Random'  => 'var(--color-race-random-soft)',
+            'Unknown' => 'var(--color-race-unknown-soft)',
         ];
         $raceLabels = [
             'Terran'  => 'T',
@@ -52,7 +53,7 @@
             <flux:heading size="xl">{{ $this->tournament->name }}</flux:heading>
             <flux:text>{{ $this->games->total() }} games</flux:text>
         </div>
-        
+
        @auth
             @if(auth()->user()->canManageGames())
                 <div class="flex items-center gap-2">
@@ -106,7 +107,7 @@
                            class="hover:underline font-medium text-green-600 dark:text-green-500">
                             {{ $game->winner->name }}
                         </a>
-                        <span class="text-xs font-bold {{ $raceColors[$game->winner->race] ?? 'text-zinc-400' }}">
+                        <span class="text-xs font-bold" style="color: {{ $raceColors[$game->winner->race] ?? 'var(--color-race-unknown-soft)' }}">
                             {{ $raceLabels[$game->winner->race] ?? '?' }}
                         </span>
                     </div>
@@ -120,35 +121,49 @@
                            class="hover:underline text-zinc-500 dark:text-zinc-400">
                             {{ $game->loser->name }}
                         </a>
-                        <span class="text-xs font-bold {{ $raceColors[$game->loser->race] ?? 'text-zinc-400' }}">
+                        <span class="text-xs font-bold" style="color: {{ $raceColors[$game->loser->race] ?? 'var(--color-race-unknown-soft)' }}">
                             {{ $raceLabels[$game->loser->race] ?? '?' }}
                         </span>
                     </div>
                 </flux:table.cell>
                     <flux:table.cell>
-                        @if($game->rating_history_count === 0)
-                            <span class="text-xs text-yellow-500">⏳ pending</span>
-                        @elseif($game->result == 3)
-                            <span class="text-xs text-zinc-500">Draw</span>
-                        @else
-                            <span class="text-xs text-green-600 dark:text-green-500">Win</span>
-                        @endif
+                        <div class="flex items-center gap-2">
+                            @if($game->result == 3)
+                                <span class="text-xs text-zinc-500">Draw</span>
+                            @else
+                                <span class="text-xs text-green-600 dark:text-green-500">Win</span>
+                            @endif
+
+                            @if($game->rating_history_count === 0)
+                                <span class="text-xs text-yellow-500" title="Rating not yet calculated">⏳ pending</span>
+                            @endif
+                        </div>
                     </flux:table.cell>
                 @auth
                     @if(auth()->user()->canManageGames())
                     <flux:table.cell>
                         <div class="flex items-center gap-2">
                             @can('update', $game)
-                            <flux:button 
-                                size="sm" 
-                                variant="ghost" 
+                                <flux:button
+                                    size="sm"
+                                    variant="{{ $game->result == 3 ? 'filled' : 'primary' }}"
+                                    wire:click="toggleDraw({{ $game->id }})"
+                                    wire:loading.attr="disabled"
+                                    wire:target="toggleDraw({{ $game->id }})">
+                                    {{ $game->result == 3 ? 'Unset draw' : 'Set draw' }}
+                                </flux:button>
+                            @endcan
+                            @can('update', $game)
+                            <flux:button
+                                size="sm"
+                                
                                 wire:click="edit({{ $game->id }})"
                                 wire:loading.attr="disabled"
                                 wire:target="edit({{ $game->id }})">
                                 Edit
                             </flux:button>
                             @endcan
-                            
+
                             @can('delete', $game)
                             <flux:modal.trigger name="delete-game-{{ $game->id }}">
                                 <flux:button size="sm" variant="danger">
@@ -156,7 +171,7 @@
                                 </flux:button>
                             </flux:modal.trigger>
                             @endcan
-                            
+
                             <flux:modal name="delete-game-{{ $game->id }}" class="min-w-[22rem]">
                                 <form class="space-y-6" wire:submit="delete({{ $game->id }})">
                                     <div>
@@ -165,12 +180,12 @@
                                             Are you sure you want to delete this game?
                                         </flux:subheading>
                                     </div>
-                                    
+
                                     <div class="flex justify-end gap-2">
                                         <flux:modal.close>
                                             <flux:button variant="ghost">Cancel</flux:button>
                                         </flux:modal.close>
-                                        <flux:button 
+                                        <flux:button
                                             type="submit"
                                             variant="danger"
                                             wire:loading.attr="disabled">
@@ -197,11 +212,11 @@
 
             {{-- Winner --}}
             <div x-data="{ open: false, selected: 0 }" class="relative">
-                <flux:input 
+                <flux:input
                     autocomplete="off"
                     x-on:input="open = true"
-                    wire:model.live.debounce.300ms="winnerSearch" 
-                    label="Winner" 
+                    wire:model.live.debounce.300ms="winnerSearch"
+                    label="Winner"
                     placeholder="Search player..."
                     x-on:focus="open = true"
                     x-on:click.away="open = false"
@@ -209,12 +224,12 @@
                     x-on:keydown.arrow-up.prevent="if (open) selected = Math.max(selected - 1, 0)"
                     x-on:keydown.enter.prevent="if (open && {{ $this->winnerResults->count() }} > 0) { $refs['winner-' + selected].click(); }"
                 />
-                @error('winnerId') 
+                @error('winnerId')
                     <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                 @enderror
-                
+
                 @if($this->winnerResults->isNotEmpty())
-                <div x-show="open" 
+                <div x-show="open"
                      class="absolute z-50 w-full mt-1 bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-lg shadow-lg max-h-60 overflow-y-auto">
                     @foreach($this->winnerResults as $index => $player)
                     <button type="button"
@@ -227,7 +242,7 @@
                             <img src="{{ asset('images/country_flags/' . strtolower($player->country_code) . '.svg') }}"
                                  class="w-7 h-5 rounded-sm shrink-0">
                             <span class="text-sm text-zinc-800 dark:text-white">{{ $player->name }}</span>
-                            <span class="text-xs {{ $raceColors[$player->race] ?? 'text-zinc-400' }}">
+                            <span class="text-xs font-bold" style="color: {{ $raceColors[$player->race] ?? 'var(--color-race-unknown-soft)' }}">
                                 {{ $raceLabels[$player->race] ?? '?' }}
                             </span>
                         </div>
@@ -244,11 +259,11 @@
 
             {{-- Loser --}}
             <div x-data="{ open: false, selected: 0 }" class="relative">
-                <flux:input 
+                <flux:input
                     autocomplete="off"
                     x-on:input="open = true"
-                    wire:model.live.debounce.300ms="loserSearch" 
-                    label="Loser" 
+                    wire:model.live.debounce.300ms="loserSearch"
+                    label="Loser"
                     placeholder="Search player..."
                     x-on:focus="open = true"
                     x-on:click.away="open = false"
@@ -256,12 +271,12 @@
                     x-on:keydown.arrow-up.prevent="if (open) selected = Math.max(selected - 1, 0)"
                     x-on:keydown.enter.prevent="if (open && {{ $this->loserResults->count() }} > 0) { $refs['loser-' + selected].click(); }"
                 />
-                @error('loserId') 
+                @error('loserId')
                     <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                 @enderror
-                
+
                 @if($this->loserResults->isNotEmpty())
-                <div x-show="open" 
+                <div x-show="open"
                      class="absolute z-50 w-full mt-1 bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-lg shadow-lg max-h-60 overflow-y-auto">
                     @foreach($this->loserResults as $index => $player)
                         <button type="button"
@@ -274,7 +289,7 @@
                                 <img src="{{ asset('images/country_flags/' . strtolower($player->country_code) . '.svg') }}"
                                      class="w-7 h-5 rounded-sm shrink-0">
                                 <span class="text-sm text-zinc-800 dark:text-white">{{ $player->name }}</span>
-                                <span class="text-xs {{ $raceColors[$player->race] ?? 'text-zinc-400' }}">
+                                <span class="text-xs font-bold" style="color: {{ $raceColors[$player->race] ?? 'var(--color-race-unknown-soft)' }}">
                                     {{ $raceLabels[$player->race] ?? '?' }}
                                 </span>
                             </div>
@@ -290,9 +305,9 @@
             </div>
 
             {{-- Date & Time --}}
-            <flux:input 
-                type="datetime-local" 
-                wire:model="dateTime" 
+            <flux:input
+                type="datetime-local"
+                wire:model="dateTime"
                 label="Date & Time"
             />
 
@@ -322,11 +337,11 @@
 
             {{-- Winner --}}
             <div x-data="{ open: false, selected: 0 }" class="relative">
-                <flux:input 
+                <flux:input
                     autocomplete="off"
                     x-on:input="open = true"
-                    wire:model.live.debounce.300ms="editWinnerSearch" 
-                    label="Winner" 
+                    wire:model.live.debounce.300ms="editWinnerSearch"
+                    label="Winner"
                     placeholder="Search player..."
                     x-on:focus="open = true"
                     x-on:click.away="open = false"
@@ -334,12 +349,12 @@
                     x-on:keydown.arrow-up.prevent="if (open) selected = Math.max(selected - 1, 0)"
                     x-on:keydown.enter.prevent="if (open && {{ $this->editWinnerResults->count() }} > 0) { $refs['edit-winner-' + selected].click(); }"
                 />
-                @error('editWinnerId') 
+                @error('editWinnerId')
                     <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                 @enderror
-                
+
                 @if($this->editWinnerResults->isNotEmpty())
-                <div x-show="open" 
+                <div x-show="open"
                      class="absolute z-50 w-full mt-1 bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-lg shadow-lg max-h-60 overflow-y-auto">
                     @foreach($this->editWinnerResults as $index => $player)
                     <button type="button"
@@ -351,7 +366,7 @@
                         <img src="{{ asset('images/country_flags/' . strtolower($player->country_code) . '.svg') }}"
                              class="w-7 h-5 rounded-sm shrink-0">
                         <span class="text-sm text-zinc-800 dark:text-white">{{ $player->name }}</span>
-                        <span class="text-xs {{ $raceColors[$player->race] ?? 'text-zinc-400' }}">
+                        <span class="text-xs font-bold" style="color: {{ $raceColors[$player->race] ?? 'var(--color-race-unknown-soft)' }}">
                             {{ $raceLabels[$player->race] ?? '?' }}
                         </span>
                     </button>
@@ -362,9 +377,9 @@
 
             {{-- Loser --}}
             <div x-data="{ open: false, selected: 0 }" class="relative">
-                <flux:input 
-                    wire:model.live.debounce.300ms="editLoserSearch" 
-                    label="Loser" 
+                <flux:input
+                    wire:model.live.debounce.300ms="editLoserSearch"
+                    label="Loser"
                     placeholder="Search player..."
                     autocomplete="off"
                     x-on:input="open = true"
@@ -374,12 +389,12 @@
                     x-on:keydown.arrow-up.prevent="if (open) selected = Math.max(selected - 1, 0)"
                     x-on:keydown.enter.prevent="if (open && {{ $this->editLoserResults->count() }} > 0) { $refs['edit-loser-' + selected].click(); }"
                 />
-                @error('editLoserId') 
+                @error('editLoserId')
                     <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                 @enderror
-                
+
                 @if($this->editLoserResults->isNotEmpty())
-                <div x-show="open" 
+                <div x-show="open"
                      class="absolute z-50 w-full mt-1 bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-lg shadow-lg max-h-60 overflow-y-auto">
                     @foreach($this->editLoserResults as $index => $player)
                     <button type="button"
@@ -391,7 +406,7 @@
                         <img src="{{ asset('images/country_flags/' . strtolower($player->country_code) . '.svg') }}"
                              class="w-7 h-5 rounded-sm shrink-0">
                         <span class="text-sm text-zinc-800 dark:text-white">{{ $player->name }}</span>
-                        <span class="text-xs {{ $raceColors[$player->race] ?? 'text-zinc-400' }}">
+                        <span class="text-xs font-bold" style="color: {{ $raceColors[$player->race] ?? 'var(--color-race-unknown-soft)' }}">
                             {{ $raceLabels[$player->race] ?? '?' }}
                         </span>
                     </button>
@@ -401,9 +416,9 @@
             </div>
 
             {{-- Date & Time --}}
-            <flux:input 
-                type="datetime-local" 
-                wire:model="editDateTime" 
+            <flux:input
+                type="datetime-local"
+                wire:model="editDateTime"
                 label="Date & Time"
             />
 
