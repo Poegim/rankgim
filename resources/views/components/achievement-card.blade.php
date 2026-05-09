@@ -5,56 +5,64 @@
     'showHoldersBtn' => false,
 ])
 @php
+    // Tier visual styles — kept inline to mirror AchievementCard::TIER_STYLES.
+    // Each tier defines a card gradient, a top accent bar, the tier-badge fill,
+    // and named text colors used across the card (date / category / name / desc).
     $tierStyles = [
         's' => [
-            'card'  => 'background: linear-gradient(145deg, #3d2200 0%, #1e1000 70%, #0a0500 100%);',
-            'bar'   => 'background: linear-gradient(90deg, #854F0B, #FFD700, #EF9F27, #FFD700, #854F0B);',
-            'tier'  => 'background: #EF9F27; color: #1e1000;',
-            'date'  => 'color: #BA7517;',
-            'cat'   => 'color: #EF9F27;',
-            'name'  => 'color: #FFD700;',
-            'desc'  => 'color: #EF9F27;',
-            'label' => 'S',
+            'card'   => 'background: linear-gradient(145deg, #3d2200 0%, #1e1000 70%, #0a0500 100%);',
+            'bar'    => 'background: linear-gradient(90deg, #854F0B, #FFD700, #EF9F27, #FFD700, #854F0B);',
+            'tier'   => 'background: linear-gradient(145deg, #FFD700 0%, #EF9F27 100%); color: #1e1000;',
+            'glow'   => 'box-shadow: 0 0 24px -4px #EF9F2780, inset 0 1px 0 0 #FFD70060;',
+            'date'   => 'color: #EF9F27;',
+            'cat'    => 'background: #EF9F2722; color: #FFD700; border: 1px solid #EF9F2755;',
+            'name'   => 'color: #FFE56B; text-shadow: 0 0 18px #EF9F2755;',
+            'desc'   => 'color: #F0C870;',
+            'label'  => 'S',
         ],
         'a' => [
-            'card'  => 'background: linear-gradient(145deg, #2e1000 0%, #180800 70%, #080300 100%);',
-            'bar'   => 'background: linear-gradient(90deg, #712B13, #F0997B, #D85A30, #F0997B, #712B13);',
-            'tier'  => 'background: #D85A30; color: #180800;',
-            'date'  => 'color: #993C1D;',
-            'cat'   => 'color: #F0997B;',
-            'name'  => 'color: #FF8C55;',
-            'desc'  => 'color: #D85A30;',
-            'label' => 'A',
+            'card'   => 'background: linear-gradient(145deg, #2e1000 0%, #180800 70%, #080300 100%);',
+            'bar'    => 'background: linear-gradient(90deg, #712B13, #F0997B, #D85A30, #F0997B, #712B13);',
+            'tier'   => 'background: linear-gradient(145deg, #F0997B 0%, #D85A30 100%); color: #180800;',
+            'glow'   => 'box-shadow: 0 0 24px -4px #D85A3080, inset 0 1px 0 0 #F0997B60;',
+            'date'   => 'color: #D85A30;',
+            'cat'    => 'background: #D85A3022; color: #FF8C55; border: 1px solid #D85A3055;',
+            'name'   => 'color: #FFB890; text-shadow: 0 0 18px #D85A3055;',
+            'desc'   => 'color: #F0997B;',
+            'label'  => 'A',
         ],
         'b' => [
-            'card'  => 'background: linear-gradient(145deg, #231a4a 0%, #130e2a 70%, #080610 100%);',
-            'bar'   => 'background: linear-gradient(90deg, #3C3489, #CECBF6, #7F77DD, #CECBF6, #3C3489);',
-            'tier'  => 'background: #7F77DD; color: #130e2a;',
-            'date'  => 'color: #534AB7;',
-            'cat'   => 'color: #CECBF6;',
-            'name'  => 'color: #E8E4FF;',
-            'desc'  => 'color: #AFA9EC;',
-            'label' => 'B',
+            'card'   => 'background: linear-gradient(145deg, #231a4a 0%, #130e2a 70%, #080610 100%);',
+            'bar'    => 'background: linear-gradient(90deg, #3C3489, #CECBF6, #7F77DD, #CECBF6, #3C3489);',
+            'tier'   => 'background: linear-gradient(145deg, #CECBF6 0%, #7F77DD 100%); color: #130e2a;',
+            'glow'   => 'box-shadow: 0 0 24px -4px #7F77DD80, inset 0 1px 0 0 #CECBF660;',
+            'date'   => 'color: #AFA9EC;',
+            'cat'    => 'background: #7F77DD22; color: #CECBF6; border: 1px solid #7F77DD55;',
+            'name'   => 'color: #F0EDFF; text-shadow: 0 0 18px #7F77DD55;',
+            'desc'   => 'color: #CECBF6;',
+            'label'  => 'B',
         ],
         'c' => [
-            'card'  => 'background: linear-gradient(145deg, #042240 0%, #021525 70%, #010810 100%);',
-            'bar'   => 'background: linear-gradient(90deg, #0C447C, #B5D4F4, #378ADD, #B5D4F4, #0C447C);',
-            'tier'  => 'background: #378ADD; color: #021525;',
-            'date'  => 'color: #185FA5;',
-            'cat'   => 'color: #B5D4F4;',
-            'name'  => 'color: #D4EAFF;',
-            'desc'  => 'color: #85B7EB;',
-            'label' => 'C',
+            'card'   => 'background: linear-gradient(145deg, #042240 0%, #021525 70%, #010810 100%);',
+            'bar'    => 'background: linear-gradient(90deg, #0C447C, #B5D4F4, #378ADD, #B5D4F4, #0C447C);',
+            'tier'   => 'background: linear-gradient(145deg, #B5D4F4 0%, #378ADD 100%); color: #021525;',
+            'glow'   => 'box-shadow: 0 0 24px -4px #378ADD80, inset 0 1px 0 0 #B5D4F460;',
+            'date'   => 'color: #85B7EB;',
+            'cat'    => 'background: #378ADD22; color: #B5D4F4; border: 1px solid #378ADD55;',
+            'name'   => 'color: #E5F0FF; text-shadow: 0 0 18px #378ADD55;',
+            'desc'   => 'color: #B5D4F4;',
+            'label'  => 'C',
         ],
         'd' => [
-            'card'  => 'background: linear-gradient(145deg, #122808 0%, #091803 70%, #040c02 100%);',
-            'bar'   => 'background: linear-gradient(90deg, #27500A, #C0DD97, #639922, #C0DD97, #27500A);',
-            'tier'  => 'background: #639922; color: #091803;',
-            'date'  => 'color: #3B6D11;',
-            'cat'   => 'color: #C0DD97;',
-            'name'  => 'color: #D8F0A0;',
-            'desc'  => 'color: #97C459;',
-            'label' => 'D',
+            'card'   => 'background: linear-gradient(145deg, #122808 0%, #091803 70%, #040c02 100%);',
+            'bar'    => 'background: linear-gradient(90deg, #27500A, #C0DD97, #639922, #C0DD97, #27500A);',
+            'tier'   => 'background: linear-gradient(145deg, #C0DD97 0%, #639922 100%); color: #091803;',
+            'glow'   => 'box-shadow: 0 0 24px -4px #63992280, inset 0 1px 0 0 #C0DD9760;',
+            'date'   => 'color: #97C459;',
+            'cat'    => 'background: #63992222; color: #C0DD97; border: 1px solid #63992255;',
+            'name'   => 'color: #E5F5C0; text-shadow: 0 0 18px #63992255;',
+            'desc'   => 'color: #C0DD97;',
+            'label'  => 'D',
         ],
     ];
 
@@ -100,55 +108,62 @@
 @endphp
 
 <div
-    class="rounded-xl p-3 flex flex-col gap-2 relative overflow-visible h-full w-full {{ $masked ? 'opacity-60' : '' }}"
-    style="{{ $t['card'] }} border: 1.5px solid {{ $border }};"
+    class="group rounded-xl p-3.5 pt-4 flex flex-col gap-2.5 relative overflow-visible h-full w-full transition-transform duration-200 hover:-translate-y-0.5 {{ $masked ? 'opacity-60' : '' }}"
+    style="{{ $t['card'] }} border: 1.5px solid {{ $border }}; box-shadow: 0 4px 14px -6px {{ $border }}40;"
 >
     {{-- Top gradient bar in tier color --}}
     <div class="absolute top-0 left-0 right-0 h-1 rounded-t-xl" style="{{ $t['bar'] }}"></div>
 
-    {{-- Tier badge + optional date (player profile) or lock icon (masked) --}}
-    <div class="flex items-center justify-between">
-        <div class="w-7 h-7 rounded-md flex items-center justify-center text-sm font-bold shrink-0"
-             style="{{ $t['tier'] }}">
+    {{-- Header row: big tier badge (visual anchor) + category pill / date / lock --}}
+    <div class="flex items-start justify-between gap-2">
+
+        {{-- Big tier badge — primary visual element of the card --}}
+        <div class="w-12 h-12 rounded-lg flex items-center justify-center shrink-0 font-mono"
+             style="{{ $t['tier'] }} {{ $t['glow'] }} font-size: 1.5rem; font-weight: 800; letter-spacing: -0.02em;">
             {{ $t['label'] }}
         </div>
 
-        @if($unlockedAt)
-            <span class="text-xs font-mono" style="{{ $t['date'] }}">
-                {{ \Carbon\Carbon::parse($unlockedAt)->format('M Y') }}
+        {{-- Right column: category pill on top, date / lock below --}}
+        <div class="flex flex-col items-end gap-1.5 min-w-0 flex-1">
+            <span class="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full whitespace-nowrap truncate max-w-full"
+                  style="{{ $t['cat'] }}">
+                {{ $catLabel }}
             </span>
-        @elseif($masked)
-            <span class="text-xs" style="color: #534AB7;">🔒</span>
-        @endif
+
+            @if($unlockedAt)
+                <span class="text-[11px] font-mono font-semibold" style="{{ $t['date'] }}">
+                    {{ \Carbon\Carbon::parse($unlockedAt)->format('M Y') }}
+                </span>
+            @elseif($masked)
+                <span class="text-base leading-none" style="color: #534AB7;">🔒</span>
+            @endif
+        </div>
     </div>
 
-    {{-- Category label --}}
-    <span class="text-xs font-semibold uppercase tracking-widest" style="{{ $t['cat'] }}">
-        {{ $catLabel }}
-    </span>
-
-    {{-- Achievement name --}}
-    <p class="text-sm font-bold leading-tight" style="{{ $t['name'] }}">
+    {{-- Achievement name — bigger, bolder, with subtle tier-colored glow --}}
+    <p class="text-base font-extrabold leading-snug mt-1" style="{{ $t['name'] }} letter-spacing: -0.015em;">
         {{ $a['name'] }}
     </p>
 
-    {{-- Description — hidden for masked secrets --}}
+    {{-- Description — uses dedicated desc color for readability (no opacity hack) --}}
     @if(!empty($a['description']))
-        <p class="text-xs leading-relaxed flex-1 opacity-80" style="{{ $t['name'] }}">
+        <p class="text-[13px] leading-relaxed flex-1" style="{{ $t['desc'] }}">
             {{ $a['description'] }}
         </p>
     @elseif($masked)
-        <p class="text-xs italic" style="color: #534AB7;">Hidden achievement</p>
+        <p class="text-[13px] italic flex-1" style="color: #534AB7;">Hidden achievement</p>
     @endif
 
     {{-- Footer: owners count + lore badge + optional "who?" button --}}
-    <div class="mt-auto pt-1.5 border-t flex items-center justify-between gap-1"
-         style="{{ $t['date'] }}; border-color: {{ $border }}30;">
+    <div class="mt-auto pt-2 border-t flex items-center justify-between gap-1.5"
+         style="border-color: {{ $border }}40;">
 
-        <span class="text-xs font-mono">
-            {{ $a['owners_count'] }} {{ $a['owners_count'] === 1 ? 'player' : 'players' }}
+        <span class="text-[11px] font-mono font-semibold" style="{{ $t['date'] }}">
+            <span class="font-bold">{{ $a['owners_count'] }}</span>
+            <span class="opacity-75">{{ $a['owners_count'] === 1 ? 'player' : 'players' }}</span>
             @if($totalPlayers > 0)
-                · {{ number_format(($a['owners_count'] / $totalPlayers) * 100, 2) }}%
+                <span class="opacity-50">·</span>
+                <span>{{ number_format(($a['owners_count'] / $totalPlayers) * 100, 2) }}%</span>
             @endif
         </span>
 
@@ -159,11 +174,11 @@
 
                 <button
                     @click.stop="open = true"
-                    class="flex items-center gap-1 px-1.5 py-0.5 rounded-full text-xs font-semibold cursor-pointer hover:opacity-100 transition-opacity"
-                    style="{{ $t['tier'] }}; opacity: 0.85;"
+                    class="flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-bold cursor-pointer hover:opacity-100 transition-opacity"
+                    style="{{ $t['tier'] }} opacity: 0.9;"
                 >📖 lore</button>
 
-                {{-- Modal teleported to body so it's not clipped by card overflow:hidden --}}
+                {{-- Modal teleported to body so it's not clipped by card overflow --}}
                 <template x-teleport="body">
                     <div
                         x-show="open"
@@ -191,32 +206,43 @@
                             x-transition:leave-start="opacity-100 scale-100"
                             x-transition:leave-end="opacity-0 scale-95 translate-y-2"
                             @click.stop
-                            class="relative z-10 w-full max-w-sm rounded-2xl overflow-hidden"
-                            style="{{ $t['card'] }} border: 1.5px solid {{ $border }};"
+                            class="relative z-10 w-full max-w-md rounded-2xl overflow-hidden"
+                            style="{{ $t['card'] }} border: 1.5px solid {{ $border }}; box-shadow: 0 20px 60px -10px {{ $border }}60;"
                         >
                             {{-- Top bar --}}
                             <div class="absolute top-0 left-0 right-0 h-1" style="{{ $t['bar'] }}"></div>
 
-                            <div class="p-5 pt-6 flex flex-col gap-3">
+                            <div class="p-6 pt-7 flex flex-col gap-4">
 
-                                {{-- Category + close --}}
-                                <div class="flex items-center justify-between">
-                                    <span class="text-xs font-semibold uppercase tracking-widest" style="{{ $t['cat'] }}">{{ $catLabel }}</span>
-                                    <button @click="open = false" class="w-6 h-6 flex items-center justify-center rounded-full text-xs font-bold cursor-pointer" style="{{ $t['tier'] }}">✕</button>
+                                {{-- Header: big tier badge + category + close --}}
+                                <div class="flex items-start justify-between gap-3">
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-14 h-14 rounded-lg flex items-center justify-center shrink-0 font-mono"
+                                             style="{{ $t['tier'] }} {{ $t['glow'] }} font-size: 1.75rem; font-weight: 800;">
+                                            {{ $t['label'] }}
+                                        </div>
+                                        <span class="text-[11px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full"
+                                              style="{{ $t['cat'] }}">
+                                            {{ $catLabel }}
+                                        </span>
+                                    </div>
+                                    <button @click="open = false"
+                                            class="w-7 h-7 flex items-center justify-center rounded-full text-xs font-bold cursor-pointer shrink-0"
+                                            style="{{ $t['tier'] }}">✕</button>
                                 </div>
 
                                 {{-- Name --}}
-                                <p class="text-base font-bold leading-tight" style="{{ $t['name'] }}">{{ $a['name'] }}</p>
+                                <p class="text-xl font-extrabold leading-tight" style="{{ $t['name'] }} letter-spacing: -0.02em;">{{ $a['name'] }}</p>
 
                                 {{-- Description --}}
                                 @if(!empty($a['description']))
-                                    <p class="text-sm leading-relaxed" style="{{ $t['name'] }}">{{ $a['description'] }}</p>
+                                    <p class="text-sm leading-relaxed" style="{{ $t['desc'] }}">{{ $a['description'] }}</p>
                                 @endif
 
                                 {{-- Lore --}}
-                                <div class="border-t pt-3" style="border-color: {{ $border }}40;">
-                                    <p class="text-xs font-semibold uppercase tracking-widest mb-2" style="{{ $t['name'] }}">📖 Lore</p>
-                                    <p class="text-sm italic leading-relaxed opacity-80" style="{{ $t['name'] }}">{{ $a['lore'] }}</p>
+                                <div class="border-t pt-4" style="border-color: {{ $border }}40;">
+                                    <p class="text-[11px] font-bold uppercase tracking-widest mb-2" style="{{ $t['date'] }}">📖 Lore</p>
+                                    <p class="text-sm italic leading-relaxed" style="{{ $t['name'] }}">{{ $a['lore'] }}</p>
                                 </div>
 
                             </div>

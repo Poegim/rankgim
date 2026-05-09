@@ -355,7 +355,8 @@
                             }
                         },
                         grid: {
-                            borderColor: '#3f3f46',
+                            borderColor: getComputedStyle(document.documentElement)
+                                .getPropertyValue('--color-zinc-700').trim(),
                         },
                     }).render();
                 }
@@ -406,7 +407,8 @@
                             }
                         },
                         grid: {
-                            borderColor: document.documentElement.classList.contains('dark') ? '#3f3f46' : '#e4e4e7',
+                            borderColor: getComputedStyle(document.documentElement)
+                                .getPropertyValue('--color-zinc-700').trim(),
                         },
                     }).render();
                 }

@@ -1,14 +1,15 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="dark">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}"
+      x-data
+      >
 
 <head>
     @include('partials.head')
 </head>
 
-<body class="min-h-screen bg-white dark:bg-zinc-800">
+<body class="min-h-screen bg-travertine-75 dark:bg-zinc-800">
     @php
         // Compute the next upcoming event and its "urgency" badge color for the Events item.
-        // Kept inline at the top of the sidebar so the variables are available to flux:sidebar.item below.
         $upcomingEvents = \App\Models\Event::where('starts_at', '>=', now()->subHours(\App\Models\Event::LIVE_WINDOW_HOURS))
             ->where('starts_at', '<=', now()->addDays(7))
             ->orderBy('starts_at')
@@ -22,12 +23,11 @@
             $badgeColor = match (true) {
                 $minutesLeft <= 60   => 'bg-red-500 text-white',
                 $minutesLeft <= 1440 => 'bg-amber-400 text-black',
-                default              => 'bg-zinc-600 text-zinc-300',
+                default              => 'bg-travertine-300 text-travertine-700 dark:bg-zinc-600 dark:text-zinc-300',
             };
         }
-    
-        // Compute upcoming open forecast matches and urgency badge color for the Forecast item.
-        // Uses scheduled_at: red < 2h, orange < 24h, grey <= 7 days.
+
+        // Compute upcoming open forecast matches and urgency badge color.
         $season = \App\Models\ForecastSeason::current();
 
         $upcomingForecasts    = collect();
@@ -48,14 +48,17 @@
                 $forecastBadgeColor = match (true) {
                     $minutesLeft <= 120  => 'bg-red-500 text-white',
                     $minutesLeft <= 1440 => 'bg-amber-400 text-black',
-                    default              => 'bg-zinc-600 text-zinc-300',
+                    default              => 'bg-travertine-300 text-travertine-700 dark:bg-zinc-600 dark:text-zinc-300',
                 };
             }
         }
     @endphp
 
+    {{-- Sidebar — parchment-deep surface, distinct from body sand bg --}}
     <flux:sidebar sticky collapsible="mobile"
-        class="border-e border-zinc-200 bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-900">
+        class="border-e
+               border-travertine-300 bg-travertine-100
+               dark:border-zinc-700 dark:bg-zinc-900">
 
         <flux:sidebar.header>
             <x-app-logo :sidebar="true" href="{{ route('dashboard') }}" wire:navigate />
@@ -64,7 +67,6 @@
 
         <flux:sidebar.nav>
 
-            {{-- ── Top: search + Dashboard + Ranking (the flagship product) ── --}}
             <flux:sidebar.group class="grid">
                 <livewire:player-search />
 
@@ -83,7 +85,6 @@
                 </flux:sidebar.item>
             </flux:sidebar.group>
 
-            {{-- ── Group: Community ──────────────────────────────── --}}
             <flux:sidebar.group heading="Briefing">
                 <flux:sidebar.item icon="calendar-days"
                     :href="route('events.index')"
@@ -114,7 +115,6 @@
                 </flux:sidebar.item>
             </flux:sidebar.group>
 
-            {{-- ── Group: Insights (analytical views over the data) ── --}}
             <flux:sidebar.group heading="Insights">
                 <flux:sidebar.item icon="star"
                     :href="route('achievements.index')"
@@ -125,13 +125,11 @@
 
                 <flux:sidebar.item icon="chart-bar"
                     :href="route('stats.index')"
-                    :current="request()->routeIs('stats.index')"
-                    >
+                    :current="request()->routeIs('stats.index')">
                     {{ __('Stats') }}
                 </flux:sidebar.item>
             </flux:sidebar.group>
 
-            {{-- ── Group: Browse (list-of-entity pages) ──────────── --}}
             <flux:sidebar.group heading="Browse">
                 <flux:sidebar.item icon="users"
                     :href="route('players.index')"
@@ -162,7 +160,6 @@
                 </flux:sidebar.item>
             </flux:sidebar.group>
 
-            {{-- ── Bottom: About + Admin ─────────────────────────── --}}
             <flux:sidebar.group>
                 <flux:sidebar.item icon="information-circle"
                     :href="route('about')"
@@ -187,24 +184,32 @@
 
         <flux:spacer />
 
-        {{-- Ko-fi support link --}}
+        {{-- Theme toggle button --}}
+        <flux:radio.group x-data variant="segmented" x-model="$flux.appearance">
+            <flux:radio value="light" icon="sun"></flux:radio>
+            <flux:radio value="dark" icon="moon"></flux:radio>
+            <flux:radio value="system" icon="computer-desktop"></flux:radio>
+        </flux:radio.group>
+
+
+        {{-- Ko-fi support — gradient bg, !text-white preserved across themes --}}
         <div class="mx-3">
             <a href="https://ko-fi.com/rankgim" target="_blank"
                 class="group relative flex items-center gap-2 rounded-lg px-3 py-2 overflow-hidden transition-all duration-300 hover:scale-[1.02]"
                 style="background: linear-gradient(135deg, #ff5e5b 0%, #ff2d55 50%, #d63384 100%);">
                 <div class="absolute inset-0 bg-white/0 group-hover:bg-white/10 transition-all duration-300"></div>
-                <svg class="w-4 h-4 text-white shrink-0 relative z-10 group-hover:animate-bounce"
+                <svg class="w-4 h-4 !text-white shrink-0 relative z-10 group-hover:animate-bounce"
                     viewBox="0 0 24 24" fill="currentColor">
                     <path d="M23.881 8.948c-.773-4.085-4.859-4.593-4.859-4.593H.723c-.604 0-.679.798-.679.798s-.082 7.324-.022 11.822c.164 2.424 2.586 2.672 2.586 2.672s8.267-.023 11.966-.049c2.438-.426 2.683-2.566 2.658-3.734 4.352.24 7.422-2.831 6.649-6.916zm-11.062 3.511c-1.246 1.453-4.011 3.976-4.011 3.976s-.121.119-.31.023c-.076-.057-.108-.09-.108-.09-.443-.441-3.368-3.049-4.034-3.954-.709-.965-1.041-2.7-.091-3.71.951-1.01 3.005-1.086 4.363.407 0 0 1.565-1.782 3.468-.963 1.903.82 1.832 3.011.723 4.311zm6.173.478c-.928.116-1.682.028-1.682.028V7.284h1.77s1.971.551 1.971 2.638c0 1.913-.985 2.667-2.059 3.015z" />
                 </svg>
-                <span class="text-white text-xs font-semibold relative z-10 whitespace-nowrap">
+                <span class="!text-white text-xs font-semibold relative z-10 whitespace-nowrap">
                     Help keep Rankgim alive ❤️
                 </span>
             </a>
         </div>
 
 
-        {{-- Load forecast wallet data inline — View Composer doesn't fire reliably on included partials --}}
+        {{-- Forecast wallet pill — card lift on parchment-deep sidebar --}}
         @auth
             @php
                 $_forecastSeason = \App\Models\ForecastSeason::current();
@@ -227,27 +232,37 @@
                 @php
                     $sidebarIcon = \App\Models\ForecastWallet::CURRENCIES[$sidebarWallet->currency]['icon'] ?? '💠';
                 @endphp
-                <div class="mx-3 mb-1 px-3 py-2 rounded-lg bg-zinc-800/60 border border-zinc-700/30 flex items-center justify-between gap-2">
+                <div class="mx-3 mb-1 px-3 py-2 rounded-lg
+                            bg-travertine-50 border border-travertine-300
+                            dark:bg-zinc-800/60 dark:border-zinc-700/30
+                            flex items-center justify-between gap-2">
                     <div class="flex items-center gap-1.5 min-w-0">
                         <span class="text-base leading-none shrink-0">{{ $sidebarIcon }}</span>
-                        <span class="text-xs font-mono font-bold text-amber-300 leading-none">
+                        <span class="text-xs font-mono font-bold leading-none
+                                     text-amber-700 dark:text-amber-300">
                             {{ number_format($sidebarWallet->balance, 0) }}
                         </span>
-                        <span class="text-[10px] text-zinc-600 leading-none">energy</span>
+                        <span class="text-[10px] leading-none
+                                     text-travertine-500 dark:text-zinc-600">energy</span>
                     </div>
 
-                    <span class="text-zinc-700 text-xs shrink-0">·</span>
+                    <span class="text-xs shrink-0
+                                 text-travertine-400 dark:text-zinc-700">·</span>
 
                     <div class="flex items-center gap-1 shrink-0">
                         @if($sidebarPendingBets > 0)
-                            <span class="inline-flex items-center justify-center w-4 h-4 rounded-full bg-amber-500/20 text-amber-400 text-[10px] font-bold leading-none">
+                            <span class="inline-flex items-center justify-center w-4 h-4 rounded-full text-[10px] font-bold leading-none
+                                         bg-amber-200 text-amber-800
+                                         dark:bg-amber-500/20 dark:text-amber-400">
                                 {{ $sidebarPendingBets }}
                             </span>
-                            <span class="text-[10px] text-zinc-400 leading-none">
+                            <span class="text-[10px] leading-none
+                                         text-travertine-600 dark:text-zinc-400">
                                 active {{ Str::plural('bet', $sidebarPendingBets) }}
                             </span>
                         @else
-                            <span class="text-[10px] text-zinc-600 leading-none">no active bets</span>
+                            <span class="text-[10px] leading-none
+                                         text-travertine-500 dark:text-zinc-600">no active bets</span>
                         @endif
                     </div>
                 </div>
@@ -274,7 +289,7 @@
 
     </flux:sidebar>
 
-    {{-- ── Mobile Header — always visible on mobile ───────────────── --}}
+    {{-- ── Mobile Header ── --}}
     <flux:header class="lg:hidden">
         <flux:sidebar.toggle class="lg:hidden" icon="bars-2" inset="left" />
         <flux:spacer />

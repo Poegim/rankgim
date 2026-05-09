@@ -25,8 +25,7 @@ class MostActive extends Component
         return RatingHistory::where('played_at', '>=', $this->since)
             ->selectRaw('player_id, count(*) as total, sum(result = "win") as wins')
             ->groupBy('player_id')
-            ->having('total', '>=', 15)
-            ->orderByRaw('wins / total DESC')
+            ->orderByRaw('total DESC')
             ->with('player')
             ->limit(5)
             ->get();

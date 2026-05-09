@@ -44,6 +44,29 @@
     --color-zinc-900: #171717;
     --color-zinc-950: #0a0a0a;
 
+    /* Travertine ramp — warm beige/olive for light mode surfaces.        */
+    /* Hierarchy: 200 = body (sand), 100 = sidebar (parchment-deep),      */
+    /* 50 = card lift. 300+ = borders. 500+ = text shades.                */
+    --color-travertine-50:  #faf6e9;   /* card lift — widget container   */
+    --color-travertine-75:  #f4ecd8;   /* body / page bg                 */
+    --color-travertine-100: #efe6cc;   /* sidebar surface                */
+    --color-travertine-200: #e8dfc0;   /* hover bg / muted surface       */
+    --color-travertine-300: #d4cab0;   /* card borders                   */
+    --color-travertine-350: #ebe1c4;   /* row separator (lighter)        */
+    --color-travertine-400: #b8a87a;   /* hover border / muted icons     */
+    --color-travertine-500: #8a7a52;   /* muted text                     */
+    --color-travertine-600: #6b5d3e;   /* secondary text                 */
+    --color-travertine-700: #4a4029;   /* body text                      */
+    --color-travertine-800: #2a241b;   /* strong text                    */
+    --color-travertine-900: #1a1611;   /* headings                       */
+ 
+    /* Roman accent — oxblood / senator's wine. Used for: brand logo,    */
+    /* active nav indicator, CTA buttons, widget header text, link       */
+    /* hovers. Single source of truth for the brand color.                */
+    --color-oxblood:         #6e1e2a;
+    --color-oxblood-deep:    #5a1822;   /* hover state for oxblood       */
+    --color-oxblood-content: #f4ecd8;   /* foreground on oxblood bg      */
+
     --color-accent: var(--color-neutral-800);
     --color-accent-content: var(--color-neutral-800);
     --color-accent-foreground: var(--color-white);
@@ -340,3 +363,102 @@ select:focus[data-flux-control] {
     @apply size-4;
 } */
 
+/* ════════════════════════════════════════════════════════════════════
+   LIGHT THEME — minimal foundation
+   Travertine + wine palette. Per-component styling lives in blades
+   via Tailwind dark: variants. This file holds only the global
+   foundation: page chrome, accent token, race color overrides, and
+   article markdown (which has its own custom CSS, no utilities).
+   ════════════════════════════════════════════════════════════════════ */
+
+:root:not(.dark) {
+    /* Accent — burgundy / senator's wine. Used by Flux for focus rings, */
+    /* button accents. Single source of truth for the brand color.        */
+    --color-accent:            #6e1e2a;
+    --color-accent-content:    #6e1e2a;
+    --color-accent-foreground: #faf6e9;
+
+    /* Race colors retuned for light bg. These are CSS vars consumed by  */
+    /* inline style="color: var(--color-race-*)" across many blades —    */
+    /* impossible to override per-blade with Tailwind utilities.         */
+    --color-race-terran:        #1d4ed8;
+    --color-race-terran-soft:   #2563eb;
+    --color-race-zerg:          #be123c;
+    --color-race-zerg-soft:     #e11d48;
+    --color-race-protoss:       #a16207;
+    --color-race-protoss-soft:  #ca8a04;
+    --color-race-random:        #c2410c;
+    --color-race-random-soft:   #ea580c;
+    --color-race-unknown:       #57534e;
+    --color-race-unknown-soft:  #78716c;
+}
+
+/* Body background — single source of truth for the page canvas.        */
+/* Cannot be done in blade because <body> is in app layout, but the     */
+/* color decision is global and won't vary per page.                    */
+/* :root:not(.dark) body {
+    background-color: #efe9d6;
+    color: #2a241b;
+} */
+
+/* Logo / brand — burgundy in light mode. Targets Flux brand element    */
+/* which we don't control via blade utilities.                          */
+:root:not(.dark) [data-flux-brand],
+:root:not(.dark) [data-flux-sidebar-brand] {
+    color: #6e1e2a;
+}
+
+/* Article markdown — uses custom CSS classes (.article-content etc.),  */
+/* not Tailwind utilities, so light overrides must live here.           */
+:root:not(.dark) .article-content                                  { color: #3d3422; }
+:root:not(.dark) .article-content h2                               { color: #574a31; border-bottom-color: #d6c9a6; }
+:root:not(.dark) .article-content h3,
+:root:not(.dark) .article-content strong                           { color: #1a1611; }
+:root:not(.dark) .article-content a:not(.player-pill):not(.tournament-link) {
+    color: #6e1e2a;
+    text-decoration-color: color-mix(in srgb, #6e1e2a 40%, transparent);
+}
+:root:not(.dark) .article-content a:not(.player-pill):not(.tournament-link):hover {
+    color: #4a1219;
+    text-decoration-color: #6e1e2a;
+}
+:root:not(.dark) .article-content ul {
+    border-color: #d6c9a6;
+    background: color-mix(in srgb, #faf6e9 80%, transparent);
+}
+:root:not(.dark) .article-content ul li                            { border-bottom-color: #e2d9bf; }
+:root:not(.dark) .article-content .rank-pill                       { background: color-mix(in srgb, #d6c9a6 60%, transparent); color: #3d3422; }
+:root:not(.dark) .article-content .delta-positive                  { color: #047857; }
+:root:not(.dark) .article-content .delta-negative                  { color: #b91c1c; }
+
+:root:not(.dark) .player-pill                                      { border-color: #c9bd9a; background: color-mix(in srgb, #f3ecd6 80%, transparent); }
+:root:not(.dark) .player-pill__name                                { color: #2a241b; }
+:root:not(.dark) .player-pill:hover                                { border-color: #a89a74; }
+:root:not(.dark) .player-pill:hover .player-pill__name             { color: #1a1611; }
+:root:not(.dark) .tournament-link                                  { color: #2a241b; }
+:root:not(.dark) .tournament-link:hover                            { color: #1a1611; }
+:root:not(.dark) .tournament-link__name                            { border-bottom-color: color-mix(in srgb, #a89a74 70%, transparent); }
+
+
+/* ─── Theme switch transition ───────────────────────────────────────────
+   Flux toggles the .dark class on <html> instantly. To make the color
+   swap feel smooth instead of a hard flip, animate background-color
+   and border-color on every element. Color (text) is intentionally
+   excluded — fading text creates a brief illegibility flash; it should
+   swap instantly. Same for box-shadow and transform — those are used
+   by hover effects and animating them on theme change causes weird
+   double-transitions on already-hovered elements.
+
+   prefers-reduced-motion users get an instant swap (accessibility).
+*/
+@media (prefers-reduced-motion: no-preference) {
+    *,
+    *::before,
+    *::after {
+        transition:
+            background-color 250ms ease,
+            border-color 250ms ease,
+            fill 250ms ease,
+            stroke 250ms ease;
+    }
+}

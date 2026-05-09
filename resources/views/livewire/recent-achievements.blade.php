@@ -23,12 +23,14 @@
         <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
             @foreach($this->visibleAchievements as $a)
                 @php
-                    $raceColor = match($a['race']) {
-                        'Terran'  => '#3b82f6',
-                        'Zerg'    => '#a855f7',
-                        'Protoss' => '#eab308',
-                        'Random'  => '#f97316',
-                        default   => '#71717a',
+                    // Race base color — resolved from CSS custom properties defined in app.css.
+                    // Use var() in inline styles so Tailwind JIT never strips these values.
+                    $raceColorVar = match($a['race']) {
+                        'Terran'  => 'var(--color-race-terran)',
+                        'Zerg'    => 'var(--color-race-zerg)',
+                        'Protoss' => 'var(--color-race-protoss)',
+                        'Random'  => 'var(--color-race-random)',
+                        default   => 'var(--color-race-unknown)',
                     };
                 @endphp
 
@@ -38,12 +40,12 @@
                     <a href="{{ route('players.show', ['id' => $a['player_id'], 'slug' => \Illuminate\Support\Str::slug($a['player_name'])]) }}"
                        wire:navigate
                        class="flex items-center gap-2 rounded-t-xl px-3 py-2 border-x border-t shrink-0"
-                       style="background: linear-gradient(90deg, {{ $raceColor }}30 0%, {{ $raceColor }}10 100%); border-color: {{ $raceColor }}50;">
+                       style="background: linear-gradient(90deg, color-mix(in srgb, {{ $raceColorVar }} 18%, transparent) 0%, color-mix(in srgb, {{ $raceColorVar }} 6%, transparent) 100%); border-color: color-mix(in srgb, {{ $raceColorVar }} 30%, transparent);">
                         <img src="{{ asset('images/country_flags/' . strtolower($a['country']) . '.svg') }}"
                              class="w-5 h-3.5 rounded-sm shrink-0"
                              alt="{{ $a['country'] }}">
                         <span class="text-xs font-bold text-zinc-100 truncate">{{ $a['player_name'] }}</span>
-                        <span class="text-xs font-semibold shrink-0" style="color: {{ $raceColor }};">{{ $a['race'][0] }}</span>
+                        <span class="text-xs font-semibold shrink-0" style="color: {{ $raceColorVar }};">{{ $a['race'][0] }}</span>
                     </a>
 
                     {{-- Achievement card — fills remaining height so all cards in a row line up --}}
