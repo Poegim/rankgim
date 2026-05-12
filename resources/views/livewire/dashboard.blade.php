@@ -7,6 +7,8 @@
         
     </div>
 
+    <livewire:streams.stream-list />
+
     {{-- ========== Row 2: Events + Next match to predict ==========
          Layout adapts:
          - both present     → 50/50 grid

@@ -88,10 +88,20 @@ Route::get('/forecast', App\Livewire\Forecast\Index::class)->name('forecast.inde
 
 // Admin routes with middleware for authentication and admin access
 Route::middleware(['auth', 'verified',  App\Http\Middleware\EnsureUserIsAdmin::class])->prefix('admin')->name('admin.')->group(function () {
-    Route::get('/', fn() => view('admin.index'))->name('index');
+    // Default landing — Users management
+    Route::get('/', fn() => view('admin.users'))->name('index');
+
+    // Streams tab — component lives in App\Livewire\Admin\StreamList (built separately)
+    Route::get('/streams', fn() => view('admin.streams'))->name('streams');
+
+    // Inactive players tab
+    Route::get('/inactive-players', fn() => view('admin.inactive-players'))->name('inactive-players');
+
+    // Subpage linked from the Users tab
     Route::get('/achievement-insights', \App\Livewire\Admin\AchievementInsights::class)->name('achievement-insights');
 
-
+    Route::get('/soop-streamers', \App\Livewire\Admin\SoopStreamers::class)
+        ->name('soop-streamers');
 
 });
 

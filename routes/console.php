@@ -18,3 +18,11 @@ Schedule::call(function () {
         ->whereNull('reminder_sent_at')
         ->each(fn($event) => SendEventReminderJob::dispatch($event));
 })->everyMinute();
+
+// SOOP live stream cache refresh — single request to broad/list every 5 min,
+// well below any sensible rate limit (288 requests/day).
+// withoutOverlapping prevents pile-ups if SOOP is slow on a given tick.
+Schedule::command('soop:refresh-streams')
+    ->everyFiveMinutes()
+    ->withoutOverlapping(10)
+    ->runInBackground();
