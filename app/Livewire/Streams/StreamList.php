@@ -15,10 +15,26 @@ class StreamList extends Component
      */
     public int $pollSeconds = 60;
 
+    /**
+     * When true, render the "Other live streams" section under featured ones.
+     * Disabled on the dashboard widget (featured only), enabled on /streams page.
+     */
+    public bool $showOthers = false;
+
     #[Computed]
     public function streams(): array
     {
         return app(SoopLiveStatusService::class)->whitelistedLiveStreams();
+    }
+
+    #[Computed]
+    public function others(): array
+    {
+        if (! $this->showOthers) {
+            return [];
+        }
+
+        return app(SoopLiveStatusService::class)->otherLiveStreams();
     }
 
     #[Computed]

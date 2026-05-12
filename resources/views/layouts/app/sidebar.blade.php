@@ -85,6 +85,12 @@
 
             {{-- ── Group: Community ──────────────────────────────── --}}
             <flux:sidebar.group heading="Briefing">
+                <flux:sidebar.item icon="video-camera"
+                    :href="route('streams.index')"
+                    :current="request()->routeIs('streams.index')"
+                    wire:navigate>
+                    {{ __('Live streams') }}
+                </flux:sidebar.item>
                 <flux:sidebar.item icon="calendar-days"
                     :href="route('events.index')"
                     :current="request()->routeIs('events.*')"

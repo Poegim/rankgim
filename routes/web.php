@@ -85,6 +85,8 @@ Route::get('/achievements', AchievementsBrowser::class)->name('achievements.inde
 // Forecasting routes
 Route::get('/forecast', App\Livewire\Forecast\Index::class)->name('forecast.index');
 
+// Streams route
+Route::get('/streams', App\Livewire\Streams\Index::class)->name('streams.index');
 
 // Admin routes with middleware for authentication and admin access
 Route::middleware(['auth', 'verified',  App\Http\Middleware\EnsureUserIsAdmin::class])->prefix('admin')->name('admin.')->group(function () {

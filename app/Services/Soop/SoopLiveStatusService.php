@@ -184,6 +184,57 @@ class SoopLiveStatusService
         return $url;
     }
 
+    /**
+     * Return all live broadcasts NOT in the whitelist.
+     *
+     * Same output shape as whitelistedLiveStreams() but without `label`/`race`
+     * (those come from soop_streamers table which by definition is the whitelist).
+     * Sorted by viewers DESC.
+     *
+     * @return array<int, array<string, mixed>>
+     */
+    public function otherLiveStreams(): array
+    {
+        $payload    = $this->cachedPayload();
+        $broadcasts = $payload['broadcasts'] ?? [];
+        $whitelist  = \App\Models\SoopStreamer::query()->pluck('user_id')->all();
+        $whitelist  = array_flip($whitelist); // O(1) isset() lookup
+
+        $rows = [];
+
+        foreach ($broadcasts as $b) {
+            $userId = $b['user_id'] ?? null;
+
+            if (! is_string($userId) || isset($whitelist[$userId])) {
+                continue; // skip non-strings and whitelisted (handled separately)
+            }
+
+            // Same safety filters as the whitelist path.
+            if ((string) ($b['broad_grade'] ?? '0') === '19') {
+                continue;
+            }
+
+            if ((string) ($b['is_password'] ?? '0') === '1') {
+                continue;
+            }
+
+            $rows[] = [
+                'user_id'     => $userId,
+                'user_nick'   => (string) ($b['user_nick'] ?? $userId),
+                'broad_no'    => (string) ($b['broad_no'] ?? ''),
+                'broad_title' => (string) ($b['broad_title'] ?? ''),
+                'viewers'     => (int)    ($b['total_view_cnt'] ?? 0),
+                'thumbnail'   => $this->normalizeThumbnail($b['broad_thumb'] ?? null),
+                'started_at'  => $this->parseDate($b['broad_start'] ?? null),
+                'play_url'    => "https://play.sooplive.com/{$userId}/{$b['broad_no']}",
+            ];
+        }
+
+        usort($rows, fn ($a, $b) => $b['viewers'] <=> $a['viewers']);
+
+        return $rows;
+    }
+
     protected function parseDate(?string $value): ?Carbon
     {
         if (! $value) {
