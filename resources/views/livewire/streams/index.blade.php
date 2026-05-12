@@ -5,7 +5,6 @@
         'terran'  => 'Terran',
         'protoss' => 'Protoss',
         'zerg'    => 'Zerg',
-        'random'  => 'Random',
     ];
 @endphp
 

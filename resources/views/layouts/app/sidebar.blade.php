@@ -7,6 +7,7 @@
 
 <body class="min-h-screen bg-white dark:bg-zinc-800">
     @php
+        $liveStreamCount = count(app(\App\Services\Soop\SoopLiveStatusService::class)->whitelistedLiveStreams());
         // Compute the next upcoming event and its "urgency" badge color for the Events item.
         // Kept inline at the top of the sidebar so the variables are available to flux:sidebar.item below.
         $upcomingEvents = \App\Models\Event::where('starts_at', '>=', now()->subHours(\App\Models\Event::LIVE_WINDOW_HOURS))
@@ -89,7 +90,15 @@
                     :href="route('streams.index')"
                     :current="request()->routeIs('streams.index')"
                     wire:navigate>
-                    {{ __('Live streams') }}
+                    <div class="flex items-center justify-between w-full">
+                        <span>{{ __('Live streams') }}</span>
+                        @if($liveStreamCount > 0)
+                            <span class="inline-flex items-center gap-1 text-xs font-bold px-1.5 py-0.5 rounded-full bg-rose-500 text-white">
+                                <span class="w-1.5 h-1.5 rounded-full bg-white animate-pulse"></span>
+                                {{ $liveStreamCount }}
+                            </span>
+                        @endif
+                    </div>
                 </flux:sidebar.item>
                 <flux:sidebar.item icon="calendar-days"
                     :href="route('events.index')"
