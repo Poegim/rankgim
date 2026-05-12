@@ -29,9 +29,9 @@
             No SOOP streams live right now.
         </p>
         <div>
-                <a href="https://www.sooplive.co.kr/directory/category/%EC%8A%A4%ED%83%80%ED%81%AC%EB%9E%98%ED%94%84%ED%8A%B8/live" target="_blank" rel="noopener noreferrer"
+                <a href=" {{ route('streams.index') }}"
                    class="text-xs text-zinc-400 hover:text-zinc-200 transition-colors px-3 py-1.5 rounded-md hover:bg-zinc-700/40">
-                    Go To Soop
+                    Show all
                 </a>           
         </div>
     @else
@@ -55,10 +55,10 @@
                 </button>
             @endforeach
             <div>
-                <a href="https://www.sooplive.co.kr/directory/category/%EC%8A%A4%ED%83%80%ED%81%AC%EB%9E%98%ED%94%84%ED%8A%B8/live" target="_blank" rel="noopener noreferrer"
+                <a href=" {{ route('streams.index') }}"
                    class="text-xs text-zinc-400 hover:text-zinc-200 transition-colors px-3 py-1.5 rounded-md hover:bg-zinc-700/40">
-                    Go To SoopLive
-                </a>           
+                    Show all
+                </a>            
             </div>
         </div>
 
