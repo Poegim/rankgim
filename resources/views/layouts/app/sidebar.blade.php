@@ -237,7 +237,7 @@
                     <div class="flex items-center gap-1.5 min-w-0">
                         <span class="text-base leading-none shrink-0">{{ $sidebarIcon }}</span>
                         <span class="text-xs font-mono font-bold text-amber-300 leading-none">
-                            {{ number_format($sidebarWallet->balance, 0) }}
+                            {{ number_format($sidebarWallet->balance, 2) }}
                         </span>
                         <span class="text-[10px] text-zinc-600 leading-none">energy</span>
                     </div>

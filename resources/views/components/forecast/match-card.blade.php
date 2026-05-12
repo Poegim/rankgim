@@ -402,16 +402,16 @@
             <span class="font-bold">{{ $predIcon }}</span>
             <span class="min-w-0 truncate">
                 Your pick: <strong>{{ $pickedName }}</strong>
-                · {{ number_format($userPrediction->stake, 0) }} pts
+                · {{ number_format($userPrediction->stake, 2) }} pts
                 · ×{{ number_format($userPrediction->odds_at_time, 2) }}
                 @if($userPrediction->bonus_multiplier > 1)
                     <span class="opacity-70">(×{{ number_format($userPrediction->bonus_multiplier, 2) }} perk)</span>
                 @endif
             </span>
             @if($userPrediction->result === 'won')
-                <span class="ml-auto font-bold font-mono shrink-0">+{{ number_format($userPrediction->actual_payout, 0) }} pts</span>
+                <span class="ml-auto font-bold font-mono shrink-0">+{{ number_format($userPrediction->actual_payout, 2) }} pts</span>
             @elseif($userPrediction->result === 'pending')
-                <span class="ml-auto font-mono shrink-0 opacity-70">→ {{ number_format($userPrediction->potential_payout, 0) }} pts</span>
+                <span class="ml-auto font-mono shrink-0 opacity-70">→ {{ number_format($userPrediction->potential_payout, 2) }} pts</span>
             @endif
         </div>
     @endif

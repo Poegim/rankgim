@@ -137,7 +137,8 @@ class Users extends Component
         }
 
         $this->editBalanceUserId = $userId;
-        $this->editBalanceValue  = (string) intval($wallet->balance);
+        $this->editBalanceValue = number_format((float) $wallet->balance, 2, '.', '');
+        
         $this->editBalanceError  = null;
     }
 
@@ -161,6 +162,12 @@ class Users extends Component
 
         if (! is_numeric($value) || (float) $value < 0 || (float) $value > 9999) {
             $this->editBalanceError = 'Enter a number between 0 and 9999.';
+            return;
+        }
+
+        // Limit to 2 decimal places to match wallet precision
+        if (preg_match('/\.\d{3,}$/', $value)) {
+            $this->editBalanceError = 'Up to 2 decimal places only.';
             return;
         }
 

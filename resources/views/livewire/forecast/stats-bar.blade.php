@@ -27,7 +27,7 @@
                     </div>
                     <div class="min-w-0">
                         <p class="text-[10px] uppercase tracking-wider text-zinc-500">Energy</p>
-                        <p class="text-base font-mono font-bold text-white">{{ number_format($this->wallet->balance, 0) }}</p>
+                        <p class="text-base font-mono font-bold text-white">{{ number_format($this->wallet->balance, 2) }}</p>
                     </div>
                 </div>
 
@@ -66,7 +66,7 @@
                             @endif
                         </div>
                         <p class="text-base font-mono font-bold {{ $profit >= 0 ? 'text-emerald-400' : 'text-red-400' }}">
-                            {{ $profit >= 0 ? '+' : '' }}{{ number_format($profit, 0) }}
+                            {{ $profit >= 0 ? '+' : '' }}{{ number_format($profit, 2) }}
                         </p>
                     </div>
                 </div>
