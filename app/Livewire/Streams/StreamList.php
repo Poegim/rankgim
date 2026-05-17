@@ -2,7 +2,7 @@
 
 namespace App\Livewire\Streams;
 
-use App\Services\Soop\SoopLiveStatusService;
+use App\Services\Streams\LiveStreamsService;
 use Livewire\Attributes\Computed;
 use Livewire\Component;
 
@@ -24,7 +24,9 @@ class StreamList extends Component
     #[Computed]
     public function streams(): array
     {
-        return app(SoopLiveStatusService::class)->whitelistedLiveStreams();
+        // Dashboard widget always merges both platforms — platform filtering
+        // is a /streams-page concept only.
+        return app(LiveStreamsService::class)->featuredStreams(null, auth()->user());
     }
 
     #[Computed]
@@ -34,19 +36,19 @@ class StreamList extends Component
             return [];
         }
 
-        return app(SoopLiveStatusService::class)->otherLiveStreams();
+        return app(LiveStreamsService::class)->otherStreams(null, auth()->user());
     }
 
     #[Computed]
     public function lastFetchedAt(): ?\Illuminate\Support\Carbon
     {
-        return app(SoopLiveStatusService::class)->lastFetchedAt();
+        return app(LiveStreamsService::class)->lastFetchedAt();
     }
 
     #[Computed]
     public function isStale(): bool
     {
-        return app(SoopLiveStatusService::class)->isStale();
+        return app(LiveStreamsService::class)->isStale();
     }
 
     public function render()

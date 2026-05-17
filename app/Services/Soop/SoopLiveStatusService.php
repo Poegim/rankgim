@@ -29,7 +29,7 @@ class SoopLiveStatusService
      * Streams older than this are considered stale by the UI badge,
      * even though we still render them.
      */
-    public const STALE_AFTER_MINUTES = 15;
+    public const STALE_AFTER_MINUTES = 5;
 
     public function __construct(protected SoopApiClient $client) {}
 
@@ -77,7 +77,7 @@ class SoopLiveStatusService
         $broadcasts = $payload['broadcasts'] ?? [];
 
         // Pull whitelist as [user_id => label] for O(1) lookup.
-        $whitelist = \App\Models\SoopStreamer::query()
+        $whitelist = \App\Models\Streamer::soop()
             ->get(['user_id', 'label', 'race'])
             ->keyBy('user_id')
             ->map(fn ($s) => ['label' => $s->label, 'race' => $s->race])
@@ -108,6 +108,7 @@ class SoopLiveStatusService
             }
 
             $rows[] = [
+                'platform'    => 'soop',
                 'user_id'     => $userId,
                 'user_nick'   => (string) ($b['user_nick'] ?? $userId),
                 'broad_no'    => (string) ($b['broad_no'] ?? ''),
@@ -197,7 +198,7 @@ class SoopLiveStatusService
     {
         $payload    = $this->cachedPayload();
         $broadcasts = $payload['broadcasts'] ?? [];
-        $whitelist  = \App\Models\SoopStreamer::query()->pluck('user_id')->all();
+        $whitelist  = \App\Models\Streamer::soop()->pluck('user_id')->all();
         $whitelist  = array_flip($whitelist); // O(1) isset() lookup
 
         $rows = [];
@@ -219,6 +220,7 @@ class SoopLiveStatusService
             }
 
             $rows[] = [
+                'platform'    => 'soop',
                 'user_id'     => $userId,
                 'user_nick'   => (string) ($b['user_nick'] ?? $userId),
                 'broad_no'    => (string) ($b['broad_no'] ?? ''),

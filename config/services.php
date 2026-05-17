@@ -39,6 +39,28 @@ return [
         'user_agent'    => env('SOOP_USER_AGENT', 'Rankgim/1.0 (+https://rankgim.com)'),
     ],
 
+    'twitch' => [
+        'client_id'     => env('TWITCH_CLIENT_ID'),
+        'client_secret' => env('TWITCH_CLIENT_SECRET'),
+
+        // Helix API base for streams/games/users endpoints.
+        'base_url'      => env('TWITCH_BASE_URL', 'https://api.twitch.tv/helix'),
+
+        // OAuth token endpoint — we use the client_credentials grant to mint
+        // app access tokens (no user login required, lasts ~60 days).
+        'oauth_url'     => env('TWITCH_OAUTH_URL', 'https://id.twitch.tv/oauth2'),
+
+        // Twitch game IDs are numeric strings assigned by Twitch.
+        //   StarCraft: Brood War  = 490634
+        //   StarCraft II          = 32959  (not used currently)
+        // Verify with: GET /helix/games?name=StarCraft:%20Brood%20War
+        // — if Twitch ever merges/renames the category, this ID must be updated.
+        'bw_game_id'    => env('TWITCH_BW_GAME_ID', '490634'),
+
+        'timeout'       => (int) env('TWITCH_TIMEOUT', 8),
+        'user_agent'    => env('TWITCH_USER_AGENT', 'Rankgim/1.0 (+https://rankgim.com)'),
+    ],
+
     'postmark' => [
         'key' => env('POSTMARK_API_KEY'),
     ],

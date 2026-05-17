@@ -101,40 +101,69 @@
                     }"
                     target="_blank"
                     rel="noopener noreferrer"
-                    class="flex items-start gap-3 rounded-lg border border-zinc-700/60 bg-zinc-900/40 p-3 transition hover:border-rose-500/60 hover:bg-zinc-800/70"
+                    class="group flex items-stretch gap-0 overflow-hidden rounded-lg border border-zinc-700/60 bg-zinc-900/70 transition hover:border-rose-500/60 hover:bg-zinc-900"
                 >
-                    @if ($s['thumbnail'])
-                        <img
-                            src="{{ $s['thumbnail'] }}"
-                            alt=""
-                            class="block h-16 w-24 shrink-0 rounded object-cover"
-                            loading="lazy"
-                        >
-                    @endif
+                    @php
+                        $widgetPlatform = $s['platform'] ?? 'soop';
+                        $widgetBadge = match ($widgetPlatform) {
+                            'twitch' => ['label' => 'TW', 'bg' => '#9146ff'],
+                            'soop'   => ['label' => 'SP', 'bg' => '#ef4444'],
+                            default  => ['label' => strtoupper(substr($widgetPlatform, 0, 2)), 'bg' => '#52525b'],
+                        };
+                        $widgetAccent = $s['race']
+                            ? "var(--color-race-{$s['race']})"
+                            : 'rgb(82, 82, 91)';
+                    @endphp
 
-                    <div class="min-w-0 flex-1 space-y-1">
-                        {{-- Row 1: label (player name) + race tag --}}
+                    {{-- Race accent bar on the left edge --}}
+                    <div class="w-1 shrink-0" style="background: {{ $widgetAccent }};"></div>
+
+                    {{-- Thumbnail with overlay platform badge --}}
+                    <div class="relative aspect-video w-28 shrink-0 overflow-hidden bg-zinc-950">
+                        @if ($s['thumbnail'])
+                            <img
+                                src="{{ $s['thumbnail'] }}"
+                                alt=""
+                                class="h-full w-full object-cover"
+                                loading="lazy"
+                            >
+                        @endif
+                        <span
+                            class="absolute left-1 top-1 rounded px-1 py-0.5 text-[9px] font-bold uppercase tracking-wider text-white"
+                            style="background: {{ $widgetBadge['bg'] }};"
+                        >
+                            {{ $widgetBadge['label'] }}
+                        </span>
+                    </div>
+
+                    {{-- Content: name + race chip + viewers --}}
+                    <div class="min-w-0 flex-1 space-y-1 p-2">
                         <div class="flex items-center gap-2">
-                            <span class="truncate text-sm font-semibold text-zinc-100">
-                                {{ $s['label'] }}
+                            @if ($s['is_favorite'] ?? false)
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="h-3.5 w-3.5 shrink-0 text-amber-400" aria-hidden="true">
+                                    <path fill-rule="evenodd" d="M10.788 3.21c.448-1.077 1.976-1.077 2.424 0l2.082 5.007 5.404.433c1.164.093 1.636 1.545.749 2.305l-4.117 3.527 1.257 5.273c.271 1.136-.964 2.033-1.96 1.425L12 18.354 7.373 21.18c-.996.608-2.231-.29-1.96-1.425l1.257-5.273-4.117-3.527c-.887-.76-.415-2.212.749-2.305l5.404-.433 2.082-5.006z" clip-rule="evenodd" />
+                                </svg>
+                            @endif
+                            <span class="truncate text-sm font-semibold text-zinc-50">
+                                {{ $s['label'] ?: $s['user_nick'] }}
                             </span>
                             @if ($s['race'])
                                 <span
-                                    class="shrink-0 rounded px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider"
-                                    style="background: color-mix(in srgb, var(--color-race-{{ $s['race'] }}) 20%, transparent); color: var(--color-race-{{ $s['race'] }});"
+                                    class="shrink-0 rounded px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider text-white"
+                                    style="background: {{ $widgetAccent }};"
                                 >
-                                    {{ ucfirst($s['race']) }}
+                                    {{ $s['race'] }}
                                 </span>
                             @endif
                         </div>
 
-                        {{-- Row 3: meta (viewers + start time) --}}
-                        <p class="text-xs text-zinc-500 italic">
-                            <span class="font-medium text-zinc-400">
-                            👥 {{ number_format($s['viewers']) }}
+                        <p class="text-[11px] text-zinc-400">
+                            <span class="inline-flex items-center gap-1 font-medium text-zinc-300">
+                                <span class="inline-block h-1.5 w-1.5 animate-pulse rounded-full bg-rose-500"></span>
+                                {{ number_format($s['viewers']) }}
                             </span>
                             @if ($s['started_at'])
-                                · {{ $s['started_at']->diffForHumans() }}
+                                <span class="text-zinc-500">· {{ $s['started_at']->diffForHumans() }}</span>
                             @endif
                         </p>
                     </div>

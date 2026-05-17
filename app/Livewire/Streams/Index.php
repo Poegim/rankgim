@@ -2,56 +2,96 @@
 
 namespace App\Livewire\Streams;
 
-use App\Services\Soop\SoopLiveStatusService;
+use App\Models\UserFavoriteStreamer;
+use App\Services\Streams\LiveStreamsService;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Url;
 use Livewire\Component;
 
 class Index extends Component
 {
-    /**
-     * Cache re-read interval. The actual SOOP fetch runs on a 5-min schedule.
-     */
     public int $pollSeconds = 60;
 
-    /**
-     * Race filter, persisted in URL so the view is shareable.
-     * Empty string = no filter (show all races including null).
-     */
     #[Url(as: 'race', except: '')]
     public string $raceFilter = '';
 
-    /**
-     * Available race filter tabs. Empty string = "All".
-     */
+    #[Url(as: 'platform', except: '')]
+    public string $platformFilter = '';
+
     public array $raceTabs = ['', 'terran', 'protoss', 'zerg', 'random'];
+
+    public array $platformTabs = ['', LiveStreamsService::PLATFORM_SOOP, LiveStreamsService::PLATFORM_TWITCH];
 
     public function setRace(string $race): void
     {
         $this->raceFilter = in_array($race, $this->raceTabs, true) ? $race : '';
     }
 
+    public function setPlatform(string $platform): void
+    {
+        $this->platformFilter = in_array($platform, $this->platformTabs, true) ? $platform : '';
+    }
+
     /**
-     * Featured streams (whitelist), optionally filtered by race.
+     * Toggle a favorite for the currently-authenticated user.
+     *
+     * Guests get redirected to login. The intended URL (with current filters)
+     * is preserved so they land back on the same view post-login.
+     *
+     * @return mixed Redirect for guests; null when toggled.
      */
+    public function toggleFavorite(string $platform, string $userId)
+    {
+        if (! auth()->check()) {
+            // Preserve current URL (filters included) so post-login lands here.
+            session()->put('url.intended', request()->fullUrl());
+
+            return redirect()->route('login');
+        }
+
+        if (! in_array($platform, [LiveStreamsService::PLATFORM_SOOP, LiveStreamsService::PLATFORM_TWITCH], true)) {
+            return null;
+        }
+
+        if ($userId === '') {
+            return null;
+        }
+
+        $existing = UserFavoriteStreamer::query()
+            ->where('user_id', auth()->id())
+            ->where('platform', $platform)
+            ->where('streamer_user_id', $userId)
+            ->first();
+
+        if ($existing !== null) {
+            $existing->delete();
+        } else {
+            UserFavoriteStreamer::create([
+                'user_id'          => auth()->id(),
+                'platform'         => $platform,
+                'streamer_user_id' => $userId,
+            ]);
+        }
+
+        // No explicit return — Livewire will re-render the page and the computed
+        // properties below will pick up the new favorite state.
+        return null;
+    }
+
     #[Computed]
     public function featured(): array
     {
-        $streams = app(SoopLiveStatusService::class)->whitelistedLiveStreams();
+        $platform = $this->platformFilter === '' ? null : $this->platformFilter;
+        $streams  = app(LiveStreamsService::class)->featuredStreams($platform, auth()->user());
 
         return $this->applyRaceFilter($streams);
     }
 
-    /**
-     * Non-whitelisted live streams. Race filter applied too —
-     * but non-whitelisted streams have no race in our DB, so applying a
-     * non-empty filter will always return an empty list. That's intentional:
-     * a user filtering "Terran" doesn't want random unfiltered BJs.
-     */
     #[Computed]
     public function others(): array
     {
-        $streams = app(SoopLiveStatusService::class)->otherLiveStreams();
+        $platform = $this->platformFilter === '' ? null : $this->platformFilter;
+        $streams  = app(LiveStreamsService::class)->otherStreams($platform, auth()->user());
 
         return $this->applyRaceFilter($streams);
     }
@@ -59,21 +99,18 @@ class Index extends Component
     #[Computed]
     public function lastFetchedAt(): ?\Illuminate\Support\Carbon
     {
-        return app(SoopLiveStatusService::class)->lastFetchedAt();
+        return app(LiveStreamsService::class)->lastFetchedAt();
     }
 
     #[Computed]
     public function isStale(): bool
     {
-        return app(SoopLiveStatusService::class)->isStale();
+        return app(LiveStreamsService::class)->isStale();
     }
 
     /**
      * Filter a stream list by the currently selected race.
-     * Empty filter passes everything through (incl. streams with null race).
-     *
-     * @param  array<int, array<string, mixed>> $streams
-     * @return array<int, array<string, mixed>>
+     * Empty filter passes everything through.
      */
     protected function applyRaceFilter(array $streams): array
     {

@@ -5,6 +5,20 @@
         'terran'  => 'Terran',
         'protoss' => 'Protoss',
         'zerg'    => 'Zerg',
+        'random'  => 'Random',
+    ];
+
+    // Platform tab metadata. Empty string = "All platforms".
+    $platformLabels = [
+        ''       => 'All',
+        'soop'   => 'SOOP',
+        'twitch' => 'Twitch',
+    ];
+
+    // Per-platform accent colors for the active-state pill (matches card badges).
+    $platformAccents = [
+        'soop'   => '#ef4444', // rose-500-ish (SOOP red)
+        'twitch' => '#9146ff', // Twitch official purple
     ];
 @endphp
 
@@ -26,29 +40,65 @@
         @endif
     </div>
 
-    {{-- Race filter tabs --}}
-    <div class="flex flex-wrap gap-1">
-        @foreach ($raceLabels as $value => $label)
-            @php
-                $isActive = $raceFilter === $value;
+    {{-- Filter rows: platform on top, race below --}}
+    <div class="space-y-2">
 
-                // Build colored style only for race tabs (not for "All").
-                // Active tab uses solid race color background; inactive uses subtle hover.
-                $style = $value !== '' && $isActive
-                    ? "background: var(--color-race-{$value}); color: white;"
-                    : '';
-            @endphp
-            <button
-                type="button"
-                wire:click="setRace('{{ $value }}')"
-                @if ($style) style="{{ $style }}" @endif
-                class="px-3 py-1.5 rounded-md text-xs font-semibold transition-colors
-                    {{ $isActive && $value === '' ? 'bg-zinc-100 text-zinc-900' : '' }}
-                    {{ ! $isActive ? 'text-zinc-400 hover:text-zinc-200 hover:bg-zinc-700' : '' }}"
-            >
-                {{ $label }}
-            </button>
-        @endforeach
+        {{-- Platform filter tabs --}}
+        <div class="flex flex-wrap items-center gap-1">
+            <span class="mr-1 text-[10px] font-semibold uppercase tracking-widest text-zinc-600">
+                Platform
+            </span>
+            @foreach ($platformLabels as $value => $label)
+                @php
+                    $isActive = $platformFilter === $value;
+                    $accent   = $platformAccents[$value] ?? null;
+
+                    // Active state for a specific platform → tint with brand accent.
+                    // Active state for "All" → solid light pill (matches race "All").
+                    $style = $value !== '' && $isActive
+                        ? "background: {$accent}; color: white;"
+                        : '';
+                @endphp
+                <button
+                    type="button"
+                    wire:click="setPlatform('{{ $value }}')"
+                    @if ($style) style="{{ $style }}" @endif
+                    class="px-3 py-1.5 rounded-md text-xs font-semibold transition-colors
+                        {{ $isActive && $value === '' ? 'bg-zinc-100 text-zinc-900' : '' }}
+                        {{ ! $isActive ? 'text-zinc-400 hover:text-zinc-200 hover:bg-zinc-700' : '' }}"
+                >
+                    {{ $label }}
+                </button>
+            @endforeach
+        </div>
+
+        {{-- Race filter tabs --}}
+        <div class="flex flex-wrap items-center gap-1">
+            <span class="mr-1 text-[10px] font-semibold uppercase tracking-widest text-zinc-600">
+                Race
+            </span>
+            @foreach ($raceLabels as $value => $label)
+                @php
+                    $isActive = $raceFilter === $value;
+
+                    // Active tab for a race → solid race-color background.
+                    // Active "All" → solid light pill.
+                    $style = $value !== '' && $isActive
+                        ? "background: var(--color-race-{$value}); color: white;"
+                        : '';
+                @endphp
+                <button
+                    type="button"
+                    wire:click="setRace('{{ $value }}')"
+                    @if ($style) style="{{ $style }}" @endif
+                    class="px-3 py-1.5 rounded-md text-xs font-semibold transition-colors
+                        {{ $isActive && $value === '' ? 'bg-zinc-100 text-zinc-900' : '' }}
+                        {{ ! $isActive ? 'text-zinc-400 hover:text-zinc-200 hover:bg-zinc-700' : '' }}"
+                >
+                    {{ $label }}
+                </button>
+            @endforeach
+        </div>
     </div>
 
     {{-- Section: Featured (whitelist) --}}
@@ -74,7 +124,7 @@
     </div>
 
     {{-- Section: Other live streams (non-whitelisted) --}}
-    {{-- Only meaningful when no race filter is active — non-whitelisted streams have no race in our DB. --}}
+    {{-- Hidden when a race filter is active — non-whitelisted streams have no race in our DB. --}}
     @if ($raceFilter === '')
         <div class="space-y-3">
             <p class="text-xs font-semibold uppercase tracking-widest text-zinc-500">
@@ -86,7 +136,7 @@
 
             @if (count($this->others) === 0)
                 <p class="text-sm text-zinc-400">
-                    No other live streams in the StarCraft category.
+                    No other live streams match this filter right now.
                 </p>
             @else
                 <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">

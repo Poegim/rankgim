@@ -102,8 +102,8 @@ Route::middleware(['auth', 'verified',  App\Http\Middleware\EnsureUserIsAdmin::c
     // Subpage linked from the Users tab
     Route::get('/achievement-insights', \App\Livewire\Admin\AchievementInsights::class)->name('achievement-insights');
 
-    Route::get('/soop-streamers', \App\Livewire\Admin\SoopStreamers::class)
-        ->name('soop-streamers');
+    Route::get('/streamers', \App\Livewire\Admin\Streamers::class)
+        ->name('streamers');
 
 });
 
