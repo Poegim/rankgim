@@ -117,6 +117,7 @@
         @else
             <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
                 @foreach ($this->featured as $s)
+                @php $s['is_featured'] = true @endphp
                     <div wire:key="card-{{ $s['platform'] }}-{{ $s['user_id'] }}">
                         @include('livewire.streams.partials.card', ['s' => $s, 'showLabel' => true])
                     </div>
@@ -144,6 +145,7 @@
                 <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
                     @foreach ($this->others as $s)
                     <div wire:key="card-{{ $s['platform'] }}-{{ $s['user_id'] }}">
+                        @php $s['is_featured'] = false @endphp
                         @include('livewire.streams.partials.card', ['s' => $s, 'showLabel' => false])
                     </div>
                     @endforeach
