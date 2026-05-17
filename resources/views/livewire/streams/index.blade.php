@@ -115,9 +115,11 @@
                 No featured streams match this filter right now.
             </p>
         @else
-            <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+            <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
                 @foreach ($this->featured as $s)
-                    @include('livewire.streams.partials.card', ['s' => $s, 'showLabel' => true])
+                    <div wire:key="card-{{ $s['platform'] }}-{{ $s['user_id'] }}">
+                        @include('livewire.streams.partials.card', ['s' => $s, 'showLabel' => true])
+                    </div>
                 @endforeach
             </div>
         @endif
@@ -139,9 +141,11 @@
                     No other live streams match this filter right now.
                 </p>
             @else
-                <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
                     @foreach ($this->others as $s)
+                    <div wire:key="card-{{ $s['platform'] }}-{{ $s['user_id'] }}">
                         @include('livewire.streams.partials.card', ['s' => $s, 'showLabel' => false])
+                    </div>
                     @endforeach
                 </div>
             @endif
