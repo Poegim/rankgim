@@ -78,6 +78,64 @@ class Index extends Component
         return null;
     }
 
+    /**
+     * Admin-only: add a non-whitelisted streamer to the Featured whitelist
+     * directly from the streams page. Defaults: label = user_nick, race = null.
+     *
+     * Admin can refine label/race afterwards via /admin/streamers.
+     */
+    public function addToFeatured(string $platform, string $userId, string $label, ?string $race = null): void
+    {
+        abort_if(! auth()->user()?->isAdmin(), 403);
+
+        if (! in_array($platform, [LiveStreamsService::PLATFORM_SOOP, LiveStreamsService::PLATFORM_TWITCH], true)) {
+            return;
+        }
+
+        $userId = $platform === LiveStreamsService::PLATFORM_TWITCH
+            ? mb_strtolower(trim($userId))
+            : trim($userId);
+
+        $label = trim($label);
+        if ($userId === '' || $label === '') {
+            return;
+        }
+
+        $allowedRaces = ['zerg', 'protoss', 'terran', 'random'];
+        $race = in_array($race, $allowedRaces, true) ? $race : null;
+
+        \App\Models\Streamer::firstOrCreate(
+            ['platform' => $platform, 'user_id' => $userId],
+            ['label' => $label, 'race' => $race],
+        );
+
+        // Reset the inline mini-form for this card (handled client-side via Alpine).
+        $this->dispatch('streamer-added-from-card', platform: $platform, userId: $userId);
+    }
+
+    /**
+     * Admin-only: remove a streamer from the Featured whitelist directly from
+     * the streams page. Card will fall back into "Other" on next render.
+     */
+    public function removeFromFeatured(string $platform, string $userId): void
+    {
+        abort_if(! auth()->user()?->isAdmin(), 403);
+
+        if (! in_array($platform, [LiveStreamsService::PLATFORM_SOOP, LiveStreamsService::PLATFORM_TWITCH], true)) {
+            return;
+        }
+
+        $userId = $platform === LiveStreamsService::PLATFORM_TWITCH
+            ? mb_strtolower(trim($userId))
+            : trim($userId);
+
+        \App\Models\Streamer::where('platform', $platform)
+            ->where('user_id', $userId)
+            ->delete();
+
+        $this->dispatch('streamer-removed-from-card', platform: $platform, userId: $userId);
+    }
+
     #[Computed]
     public function featured(): array
     {
