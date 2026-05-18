@@ -43,10 +43,7 @@ class Index extends Component
     public function toggleFavorite(string $platform, string $userId)
     {
         if (! auth()->check()) {
-            // Preserve current URL (filters included) so post-login lands here.
-            session()->put('url.intended', request()->fullUrl());
-
-            return redirect()->route('login');
+            return $this->redirect(route('login'), navigate: false);
         }
 
         if (! in_array($platform, [LiveStreamsService::PLATFORM_SOOP, LiveStreamsService::PLATFORM_TWITCH], true)) {

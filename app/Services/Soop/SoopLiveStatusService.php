@@ -222,6 +222,7 @@ class SoopLiveStatusService
             $rows[] = [
                 'platform'    => 'soop',
                 'user_id'     => $userId,
+                'label'       => null,
                 'user_nick'   => (string) ($b['user_nick'] ?? $userId),
                 'broad_no'    => (string) ($b['broad_no'] ?? ''),
                 'broad_title' => (string) ($b['broad_title'] ?? ''),

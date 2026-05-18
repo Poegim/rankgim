@@ -109,11 +109,8 @@
                     </button>
                 @endif
 
-                @if($s['is_featured'])
-                    <span
-                        class="ml-1 rounded px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-white shadow"
-                        style="background: {{ $accentColor }};"
-                    >
+                
+
 
                     {{-- Favorite star (logged-in users + guests) --}}
                     @php
@@ -139,7 +136,7 @@
                             </svg>
                         @endif
                     </button>
-                @endif
+                
             </div>
 
             {{-- Bottom-left: live viewer pill --}}
