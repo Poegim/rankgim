@@ -85,8 +85,8 @@
         >
             @foreach ($this->streams as $i => $s)
                 <a href="{{ $s['play_url'] }}"
-                    data-race="{{ strtolower($s['race']) }}"
-                    x-show="matches('{{ strtolower($s['race']) }}') && (showAll || visibleIndex() < initialLimit)"
+                    data-race="{{ strtolower($s['race'] ?? '') }}"
+                    x-show="matches('{{ strtolower($s['race'] ?? '') }}') && (showAll || visibleIndex() < initialLimit)"
                     x-data="{
                         visibleIndex() {
                             // Count how many same-race-matching siblings come before this one
@@ -110,7 +110,7 @@
                             'soop'   => ['label' => 'SP', 'bg' => '#ef4444'],
                             default  => ['label' => strtoupper(substr($widgetPlatform, 0, 2)), 'bg' => '#52525b'],
                         };
-                        $widgetAccent = $s['race']
+                        $widgetAccent = ($s['race'] ?? null)
                             ? "var(--color-race-{$s['race']})"
                             : 'rgb(82, 82, 91)';
                     @endphp
