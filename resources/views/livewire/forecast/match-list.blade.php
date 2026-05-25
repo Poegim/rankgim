@@ -57,6 +57,8 @@
             $bRaceB = $bettingMatch->player_b_race;
             $bCountryA = $isForeigherBet ? ($bettingMatch->playerA?->country_code ?? null) : ($bettingMatch->player_a_country ?? null);
             $bCountryB = $isForeigherBet ? ($bettingMatch->playerB?->country_code ?? null) : ($bettingMatch->player_b_country ?? null);
+            $bOddsA = round((float) $bettingMatch->odds_a * (float) $bettingMatch->multiplier, 2);
+            $bOddsB = round((float) $bettingMatch->odds_b * (float) $bettingMatch->multiplier, 2);
         @endphp
         <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4"
             x-on:click.self="$wire.closeBetModal()">
@@ -102,7 +104,7 @@
                                         {{ $bRaceA }}
                                     </p>
                                 @endif
-                                <p class="text-xs font-mono text-zinc-500 mt-1">×{{ $bettingMatch->odds_a }}</p>
+                                <p class="text-xs font-mono text-zinc-500 mt-1">×{{ number_format($bOddsA, 2) }}</p>
                             </button>
 
                             @php
@@ -132,7 +134,7 @@
                                         {{ $bRaceB }}
                                     </p>
                                 @endif
-                                <p class="text-xs font-mono text-zinc-500 mt-1">×{{ $bettingMatch->odds_b }}</p>
+                                <p class="text-xs font-mono text-zinc-500 mt-1">×{{ number_format($bOddsB, 2) }}</p>
                             </button>
                         </div>
                         @error('pickedPlayerId') <p class="text-xs text-red-400 mt-1">{{ $message }}</p> @enderror
@@ -143,14 +145,14 @@
                     <div>
                         <label class="block text-xs text-zinc-500 mb-2 uppercase tracking-wide">
                             How many points?
-                            <span class="text-orange-500 normal-case ml-1">{{ number_format($this->wallet->balance, 0) }} available</span>
+                            <span class="text-orange-500 normal-case ml-1">{{ number_format($this->wallet->balance, 2) }} available</span>
                         </label>
                         <div class="flex gap-2">
                             <input type="number" wire:model.live="stake" min="1" max="{{ $this->wallet->balance }}" step="0.01"
                                 inputmode="decimal"
                                 class="flex-1 rounded-lg bg-zinc-800 border border-zinc-700 px-3 py-2 text-sm text-white focus:outline-none focus:border-amber-500/50"
                                 placeholder="e.g. 10">
-                            <button wire:click="$set('stake', {{ floor($this->wallet->balance) }})"
+                            <button wire:click="$set('stake', {{ number_format((float) $this->wallet->balance, 2, '.', '') }})"
                                 class="px-3 py-2 text-xs rounded-lg bg-zinc-700/80 text-zinc-300 hover:bg-zinc-700 transition-colors whitespace-nowrap">
                                 Max
                             </button>
@@ -182,7 +184,7 @@
                         @endphp
                         <div class="rounded-lg bg-zinc-800/40 border border-zinc-700/40 px-3 py-2 text-xs text-zinc-400 flex items-center gap-2">
                             <span>If right →</span>
-                            <span class="text-white font-mono font-bold">+{{ number_format($payout, 0) }} pts</span>
+                            <span class="text-white font-mono font-bold">+{{ number_format($payout, 2) }} pts</span>
                             @if($bonus > 1)
                                 <span class="text-amber-400 ml-auto">{{ $this->wallet->currencyIcon() }} perk active</span>
                             @endif

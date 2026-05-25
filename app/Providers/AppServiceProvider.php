@@ -22,7 +22,16 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        // Register model observers
+        // Wire the SOOP API client with config-driven credentials so the rest
+        // of the app can resolve it from the container without knowing details.
+        $this->app->singleton(\App\Services\Soop\SoopApiClient::class, function () {
+            return new \App\Services\Soop\SoopApiClient(
+                baseUrl:        (string) config('services.soop.base_url'),
+                clientId:       (string) config('services.soop.client_id'),
+                userAgent:      (string) config('services.soop.user_agent'),
+                timeoutSeconds: (int)    config('services.soop.timeout'),
+            );
+        });
     }
 
     /**

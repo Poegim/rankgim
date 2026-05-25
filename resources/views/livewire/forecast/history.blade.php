@@ -9,10 +9,10 @@
         <div class="rounded-xl border border-zinc-700/40 bg-zinc-900/50 p-4">
             <p class="text-[10px] uppercase tracking-wider text-zinc-500">Net profit</p>
             <p class="text-2xl font-mono font-bold mt-1 {{ $stats['profit'] >= 0 ? 'text-emerald-400' : 'text-red-400' }}">
-                {{ $stats['profit'] >= 0 ? '+' : '' }}{{ number_format($stats['profit'], 0) }}
+                {{ $stats['profit'] >= 0 ? '+' : '' }}{{ number_format($stats['profit'], 2) }}
             </p>
             <p class="text-[11px] text-zinc-600 mt-0.5">
-                staked {{ number_format($stats['total_stake'], 0) }} · earned {{ number_format($stats['total_payout'], 0) }}
+                staked {{ number_format($stats['total_stake'], 2) }} · earned {{ number_format($stats['total_payout'], 2) }}
             </p>
         </div>
 
@@ -243,7 +243,7 @@
 
                     {{-- Stake --}}
                     <div class="text-right">
-                        <p class="text-sm font-mono text-zinc-300">{{ number_format($p->stake, 0) }}</p>
+                        <p class="text-sm font-mono text-zinc-300">{{ number_format($p->stake, 2) }}</p>
                         <p class="text-[10px] text-zinc-600 md:hidden">stake</p>
                     </div>
 
@@ -265,11 +265,11 @@
                     <div class="text-right">
                         @if($p->result === 'won')
                             <p class="text-sm font-mono text-emerald-400 font-semibold">
-                                +{{ number_format($p->actual_payout, 0) }}
+                                +{{ number_format($p->actual_payout, 2) }}
                             </p>
                         @elseif($p->result === 'pending')
                             <p class="text-sm font-mono text-amber-400/70">
-                                {{ number_format($p->potential_payout, 0) }}
+                                {{ number_format($p->potential_payout, 2) }}
                             </p>
                             <p class="text-[10px] text-zinc-600">potential</p>
                         @else
@@ -287,7 +287,7 @@
                             <p class="text-[10px] text-zinc-600">refunded</p>
                         @else
                             <p class="text-sm font-mono font-bold {{ $net >= 0 ? 'text-emerald-400' : 'text-red-400' }}">
-                                {{ $net >= 0 ? '+' : '' }}{{ number_format($net, 0) }}
+                                {{ $net >= 0 ? '+' : '' }}{{ number_format($net, 2) }}
                             </p>
                         @endif
                     </div>

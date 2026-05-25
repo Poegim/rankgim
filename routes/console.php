@@ -18,3 +18,17 @@ Schedule::call(function () {
         ->whereNull('reminder_sent_at')
         ->each(fn($event) => SendEventReminderJob::dispatch($event));
 })->everyMinute();
+
+// Live stream cache refresh — SOOP and Twitch each have a thin API client.
+// Both refresh every 5 minutes; well below any rate limit (~288 requests/day per platform).
+// withoutOverlapping prevents pile-ups if a tick is slow; runInBackground keeps the
+// scheduler loop non-blocking.
+Schedule::command('soop:refresh-streams')
+    ->everyFiveMinutes()
+    ->withoutOverlapping(10)
+    ->runInBackground();
+
+Schedule::command('twitch:refresh-streams')
+    ->everyMinute()
+    ->withoutOverlapping(2)
+    ->runInBackground();

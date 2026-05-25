@@ -171,7 +171,7 @@
                                 @if($wallet)
                                     <span class="text-sm font-mono font-semibold
                                         {{ $wallet->balance >= 50 ? 'text-emerald-400' : ($wallet->balance >= 20 ? 'text-amber-400' : 'text-red-400') }}">
-                                        {{ number_format($wallet->balance, 0) }}
+                                        {{ number_format($wallet->balance, 2) }}
                                     </span>
                                     @if($wallet->resets_count > 0)
                                         <span class="text-[10px] text-zinc-600 ml-1" title="Reset {{ $wallet->resets_count }}×">
@@ -215,7 +215,7 @@
                                     @endphp
                                     <span class="text-sm font-mono font-bold
                                         {{ $profit >= 0 ? 'text-emerald-400' : 'text-red-400' }}">
-                                        {{ $profit >= 0 ? '+' : '' }}{{ number_format($profit, 0) }}
+                                        {{ $profit >= 0 ? '+' : '' }}{{ number_format($profit, 2) }}
                                     </span>
                                 @else
                                     <span class="text-zinc-600 text-xs">—</span>
@@ -308,7 +308,7 @@
                                                         wire:keydown.escape="cancelEditBalance"
                                                         min="0"
                                                         max="9999"
-                                                        step="1"
+                                                        step="0.01"
                                                         class="w-20 rounded bg-zinc-700 border border-amber-500/50 text-white text-sm font-mono px-2 py-1 focus:outline-none focus:ring-1 focus:ring-amber-500"
                                                         autofocus
                                                     >
@@ -329,7 +329,7 @@
                                                 <div class="flex items-center gap-2">
                                                     <p class="text-xl font-mono font-bold
                                                         {{ $w->balance >= 50 ? 'text-emerald-400' : ($w->balance >= 20 ? 'text-amber-400' : 'text-red-400') }}">
-                                                        {{ number_format($w->balance, 0) }}
+                                                        {{ number_format($w->balance, 2) }}
                                                     </p>
                                                     <button
                                                         wire:click="startEditBalance({{ $user->id }})"
@@ -370,7 +370,7 @@
                                             <p class="text-[10px] uppercase tracking-wider text-zinc-500 mb-1">Net Profit</p>
                                             <p class="text-xl font-mono font-bold
                                                 {{ $w->stats_profit >= 0 ? 'text-emerald-400' : 'text-red-400' }}">
-                                                {{ $w->stats_profit >= 0 ? '+' : '' }}{{ number_format($w->stats_profit, 0) }}
+                                                {{ $w->stats_profit >= 0 ? '+' : '' }}{{ number_format($w->stats_profit, 2) }}
                                             </p>
                                             <p class="text-[10px] text-zinc-500">from settled bets</p>
                                         </div>
@@ -467,7 +467,7 @@
 
                                                             {{-- Stake --}}
                                                             <td class="px-3 py-2 text-center font-mono text-zinc-300">
-                                                                {{ number_format($pred->stake, 0) }}
+                                                                {{ number_format($pred->stake, 2) }}
                                                             </td>
 
                                                             {{-- Odds --}}
@@ -492,9 +492,9 @@
                                                             {{-- Payout --}}
                                                             <td class="px-3 py-2 text-right font-mono">
                                                                 @if($pred->result === 'won')
-                                                                    <span class="text-emerald-400 font-bold">+{{ number_format($pred->actual_payout, 0) }}</span>
+                                                                    <span class="text-emerald-400 font-bold">+{{ number_format($pred->actual_payout, 2) }}</span>
                                                                 @elseif($pred->result === 'pending')
-                                                                    <span class="text-amber-400/60">{{ number_format($pred->potential_payout, 0) }}?</span>
+                                                                    <span class="text-amber-400/60">{{ number_format($pred->potential_payout, 2) }}?</span>
                                                                 @else
                                                                     <span class="text-zinc-700">—</span>
                                                                 @endif

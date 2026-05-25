@@ -7,6 +7,16 @@
         
     </div>
 
+
+        {{-- ========== Row 4: Reactions + Comments ========== --}}
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <livewire:dashboard.recent-reactions />
+        <livewire:dashboard.recent-comments />
+    </div>
+
+    
+    <livewire:streams.stream-list />
+
     {{-- ========== Row 2: Events + Next match to predict ==========
          Layout adapts:
          - both present     → 50/50 grid
@@ -53,10 +63,6 @@
     </div>
 
 
-    {{-- ========== Row 4: Reactions + Comments ========== --}}
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <livewire:dashboard.recent-reactions />
-        <livewire:dashboard.recent-comments />
-    </div>
+
 
 </div>

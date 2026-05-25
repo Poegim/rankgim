@@ -9,6 +9,30 @@
 
 <body class="min-h-screen bg-travertine-75 dark:bg-zinc-800">
     @php
+        // Sidebar "Streams" row — three independent badges:
+        //   ⭐ starred live   — user's favorited streamers currently broadcasting (always shown for guests as 0 = soft signup nudge)
+        //   🟣 Twitch live    — featured Twitch streams (hidden when 0)
+        //   🅢 SOOP live      — featured SOOP streams  (hidden when 0)
+        //
+        // Each badge counts only Featured (whitelisted + promoted favorites), not the long-tail "Other" pool.
+        // We pull the merged Featured list once and bucket by platform/favorite flag — single aggregator call.
+        $featuredAll          = app(\App\Services\Streams\LiveStreamsService::class)
+            ->featuredStreams(null, auth()->user());
+
+        $starredLiveCount     = 0;
+        $twitchFeaturedCount  = 0;
+        $soopFeaturedCount    = 0;
+
+        foreach ($featuredAll as $_row) {
+            if (! empty($_row['is_favorite'])) {
+                $starredLiveCount++;
+            }
+            if (($_row['platform'] ?? null) === 'twitch') {
+                $twitchFeaturedCount++;
+            } elseif (($_row['platform'] ?? null) === 'soop') {
+                $soopFeaturedCount++;
+            }
+        }
         // Compute the next upcoming event and its "urgency" badge color for the Events item.
         $upcomingEvents = \App\Models\Event::where('starts_at', '>=', now()->subHours(\App\Models\Event::LIVE_WINDOW_HOURS))
             ->where('starts_at', '<=', now()->addDays(7))
@@ -86,6 +110,52 @@
             </flux:sidebar.group>
 
             <flux:sidebar.group heading="Briefing">
+                <flux:sidebar.item icon="video-camera"
+                    :href="route('streams.index')"
+                    :current="request()->routeIs('streams.index')"
+                    wire:navigate>
+                    <div class="flex items-center justify-between w-full gap-2">
+                        <span class="truncate">{{ __('Streams') }}</span>
+
+                        {{-- Three badge cluster: starred / Twitch / SOOP. --}}
+                        {{-- Starred always visible (drives signup for guests). Platform badges hide at 0. --}}
+                        <span class="inline-flex items-center gap-1 shrink-0">
+                            {{-- Starred badge: gold star + count. Greyed when 0 (guest or no favorites live). --}}
+                            <span
+                                class="inline-flex items-center gap-0.5 text-[10px] font-bold px-1.5 py-0.5 rounded-full
+                                       {{ $starredLiveCount > 0 ? 'bg-amber-500/20 text-amber-300' : 'bg-zinc-800 text-zinc-600' }}"
+                                title="{{ auth()->check()
+                                    ? __('Your favorite streamers currently live')
+                                    : __('Sign in to favorite streamers and see them here') }}"
+                            >
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-2.5 h-2.5">
+                                    <path fill-rule="evenodd" d="M10.788 3.21c.448-1.077 1.976-1.077 2.424 0l2.082 5.007 5.404.433c1.164.093 1.636 1.545.749 2.305l-4.117 3.527 1.257 5.273c.271 1.136-.964 2.033-1.96 1.425L12 18.354 7.373 21.18c-.996.608-2.231-.29-1.96-1.425l1.257-5.273-4.117-3.527c-.887-.76-.415-2.212.749-2.305l5.404-.433 2.082-5.006z" clip-rule="evenodd" />
+                                </svg>
+                                {{ $starredLiveCount }}
+                            </span>
+
+                            @if ($twitchFeaturedCount > 0)
+                                <span
+                                    class="inline-flex items-center text-[10px] font-bold px-1.5 py-0.5 rounded-full text-white"
+                                    style="background-color: #9146ff;"
+                                    title="{{ __('Featured Twitch streams currently live') }}"
+                                >
+                                    {{ $twitchFeaturedCount }}
+                                </span>
+                            @endif
+
+                            @if ($soopFeaturedCount > 0)
+                                <span
+                                    class="inline-flex items-center text-[10px] font-bold px-1.5 py-0.5 rounded-full text-white"
+                                    style="background-color: #ef4444;"
+                                    title="{{ __('Featured SOOP streams currently live') }}"
+                                >
+                                    {{ $soopFeaturedCount }}
+                                </span>
+                            @endif
+                        </span>
+                    </div>
+                </flux:sidebar.item>
                 <flux:sidebar.item icon="calendar-days"
                     :href="route('events.index')"
                     :current="request()->routeIs('events.*')"
@@ -238,9 +308,8 @@
                             flex items-center justify-between gap-2">
                     <div class="flex items-center gap-1.5 min-w-0">
                         <span class="text-base leading-none shrink-0">{{ $sidebarIcon }}</span>
-                        <span class="text-xs font-mono font-bold leading-none
-                                     text-amber-700 dark:text-amber-300">
-                            {{ number_format($sidebarWallet->balance, 0) }}
+                        <span class="text-xs font-mono font-bold text-amber-300 leading-none">
+                            {{ number_format($sidebarWallet->balance, 2) }}
                         </span>
                         <span class="text-[10px] leading-none
                                      text-travertine-500 dark:text-zinc-600">energy</span>

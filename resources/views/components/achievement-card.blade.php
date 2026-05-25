@@ -5,9 +5,21 @@
     'showHoldersBtn' => false,
 ])
 @php
+    // ─── Design decision ──────────────────────────────────────────────────
+    // Achievement cards intentionally KEEP THEIR DARK AESTHETIC in both
+    // light and dark modes. They are display artifacts (like Steam achievements,
+    // PS trophies, MTG cards) — dramatic gradients, tier glow, and text-shadow
+    // only work on dark backgrounds. The recent-achievements widget that wraps
+    // these cards is themed normally (cream in light, zinc in dark) so the
+    // cards read as "windows into artwork" rather than UI elements.
+    //
+    // Only addition in light mode: a subtle outer ring + drop shadow that
+    // visually frames the card on parchment, so it doesn't look like a
+    // misplaced fragment from another design.
+    // ──────────────────────────────────────────────────────────────────────
+
     // Tier visual styles — kept inline to mirror AchievementCard::TIER_STYLES.
-    // Each tier defines a card gradient, a top accent bar, the tier-badge fill,
-    // and named text colors used across the card (date / category / name / desc).
+    // Identical in both themes (this is the artwork).
     $tierStyles = [
         's' => [
             'card'   => 'background: linear-gradient(145deg, #3d2200 0%, #1e1000 70%, #0a0500 100%);',
@@ -107,8 +119,12 @@
     $catLabel = $categoryLabels[$a['category'] ?? ''] ?? ($a['category'] ?? '');
 @endphp
 
+{{-- Card wrapper.                                                              --}}
+{{-- The achievement-card class on the outer div lets us add a subtle outer     --}}
+{{-- frame in light mode via a sibling stylesheet at the end of this file.      --}}
+{{-- This is the ONLY theme-aware bit — everything else stays dark on purpose.  --}}
 <div
-    class="group rounded-xl p-3.5 pt-4 flex flex-col gap-2.5 relative overflow-visible h-full w-full transition-transform duration-200 hover:-translate-y-0.5 {{ $masked ? 'opacity-60' : '' }}"
+    class="achievement-card group rounded-xl p-3.5 pt-4 flex flex-col gap-2.5 relative overflow-visible h-full w-full transition-transform duration-200 hover:-translate-y-0.5 {{ $masked ? 'opacity-60' : '' }}"
     style="{{ $t['card'] }} border: 1.5px solid {{ $border }}; box-shadow: 0 4px 14px -6px {{ $border }}40;"
 >
     {{-- Top gradient bar in tier color --}}
@@ -178,7 +194,9 @@
                     style="{{ $t['tier'] }} opacity: 0.9;"
                 >📖 lore</button>
 
-                {{-- Modal teleported to body so it's not clipped by card overflow --}}
+                {{-- Modal teleported to body so it's not clipped by card overflow. --}}
+                {{-- Modal backdrop is always black/70 — works in both themes since   --}}
+                {{-- it's a "spotlight" effect, not a surface.                        --}}
                 <template x-teleport="body">
                     <div
                         x-show="open"
@@ -261,3 +279,19 @@
     </div>
 
 </div>
+
+{{-- ────────────────────────────────────────────────────────────────────────
+     Light-mode visual integration.
+     Adds a subtle outer ring + softer drop shadow so cards visually attach
+     to the parchment widget background instead of floating as misfit dark
+     rectangles. Dark mode keeps the original neon-glow shadow.
+     ──────────────────────────────────────────────────────────────────────── --}}
+<style>
+    :root:not(.dark) .achievement-card {
+        /* Soft warm shadow that grounds the dark card on cream bg.            */
+        /* Without this the card looks pasted-on rather than integrated.       */
+        box-shadow:
+            0 1px 0 0 rgba(212, 202, 176, 0.8),   /* travertine-300 hairline   */
+            0 4px 16px -4px rgba(74, 64, 41, 0.18); /* warm umber drop shadow */
+    }
+</style>

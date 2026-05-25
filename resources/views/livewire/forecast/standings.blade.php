@@ -51,12 +51,12 @@
                             @if($isMe) <span class="text-xs text-amber-400 ml-1">(you)</span> @endif
                         </p>
                         <p class="text-[11px] text-zinc-500 font-mono">
-                            {{ $cur['icon'] }} · {{ $accuracy }}% · bal {{ number_format($wallet->balance, 0) }}
+                            {{ $cur['icon'] }} · {{ $accuracy }}% · bal {{ number_format($wallet->balance, 2) }}
                         </p>
                     </div>
                     <span class="text-sm font-mono font-bold shrink-0 w-20 text-right
                         {{ $wallet->computed_profit >= 0 ? 'text-emerald-400' : 'text-red-400' }}">
-                        {{ $wallet->computed_profit >= 0 ? '+' : '' }}{{ number_format($wallet->computed_profit, 0) }}
+                        {{ $wallet->computed_profit >= 0 ? '+' : '' }}{{ number_format($wallet->computed_profit, 2) }}
                     </span>
                 </div>
 
@@ -96,14 +96,14 @@
 
                     {{-- Balance --}}
                     <div class="text-right">
-                        <p class="text-sm font-mono text-zinc-400">{{ number_format($wallet->balance, 0) }}</p>
+                        <p class="text-sm font-mono text-zinc-400">{{ number_format($wallet->balance, 2) }}</p>
                     </div>
 
                     {{-- Net --}}
                     <div class="text-right">
                         <p class="text-base font-mono font-bold
                             {{ $wallet->computed_profit >= 0 ? 'text-emerald-400' : 'text-red-400' }}">
-                            {{ $wallet->computed_profit >= 0 ? '+' : '' }}{{ number_format($wallet->computed_profit, 0) }}
+                            {{ $wallet->computed_profit >= 0 ? '+' : '' }}{{ number_format($wallet->computed_profit, 2) }}
                         </p>
                     </div>
                 </div>
