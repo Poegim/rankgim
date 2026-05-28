@@ -1,6 +1,6 @@
 <div>
     @if($show)
-        {{-- Backdrop --}}
+        {{-- Backdrop — kept dark in both themes (modal convention, sits over whole page) --}}
         <div
             class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm"
             wire:click="closeModal"
@@ -8,14 +8,14 @@
 
         {{-- Modal --}}
         <div class="fixed inset-0 z-50 flex items-center justify-center p-4 pointer-events-none">
-            <div class="pointer-events-auto w-full max-w-2xl max-h-[85vh] flex flex-col rounded-xl bg-zinc-900 border border-zinc-700 shadow-xl">
+            <div class="pointer-events-auto w-full max-w-2xl max-h-[85vh] flex flex-col rounded-lg bg-travertine-50 border border-travertine-300 dark:bg-zinc-900 dark:border-zinc-700 shadow-xl">
 
                 {{-- Header --}}
-                <div class="flex items-center justify-between p-5 border-b border-zinc-700/50">
-                    <h2 class="text-lg font-semibold text-white">Comments</h2>
+                <div class="flex items-center justify-between p-5 border-b border-travertine-300 dark:border-zinc-700/50">
+                    <h2 class="text-lg font-semibold text-travertine-900 dark:text-white">Comments</h2>
                     <button
                         wire:click="closeModal"
-                        class="text-zinc-400 hover:text-white transition-colors"
+                        class="text-travertine-500 hover:text-travertine-900 dark:text-zinc-400 dark:hover:text-white transition-colors"
                     >
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
@@ -38,15 +38,15 @@
                                 />
                                 <div class="flex-1 space-y-1">
                                     <div class="flex items-baseline gap-2">
-                                        <span class="text-sm font-medium text-white">{{ $comment->user->name }}</span>
-                                        <span class="text-xs text-zinc-500">{{ $comment->created_at->diffForHumans() }}</span>
+                                        <span class="text-sm font-medium text-travertine-900 dark:text-white">{{ $comment->user->name }}</span>
+                                        <span class="text-xs text-travertine-500 dark:text-zinc-500">{{ $comment->created_at->diffForHumans() }}</span>
                                     </div>
-                                    <p class="text-sm text-zinc-300 leading-relaxed">{{ $comment->body }}</p>
+                                    <p class="text-sm text-travertine-700 dark:text-zinc-300 leading-relaxed">{{ $comment->body }}</p>
                                     <div class="flex items-center gap-3 pt-0.5">
                                         @auth
                                             <button
                                                 wire:click="replyTo({{ $comment->id }})"
-                                                class="text-xs text-zinc-500 hover:text-zinc-300 transition-colors"
+                                                class="text-xs text-travertine-500 hover:text-travertine-800 dark:text-zinc-500 dark:hover:text-zinc-300 transition-colors"
                                             >
                                                 reply
                                             </button>
@@ -55,7 +55,7 @@
                                             <button
                                                 wire:click="deleteComment({{ $comment->id }})"
                                                 wire:confirm="Delete this comment?"
-                                                class="text-xs text-zinc-500 hover:text-red-400 transition-colors"
+                                                class="text-xs text-travertine-500 hover:text-red-700 dark:text-zinc-500 dark:hover:text-red-400 transition-colors"
                                             >
                                                 delete
                                             </button>
@@ -66,7 +66,7 @@
 
                             {{-- Replies --}}
                             @if($comment->replies->isNotEmpty())
-                                <div class="ml-11 space-y-3 border-l border-zinc-700/50 pl-4">
+                                <div class="ml-11 space-y-3 border-l border-travertine-300 dark:border-zinc-700/50 pl-4">
                                     @foreach($comment->replies as $reply)
                                         <div class="flex gap-3">
                                             <flux:avatar
@@ -78,15 +78,15 @@
                                             />
                                             <div class="flex-1 space-y-1">
                                                 <div class="flex items-baseline gap-2">
-                                                    <span class="text-sm font-medium text-white">{{ $reply->user->name }}</span>
-                                                    <span class="text-xs text-zinc-500">{{ $reply->created_at->diffForHumans() }}</span>
+                                                    <span class="text-sm font-medium text-travertine-900 dark:text-white">{{ $reply->user->name }}</span>
+                                                    <span class="text-xs text-travertine-500 dark:text-zinc-500">{{ $reply->created_at->diffForHumans() }}</span>
                                                 </div>
-                                                <p class="text-sm text-zinc-300 leading-relaxed">{{ $reply->body }}</p>
+                                                <p class="text-sm text-travertine-700 dark:text-zinc-300 leading-relaxed">{{ $reply->body }}</p>
                                                 @if(auth()->check() && (auth()->id() === $reply->user_id || auth()->user()->canManageGames()))
                                                     <button
                                                         wire:click="deleteComment({{ $reply->id }})"
                                                         wire:confirm="Delete this reply?"
-                                                        class="text-xs text-zinc-500 hover:text-red-400 transition-colors"
+                                                        class="text-xs text-travertine-500 hover:text-red-700 dark:text-zinc-500 dark:hover:text-red-400 transition-colors"
                                                     >
                                                         delete
                                                     </button>
@@ -99,21 +99,21 @@
                         </div>
                     @empty
                         <div class="text-center py-10">
-                            <svg class="w-10 h-10 mx-auto mb-3 text-zinc-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <svg class="w-10 h-10 mx-auto mb-3 text-travertine-400 dark:text-zinc-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
                             </svg>
-                            <p class="text-sm text-zinc-500">No comments yet. Be the first!</p>
+                            <p class="text-sm text-travertine-500 dark:text-zinc-500">No comments yet. Be the first!</p>
                         </div>
                     @endforelse
                 </div>
 
-                {{-- Footer z formularzem --}}
-                <div class="p-5 border-t border-zinc-700/50">
+                {{-- Footer with form --}}
+                <div class="p-5 border-t border-travertine-300 dark:border-zinc-700/50">
                     @auth
                         @if($replyingTo)
-                            <div class="flex items-center gap-2 text-xs text-zinc-500 mb-2">
+                            <div class="flex items-center gap-2 text-xs text-travertine-500 dark:text-zinc-500 mb-2">
                                 <span>Replying to comment</span>
-                                <button type="button" wire:click="cancelReply" class="underline hover:text-zinc-300 transition-colors">
+                                <button type="button" wire:click="cancelReply" class="underline hover:text-travertine-800 dark:hover:text-zinc-300 transition-colors">
                                     cancel
                                 </button>
                             </div>
@@ -124,22 +124,22 @@
                                 wire:model="body"
                                 rows="2"
                                 placeholder="{{ $replyingTo ? 'Write a reply...' : 'Write a comment...' }}"
-                                class="flex-1 rounded-lg bg-zinc-800 border border-zinc-700 px-3 py-2 text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-zinc-500 resize-none"
+                                class="flex-1 rounded-lg bg-travertine-100 border border-travertine-300 px-3 py-2 text-sm text-travertine-900 placeholder-travertine-500 focus:outline-none focus:border-amber-600 dark:bg-zinc-800 dark:border-zinc-700 dark:text-white dark:placeholder-zinc-500 dark:focus:border-zinc-500 resize-none transition-colors"
                             ></textarea>
                             <button
                                 type="submit"
-                                class="self-end px-4 py-2 text-sm font-medium rounded-lg bg-amber-500/10 text-amber-400 border border-amber-500/20 hover:bg-amber-500/20 transition-colors whitespace-nowrap"
+                                class="self-end px-4 py-2 text-sm font-medium rounded-lg bg-amber-500/10 text-amber-700 border border-amber-600/30 hover:bg-amber-500/20 dark:text-amber-400 dark:border-amber-500/20 dark:hover:bg-amber-500/20 transition-colors whitespace-nowrap"
                             >
                                 {{ $replyingTo ? 'Reply' : 'Send' }}
                             </button>
                         </form>
 
                         @error('body')
-                            <p class="text-xs text-red-400 mt-1">{{ $message }}</p>
+                            <p class="text-xs text-red-700 dark:text-red-400 mt-1">{{ $message }}</p>
                         @enderror
                     @else
-                        <p class="text-sm text-zinc-500">
-                            <a href="{{ route('login') }}" wire:navigate class="text-amber-400 hover:text-amber-300">Log in</a> to leave a comment.
+                        <p class="text-sm text-travertine-500 dark:text-zinc-500">
+                            <a href="{{ route('login') }}" wire:navigate class="text-amber-700 hover:text-amber-800 dark:text-amber-400 dark:hover:text-amber-300">Log in</a> to leave a comment.
                         </p>
                     @endauth
                 </div>

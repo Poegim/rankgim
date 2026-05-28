@@ -10,6 +10,14 @@
 
 [x-cloak] { display: none !important; }
 
+/* No transitions until first paint marks the page ready —
+   prevents the initial paint from animating per-element color swaps. */
+html:not(.theme-ready) *,
+html:not(.theme-ready) *::before,
+html:not(.theme-ready) *::after {
+    transition: none !important;
+}
+
 /* Rating numbers, ranks, stats — monospace */
 .font-mono {
     font-family: 'JetBrains Mono', monospace !important;
@@ -452,13 +460,53 @@ select:focus[data-flux-control] {
    prefers-reduced-motion users get an instant swap (accessibility).
 */
 @media (prefers-reduced-motion: no-preference) {
-    *,
-    *::before,
-    *::after {
+    .theme-ready *,
+    .theme-ready *::before,
+    .theme-ready *::after {
         transition:
             background-color 250ms ease,
             border-color 250ms ease,
             fill 250ms ease,
             stroke 250ms ease;
     }
+}
+
+/* ── Event-card countdown — theme-aware via vars set inline on .cd-panel ──
+   The blade sets six CSS vars on .cd-panel:
+     --cd-fg-light / --cd-fg-dark   accent text (date, time, digits)
+     --cd-bg-light / --cd-bg-dark   digit-block + panel tint
+     --cd-bd-light / --cd-bd-dark   borders
+   Light is the default; .dark flips each one. Single place to reason about it. */
+
+.cd-panel {
+    background: var(--cd-bg-light);
+    border-color: var(--cd-bd-light);
+}
+.dark .cd-panel {
+    background: var(--cd-bg-dark);
+    border-color: var(--cd-bd-dark);
+}
+
+.cd-block {
+    background: var(--cd-bg-light);
+    border-color: var(--cd-bd-light);
+}
+.dark .cd-block {
+    background: var(--cd-bg-dark);
+    border-color: var(--cd-bd-dark);
+}
+
+.cd-divider {
+    border-color: var(--cd-bd-light);
+}
+.dark .cd-divider {
+    border-color: var(--cd-bd-dark);
+}
+
+/* Accent text (date / time / countdown digits) — darker in light, bright in dark */
+.cd-accent {
+    color: var(--cd-fg-light);
+}
+.dark .cd-accent {
+    color: var(--cd-fg-dark);
 }

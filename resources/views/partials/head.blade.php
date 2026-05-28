@@ -1,9 +1,24 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
+<script>
+  // Enable theme transitions only after first paint, so the initial
+  // .dark application by Flux is instant (no animated light→dark flash).
+  requestAnimationFrame(() => document.documentElement.classList.add('theme-ready'));
+  document.addEventListener('livewire:navigated', () => {
+    document.documentElement.classList.add('theme-ready');
+  });
+</script>
+
+@fluxAppearance
+
 <title>
     {{ filled($title ?? null) ? $title.' - '.config('app.name', 'Laravel') : config('app.name', 'Laravel') }}
 </title>
+
+
+
+
 
 {{-- Favicon set --}}
 <link rel="icon" type="image/svg+xml" href="{{ asset('favicon.svg') }}">
@@ -13,7 +28,6 @@
 <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('apple-touch-icon.png') }}">
 <link rel="manifest" href="{{ asset('site.webmanifest') }}">
 <meta name="theme-color" content="#f5f0e1">
-
 {{-- <link rel="preconnect" href="https://fonts.bunny.net">
 <link href="https://fonts.bunny.net/css?family=instrument-sans:400,500,600" rel="stylesheet" /> --}}
 
@@ -36,4 +50,4 @@
 </script>
 
 @vite(['resources/css/app.css', 'resources/js/app.js'])
-@fluxAppearance 
+
