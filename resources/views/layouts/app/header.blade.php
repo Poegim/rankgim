@@ -1,16 +1,6 @@
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}"
-      x-data
-      x-init="
-          // Apply saved theme on first render, before paint (avoids flash)
-          const saved = localStorage.getItem('rankgim-theme');
-          if (saved === 'light') {
-              $el.classList.remove('dark');
-          } else {
-              // Default: dark mode
-              $el.classList.add('dark');
-          }
-      ">
+      @class(['dark' => request()->cookie('theme') === 'dark'])>
     <head>
         @include('partials.head')
     </head>

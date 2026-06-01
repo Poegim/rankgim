@@ -1,30 +1,24 @@
 <div>
-    {{-- Toast Notifications (custom) --}}
+    {{-- Toast Notifications --}}
     <div
         x-data="{ show: false }"
         x-on:cannot-delete.window="show = true; setTimeout(() => show = false, 3000)"
-        x-show="show"
-        x-transition
-        class="fixed bottom-4 right-4 bg-red-500 text-white text-sm font-medium px-4 py-2 rounded-lg shadow-lg z-50"
-    >
+        x-show="show" x-transition
+        class="fixed bottom-4 right-4 bg-red-600 text-white text-sm font-medium px-4 py-2 rounded-lg shadow-lg z-50">
         ❌ Cannot delete — tournament has games
     </div>
     <div
         x-data="{ show: false }"
         x-on:tournament-saved.window="show = true; setTimeout(() => show = false, 2000)"
-        x-show="show"
-        x-transition
-        class="fixed bottom-4 right-4 bg-green-500 text-white text-sm font-medium px-4 py-2 rounded-lg shadow-lg z-50"
-    >
+        x-show="show" x-transition
+        class="fixed bottom-4 right-4 bg-green-600 text-white text-sm font-medium px-4 py-2 rounded-lg shadow-lg z-50">
         ✅ Tournament saved
     </div>
     <div
         x-data="{ show: false }"
         x-on:tournament-updated.window="show = true; setTimeout(() => show = false, 2000)"
-        x-show="show"
-        x-transition
-        class="fixed bottom-4 right-4 bg-green-500 text-white text-sm font-medium px-4 py-2 rounded-lg shadow-lg z-50"
-    >
+        x-show="show" x-transition
+        class="fixed bottom-4 right-4 bg-green-600 text-white text-sm font-medium px-4 py-2 rounded-lg shadow-lg z-50">
         ✅ Tournament updated
     </div>
 
@@ -35,9 +29,7 @@
             <flux:text>{{ $this->tournaments->total() }} tournaments</flux:text>
             @auth
                 @if(auth()->user()->canManageGames())
-                    <flux:button variant="primary" wire:click="openModal">
-                        Add Tournament
-                    </flux:button>
+                    <flux:button variant="primary" wire:click="openModal">Add Tournament</flux:button>
                 @endif
             @endauth
         </div>
@@ -45,11 +37,7 @@
 
     {{-- Search --}}
     <div class="mb-4">
-        <flux:input 
-            type="text" 
-            wire:model.live.debounce.300ms="search" 
-            placeholder="Search tournament..."
-        />
+        <flux:input type="text" wire:model.live.debounce.300ms="search" placeholder="Search tournament..." />
     </div>
 
     {{-- Table --}}
@@ -68,26 +56,32 @@
 
         <flux:table.rows>
             @foreach($this->tournaments as $tournament)
-            
-            
-            @if($tournament->games_count > 0)
+
+            {{-- Row macro — used for both game>0 and admin-visible empty tournaments --}}
+            @php
+                $showRow = $tournament->games_count > 0
+                    || (auth()->check() && (auth()->user()->isAdmin() || auth()->user()->isMod()));
+            @endphp
+
+            @if($showRow)
             <flux:table.row :key="$tournament->id">
                 <flux:table.cell>
                     <a href="{{ route('tournaments.show', $tournament->id) }}"
-                       class="hover:underline font-semibold text-[0.9375rem] text-zinc-800 dark:text-white">
+                       class="hover:underline font-semibold text-[0.9375rem]
+                           text-travertine-900 dark:text-white">
                         {{ $tournament->name }}
                     </a>
                 </flux:table.cell>
                 <flux:table.cell>
-                    <span class="text-zinc-500 dark:text-zinc-400">{{ $tournament->games_count }}</span>
+                    <span class="text-travertine-500 dark:text-zinc-400">{{ $tournament->games_count }}</span>
                 </flux:table.cell>
                 <flux:table.cell>
-                    <span class="text-xs text-zinc-400">
+                    <span class="text-xs text-travertine-400 dark:text-zinc-400">
                         {{ $tournament->first_game ? \Carbon\Carbon::parse($tournament->first_game)->format('Y-m-d') : '—' }}
                     </span>
                 </flux:table.cell>
                 <flux:table.cell>
-                    <span class="text-xs text-zinc-400">
+                    <span class="text-xs text-travertine-400 dark:text-zinc-400">
                         {{ $tournament->last_game ? \Carbon\Carbon::parse($tournament->last_game)->format('Y-m-d') : '—' }}
                     </span>
                 </flux:table.cell>
@@ -95,126 +89,38 @@
                     @if(auth()->user()->canManageGames())
                     <flux:table.cell>
                         <div class="flex items-center gap-2">
-                            <flux:button 
-                                size="sm" 
-                                variant="ghost" 
+                            <flux:button size="sm" variant="ghost"
                                 wire:click="edit({{ $tournament->id }})"
                                 wire:loading.attr="disabled"
                                 wire:target="edit({{ $tournament->id }})">
                                 Edit
                             </flux:button>
-                            
+
                             @if($tournament->games_count > 0)
-                                <flux:button 
-                                    size="sm" 
-                                    variant="danger" 
-                                    disabled
+                                {{-- Cannot delete — has games --}}
+                                <flux:button size="sm" variant="danger" disabled
                                     wire:click="$dispatch('cannot-delete')">
                                     Delete
                                 </flux:button>
                             @else
                                 <flux:modal.trigger name="delete-{{ $tournament->id }}">
-                                    <flux:button size="sm" variant="danger">
-                                        Delete
-                                    </flux:button>
+                                    <flux:button size="sm" variant="danger">Delete</flux:button>
                                 </flux:modal.trigger>
-                                
+
                                 <flux:modal name="delete-{{ $tournament->id }}" class="min-w-[22rem]">
                                     <form class="space-y-6" wire:submit="delete({{ $tournament->id }})">
                                         <div>
                                             <flux:heading size="lg">Delete tournament?</flux:heading>
                                             <flux:subheading class="mt-2">
-                                                Are you sure you want to delete <strong>{{ $tournament->name }}</strong>? 
+                                                Are you sure you want to delete <strong>{{ $tournament->name }}</strong>?
                                                 This action cannot be undone.
                                             </flux:subheading>
                                         </div>
-                                        
                                         <div class="flex justify-end gap-2">
                                             <flux:modal.close>
                                                 <flux:button variant="ghost">Cancel</flux:button>
                                             </flux:modal.close>
-                                            <flux:button 
-                                                type="submit"
-                                                variant="danger"
-                                                wire:loading.attr="disabled">
-                                                Delete
-                                            </flux:button>
-                                        </div>
-                                    </form>
-                                </flux:modal>
-                            @endif
-                        </div>
-                    </flux:table.cell>
-                    @endif
-                @endauth
-            </flux:table.row>
-            @elseif(($tournament->games_count === 0) && (auth()->check() && (auth()->user()->isAdmin() || auth()->user()->isMod())))
-            <flux:table.row :key="$tournament->id">
-                <flux:table.cell>
-                    <a href="{{ route('tournaments.show', $tournament->id) }}"
-                       class="hover:underline font-semibold text-[0.9375rem] text-zinc-800 dark:text-white">
-                        {{ $tournament->name }}
-                    </a>
-                </flux:table.cell>
-                <flux:table.cell>
-                    <span class="text-zinc-500 dark:text-zinc-400">{{ $tournament->games_count }}</span>
-                </flux:table.cell>
-                <flux:table.cell>
-                    <span class="text-xs text-zinc-400">
-                        {{ $tournament->first_game ? \Carbon\Carbon::parse($tournament->first_game)->format('Y-m-d') : '—' }}
-                    </span>
-                </flux:table.cell>
-                <flux:table.cell>
-                    <span class="text-xs text-zinc-400">
-                        {{ $tournament->last_game ? \Carbon\Carbon::parse($tournament->last_game)->format('Y-m-d') : '—' }}
-                    </span>
-                </flux:table.cell>
-                @auth
-                    @if(auth()->user()->canManageGames())
-                    <flux:table.cell>
-                        <div class="flex items-center gap-2">
-                            <flux:button 
-                                size="sm" 
-                                variant="ghost" 
-                                wire:click="edit({{ $tournament->id }})"
-                                wire:loading.attr="disabled"
-                                wire:target="edit({{ $tournament->id }})">
-                                Edit
-                            </flux:button>
-                            
-                            @if($tournament->games_count > 0)
-                                <flux:button 
-                                    size="sm" 
-                                    variant="danger" 
-                                    disabled
-                                    wire:click="$dispatch('cannot-delete')">
-                                    Delete
-                                </flux:button>
-                            @else
-                                <flux:modal.trigger name="delete-{{ $tournament->id }}">
-                                    <flux:button size="sm" variant="danger">
-                                        Delete
-                                    </flux:button>
-                                </flux:modal.trigger>
-                                
-                                <flux:modal name="delete-{{ $tournament->id }}" class="min-w-[22rem]">
-                                    <form class="space-y-6" wire:submit="delete({{ $tournament->id }})">
-                                        <div>
-                                            <flux:heading size="lg">Delete tournament?</flux:heading>
-                                            <flux:subheading class="mt-2">
-                                                Are you sure you want to delete <strong>{{ $tournament->name }}</strong>? 
-                                                This action cannot be undone.
-                                            </flux:subheading>
-                                        </div>
-                                        
-                                        <div class="flex justify-end gap-2">
-                                            <flux:modal.close>
-                                                <flux:button variant="ghost">Cancel</flux:button>
-                                            </flux:modal.close>
-                                            <flux:button 
-                                                type="submit"
-                                                variant="danger"
-                                                wire:loading.attr="disabled">
+                                            <flux:button type="submit" variant="danger" wire:loading.attr="disabled">
                                                 Delete
                                             </flux:button>
                                         </div>
@@ -228,9 +134,6 @@
             </flux:table.row>
             @endif
 
-
-
-
             @endforeach
         </flux:table.rows>
     </flux:table>
@@ -241,20 +144,10 @@
             <div>
                 <flux:heading size="lg">Add Tournament</flux:heading>
             </div>
-
-            <flux:input 
-                wire:model="name" 
-                label="Tournament name" 
-                placeholder="e.g. Through life with Netwars #42"
-            />
-
+            <flux:input wire:model="name" label="Tournament name" placeholder="e.g. Through life with Netwars #42" />
             <div class="flex justify-end gap-2">
-                <flux:button type="button" variant="ghost" wire:click="closeModal">
-                    Cancel
-                </flux:button>
-                <flux:button type="submit" variant="primary" wire:loading.attr="disabled">
-                    Save
-                </flux:button>
+                <flux:button type="button" variant="ghost" wire:click="closeModal">Cancel</flux:button>
+                <flux:button type="submit" variant="primary" wire:loading.attr="disabled">Save</flux:button>
             </div>
         </form>
     </flux:modal>
@@ -265,19 +158,10 @@
             <div>
                 <flux:heading size="lg">Edit Tournament</flux:heading>
             </div>
-
-            <flux:input 
-                wire:model="editName" 
-                label="Tournament name"
-            />
-
+            <flux:input wire:model="editName" label="Tournament name" />
             <div class="flex justify-end gap-2">
-                <flux:button type="button" variant="ghost" wire:click="$set('showEditModal', false)">
-                    Cancel
-                </flux:button>
-                <flux:button type="submit" variant="primary" wire:loading.attr="disabled">
-                    Update
-                </flux:button>
+                <flux:button type="button" variant="ghost" wire:click="$set('showEditModal', false)">Cancel</flux:button>
+                <flux:button type="submit" variant="primary" wire:loading.attr="disabled">Update</flux:button>
             </div>
         </form>
     </flux:modal>

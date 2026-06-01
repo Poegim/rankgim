@@ -60,149 +60,187 @@
             $bOddsA = round((float) $bettingMatch->odds_a * (float) $bettingMatch->multiplier, 2);
             $bOddsB = round((float) $bettingMatch->odds_b * (float) $bettingMatch->multiplier, 2);
         @endphp
-        <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4"
-            x-on:click.self="$wire.closeBetModal()">
-            <div class="bg-zinc-900 border border-zinc-700 rounded-xl w-full max-w-sm">
-                <div class="flex items-center justify-between px-5 py-3 border-b border-zinc-700/50">
-                    <h2 class="text-lg font-semibold text-white">Make your call</h2>
-                    <button wire:click="closeBetModal" class="text-zinc-400 hover:text-white">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                        </svg>
-                    </button>
-                </div>
-                <div class="p-5 space-y-4">
+            <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4"
+                x-on:click.self="$wire.closeBetModal()">
+                <div class="bg-travertine-50 border border-travertine-300 rounded-xl w-full max-w-sm
+                            dark:bg-zinc-900 dark:border-zinc-700">
 
-                    {{-- Pick winner --}}
-                    <div>
-                        <label class="block text-xs text-zinc-500 mb-2 uppercase tracking-wide">Who wins?</label>
-                        <div class="grid grid-cols-2 gap-2">
-                            @php
-                                $isPickedA = $isForeigherBet
+                    {{-- Modal header --}}
+                    <div class="flex items-center justify-between px-5 py-3 border-b
+                        border-travertine-300/70 dark:border-zinc-700/50">
+                        <h2 class="text-lg font-semibold text-travertine-900 dark:text-white">Make your call</h2>
+                        <button wire:click="closeBetModal"
+                            class="text-travertine-500 hover:text-travertine-800 dark:text-zinc-400 dark:hover:text-white">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                        </button>
+                    </div>
+
+                    <div class="p-5 space-y-4">
+
+                        {{-- Pick winner --}}
+                        <div>
+                            <label class="block text-xs text-travertine-500 dark:text-zinc-500 mb-2 uppercase tracking-wide">
+                                Who wins?
+                            </label>
+                            <div class="grid grid-cols-2 gap-2">
+
+                                {{-- Player A button --}}
+                                @php
+                                    $isPickedA = $isForeigherBet
+                                        ? ($pickedPlayerId === $bettingMatch->player_a_id)
+                                        : ($pickedSide === 'a');
+                                    $raceKeyA = match($bRaceA) {
+                                        'Terran' => 'terran', 'Zerg' => 'zerg', 'Protoss' => 'protoss',
+                                        'Random' => 'random', default => 'unknown',
+                                    };
+                                @endphp
+                                <button
+                                    @if($isForeigherBet)
+                                        wire:click="$set('pickedPlayerId', {{ $bettingMatch->player_a_id }})"
+                                    @else
+                                        wire:click="$set('pickedSide', 'a')"
+                                    @endif
+                                    class="p-3 rounded-lg border text-center transition-colors
+                                        {{ $isPickedA
+                                            ? 'bg-amber-50 border-amber-300 text-travertine-900 dark:bg-amber-500/10 dark:border-amber-500/40 dark:text-white'
+                                            : 'bg-travertine-75 border-travertine-300 text-travertine-700 hover:border-travertine-400 dark:bg-zinc-800/50 dark:border-zinc-700/50 dark:text-zinc-300 dark:hover:border-zinc-500' }}">
+                                    <div class="flex items-center justify-center gap-1.5 mb-1">
+                                        @if($bCountryA)
+                                            <img src="{{ asset('images/country_flags/' . strtolower($bCountryA) . '.svg') }}"
+                                                class="w-4 h-3 rounded-sm">
+                                        @endif
+                                        <p class="font-bold text-sm">{{ $bNameA }}</p>
+                                    </div>
+                                    @if($bRaceA !== 'Unknown')
+                                        <p class="text-xs" style="color: var(--color-race-{{ $raceKeyA }})">{{ $bRaceA }}</p>
+                                    @endif
+                                    <p class="text-xs font-mono mt-1 text-travertine-400 dark:text-zinc-500">
+                                        ×{{ number_format($bOddsA, 2) }}
+                                    </p>
+                                </button>
+
+                                {{-- Player B button --}}
+                                @php
+                                    $isPickedB = $isForeigherBet
+                                        ? ($pickedPlayerId === $bettingMatch->player_b_id)
+                                        : ($pickedSide === 'b');
+                                    $raceKeyB = match($bRaceB) {
+                                        'Terran' => 'terran', 'Zerg' => 'zerg', 'Protoss' => 'protoss',
+                                        'Random' => 'random', default => 'unknown',
+                                    };
+                                @endphp
+                                <button
+                                    @if($isForeigherBet)
+                                        wire:click="$set('pickedPlayerId', {{ $bettingMatch->player_b_id }})"
+                                    @else
+                                        wire:click="$set('pickedSide', 'b')"
+                                    @endif
+                                    class="p-3 rounded-lg border text-center transition-colors
+                                        {{ $isPickedB
+                                            ? 'bg-amber-50 border-amber-300 text-travertine-900 dark:bg-amber-500/10 dark:border-amber-500/40 dark:text-white'
+                                            : 'bg-travertine-75 border-travertine-300 text-travertine-700 hover:border-travertine-400 dark:bg-zinc-800/50 dark:border-zinc-700/50 dark:text-zinc-300 dark:hover:border-zinc-500' }}">
+                                    <div class="flex items-center justify-center gap-1.5 mb-1">
+                                        @if($bCountryB)
+                                            <img src="{{ asset('images/country_flags/' . strtolower($bCountryB) . '.svg') }}"
+                                                class="w-4 h-3 rounded-sm">
+                                        @endif
+                                        <p class="font-bold text-sm">{{ $bNameB }}</p>
+                                    </div>
+                                    @if($bRaceB !== 'Unknown')
+                                        <p class="text-xs" style="color: var(--color-race-{{ $raceKeyB }})">{{ $bRaceB }}</p>
+                                    @endif
+                                    <p class="text-xs font-mono mt-1 text-travertine-400 dark:text-zinc-500">
+                                        ×{{ number_format($bOddsB, 2) }}
+                                    </p>
+                                </button>
+                            </div>
+                            @error('pickedPlayerId') <p class="text-xs text-red-700 dark:text-red-400 mt-1">{{ $message }}</p> @enderror
+                            @error('pickedSide')     <p class="text-xs text-red-700 dark:text-red-400 mt-1">{{ $message }}</p> @enderror
+                        </div>
+
+                        {{-- Points input --}}
+                        <div>
+                            <label class="block text-xs text-travertine-500 dark:text-zinc-500 mb-2 uppercase tracking-wide">
+                                How many points?
+                                <span class="text-orange-700 dark:text-orange-500 normal-case ml-1">
+                                    {{ number_format($this->wallet->balance, 2) }} available
+                                </span>
+                            </label>
+                            <div class="flex gap-2">
+                                <input type="number" wire:model.live="stake"
+                                    min="1" max="{{ $this->wallet->balance }}" step="0.01" inputmode="decimal"
+                                    class="flex-1 rounded-lg px-3 py-2 text-sm focus:outline-none
+                                        bg-travertine-100 border border-travertine-300 text-travertine-900 focus:border-amber-600
+                                        dark:bg-zinc-800 dark:border-zinc-700 dark:text-white dark:focus:border-amber-500/50"
+                                    placeholder="e.g. 10">
+                                <button wire:click="$set('stake', {{ number_format((float) $this->wallet->balance, 2, '.', '') }})"
+                                    class="px-3 py-2 text-xs rounded-lg transition-colors whitespace-nowrap
+                                        bg-travertine-200 text-travertine-700 hover:bg-travertine-300
+                                        dark:bg-zinc-700/80 dark:text-zinc-300 dark:hover:bg-zinc-700">
+                                    Max
+                                </button>
+                            </div>
+                            @error('stake') <p class="text-xs text-red-700 dark:text-red-400 mt-1">{{ $message }}</p> @enderror
+                        </div>
+
+                        {{-- Payout preview --}}
+                        @php
+                            $hasPick = $isForeigherBet ? (bool) $pickedPlayerId : (bool) $pickedSide;
+                            $previewOdds  = null;
+                            $previewRace  = null;
+                            $previewOther = null;
+                            if ($hasPick) {
+                                $sideA = $isForeigherBet
                                     ? ($pickedPlayerId === $bettingMatch->player_a_id)
                                     : ($pickedSide === 'a');
-                            @endphp
-                            <button
-                                @if($isForeigherBet)
-                                    wire:click="$set('pickedPlayerId', {{ $bettingMatch->player_a_id }})"
-                                @else
-                                    wire:click="$set('pickedSide', 'a')"
-                                @endif
-                                class="p-3 rounded-lg border text-center transition-colors
-                                    {{ $isPickedA
-                                        ? 'bg-amber-500/10 border-amber-500/40 text-white'
-                                        : 'bg-zinc-800/50 border-zinc-700/50 text-zinc-300 hover:border-zinc-500' }}">
-                                <div class="flex items-center justify-center gap-1.5 mb-1">
-                                    @if($bCountryA)
-                                        <img src="{{ asset('images/country_flags/' . strtolower($bCountryA) . '.svg') }}"
-                                            class="w-4 h-3 rounded-sm">
-                                    @endif
-                                    <p class="font-bold text-sm">{{ $bNameA }}</p>
-                                </div>
-                                @if($bRaceA !== 'Unknown')
-                                    <p class="text-xs {{ match($bRaceA) { 'Terran' => 'text-blue-400', 'Zerg' => 'text-purple-400', 'Protoss' => 'text-yellow-400', default => 'text-zinc-500' } }}">
-                                        {{ $bRaceA }}
-                                    </p>
-                                @endif
-                                <p class="text-xs font-mono text-zinc-500 mt-1">×{{ number_format($bOddsA, 2) }}</p>
-                            </button>
-
-                            @php
-                                $isPickedB = $isForeigherBet
-                                    ? ($pickedPlayerId === $bettingMatch->player_b_id)
-                                    : ($pickedSide === 'b');
-                            @endphp
-                            <button
-                                @if($isForeigherBet)
-                                    wire:click="$set('pickedPlayerId', {{ $bettingMatch->player_b_id }})"
-                                @else
-                                    wire:click="$set('pickedSide', 'b')"
-                                @endif
-                                class="p-3 rounded-lg border text-center transition-colors
-                                    {{ $isPickedB
-                                        ? 'bg-amber-500/10 border-amber-500/40 text-white'
-                                        : 'bg-zinc-800/50 border-zinc-700/50 text-zinc-300 hover:border-zinc-500' }}">
-                                <div class="flex items-center justify-center gap-1.5 mb-1">
-                                    @if($bCountryB)
-                                        <img src="{{ asset('images/country_flags/' . strtolower($bCountryB) . '.svg') }}"
-                                            class="w-4 h-3 rounded-sm">
-                                    @endif
-                                    <p class="font-bold text-sm">{{ $bNameB }}</p>
-                                </div>
-                                @if($bRaceB !== 'Unknown')
-                                    <p class="text-xs {{ match($bRaceB) { 'Terran' => 'text-blue-400', 'Zerg' => 'text-purple-400', 'Protoss' => 'text-yellow-400', default => 'text-zinc-500' } }}">
-                                        {{ $bRaceB }}
-                                    </p>
-                                @endif
-                                <p class="text-xs font-mono text-zinc-500 mt-1">×{{ number_format($bOddsB, 2) }}</p>
-                            </button>
-                        </div>
-                        @error('pickedPlayerId') <p class="text-xs text-red-400 mt-1">{{ $message }}</p> @enderror
-                        @error('pickedSide') <p class="text-xs text-red-400 mt-1">{{ $message }}</p> @enderror
-                    </div>
-
-                    {{-- Points input --}}
-                    <div>
-                        <label class="block text-xs text-zinc-500 mb-2 uppercase tracking-wide">
-                            How many points?
-                            <span class="text-orange-500 normal-case ml-1">{{ number_format($this->wallet->balance, 2) }} available</span>
-                        </label>
-                        <div class="flex gap-2">
-                            <input type="number" wire:model.live="stake" min="1" max="{{ $this->wallet->balance }}" step="0.01"
-                                inputmode="decimal"
-                                class="flex-1 rounded-lg bg-zinc-800 border border-zinc-700 px-3 py-2 text-sm text-white focus:outline-none focus:border-amber-500/50"
-                                placeholder="e.g. 10">
-                            <button wire:click="$set('stake', {{ number_format((float) $this->wallet->balance, 2, '.', '') }})"
-                                class="px-3 py-2 text-xs rounded-lg bg-zinc-700/80 text-zinc-300 hover:bg-zinc-700 transition-colors whitespace-nowrap">
-                                Max
-                            </button>
-                        </div>
-                        @error('stake') <p class="text-xs text-red-400 mt-1">{{ $message }}</p> @enderror
-                    </div>
-
-                    {{-- Payout preview --}}
-                    @php
-                        $hasPick = $isForeigherBet ? (bool) $pickedPlayerId : (bool) $pickedSide;
-                        $previewOdds = null;
-                        $previewRace = null;
-                        $previewOther = null;
-                        if ($hasPick) {
-                            $sideA = $isForeigherBet
-                                ? ($pickedPlayerId === $bettingMatch->player_a_id)
-                                : ($pickedSide === 'a');
-                            $previewOdds  = ($sideA ? (float)$bettingMatch->odds_a : (float)$bettingMatch->odds_b) * (float)$bettingMatch->multiplier;
-                            $previewOther = ($sideA ? (float)$bettingMatch->odds_b : (float)$bettingMatch->odds_a) * (float)$bettingMatch->multiplier;
-                            $previewRace  = $sideA ? $bettingMatch->player_a_race : $bettingMatch->player_b_race;
-                        }
-                    @endphp
-                    @if($stake && $hasPick && is_numeric($stake) && $previewOdds)
-                        @php
-                            $bonus = \App\Models\ForecastPrediction::resolveBonusMultiplier(
-                                $this->wallet->currency, $previewRace, $previewOdds, $previewOther
-                            );
-                            $payout = round((float)$stake * $previewOdds * $bonus, 2);
+                                $previewOdds  = ($sideA ? (float)$bettingMatch->odds_a : (float)$bettingMatch->odds_b) * (float)$bettingMatch->multiplier;
+                                $previewOther = ($sideA ? (float)$bettingMatch->odds_b : (float)$bettingMatch->odds_a) * (float)$bettingMatch->multiplier;
+                                $previewRace  = $sideA ? $bettingMatch->player_a_race : $bettingMatch->player_b_race;
+                            }
                         @endphp
-                        <div class="rounded-lg bg-zinc-800/40 border border-zinc-700/40 px-3 py-2 text-xs text-zinc-400 flex items-center gap-2">
-                            <span>If right →</span>
-                            <span class="text-white font-mono font-bold">+{{ number_format($payout, 2) }} pts</span>
-                            @if($bonus > 1)
-                                <span class="text-amber-400 ml-auto">{{ $this->wallet->currencyIcon() }} perk active</span>
-                            @endif
-                        </div>
-                    @endif
-                </div>
-                <div class="flex justify-end gap-3 px-5 py-3 border-t border-zinc-700/50">
-                    <button wire:click="closeBetModal" class="px-4 py-2 text-sm text-zinc-400 hover:text-white transition-colors">
-                        Cancel
-                    </button>
-                    <button wire:click="placeBet"
-                    
-                        class="px-4 py-2 text-sm font-medium rounded-lg bg-amber-500/10 text-amber-400 border border-amber-500/20 hover:bg-amber-500/20 transition-colors">
-                        Confirm call
-                    </button>
+                        @if($stake && $hasPick && is_numeric($stake) && $previewOdds)
+                            @php
+                                $bonus  = \App\Models\ForecastPrediction::resolveBonusMultiplier(
+                                    $this->wallet->currency, $previewRace, $previewOdds, $previewOther
+                                );
+                                $payout = round((float)$stake * $previewOdds * $bonus, 2);
+                            @endphp
+                            <div class="rounded-lg px-3 py-2 text-xs flex items-center gap-2
+                                bg-travertine-100 border border-travertine-300 text-travertine-600
+                                dark:bg-zinc-800/40 dark:border-zinc-700/40 dark:text-zinc-400">
+                                <span>If right →</span>
+                                <span class="font-mono font-bold text-travertine-900 dark:text-white">
+                                    +{{ number_format($payout, 2) }} pts
+                                </span>
+                                @if($bonus > 1)
+                                    <span class="ml-auto text-amber-700 dark:text-amber-400">
+                                        {{ $this->wallet->currencyIcon() }} perk active
+                                    </span>
+                                @endif
+                            </div>
+                        @endif
+                    </div>
+
+                    {{-- Modal footer --}}
+                    <div class="flex justify-end gap-3 px-5 py-3 border-t
+                        border-travertine-300/70 dark:border-zinc-700/50">
+                        <button wire:click="closeBetModal"
+                            class="px-4 py-2 text-sm transition-colors
+                                text-travertine-500 hover:text-travertine-800
+                                dark:text-zinc-400 dark:hover:text-white">
+                            Cancel
+                        </button>
+                        <button wire:click="placeBet"
+                            class="px-4 py-2 text-sm font-medium rounded-lg transition-colors
+                                bg-amber-50 text-amber-700 border border-amber-200 hover:bg-amber-100
+                                dark:bg-amber-500/10 dark:text-amber-400 dark:border-amber-500/20 dark:hover:bg-amber-500/20">
+                            Confirm call
+                        </button>
+                    </div>
                 </div>
             </div>
-        </div>
         @endif
     @endif
 
@@ -221,22 +259,31 @@
         @endphp
         <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4"
             wire:click.self="$set('settlingMatchId', null)">
-            <div class="bg-zinc-900 border border-zinc-700 rounded-xl w-full max-w-sm">
-                <div class="flex items-center justify-between px-5 py-3 border-b border-zinc-700/50">
-                    <h2 class="text-lg font-semibold text-white">Who won?</h2>
-                    <button wire:click="$set('settlingMatchId', null)" class="text-zinc-400 hover:text-white">
+            <div class="bg-travertine-50 border border-travertine-300 rounded-xl w-full max-w-sm
+                        dark:bg-zinc-900 dark:border-zinc-700">
+
+                {{-- Modal header --}}
+                <div class="flex items-center justify-between px-5 py-3 border-b
+                    border-travertine-300/70 dark:border-zinc-700/50">
+                    <h2 class="text-lg font-semibold text-travertine-900 dark:text-white">Who won?</h2>
+                    <button wire:click="$set('settlingMatchId', null)"
+                        class="text-travertine-500 hover:text-travertine-800 dark:text-zinc-400 dark:hover:text-white">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                         </svg>
                     </button>
                 </div>
+
+                {{-- Player selection --}}
                 <div class="p-5">
                     <div class="grid grid-cols-2 gap-2">
+
+                        {{-- Player A --}}
                         <button wire:click="$set('winnerSide', 'a')"
                             class="p-3 rounded-lg border text-center transition-colors
                                 {{ $winnerSide === 'a'
-                                    ? 'bg-emerald-500/10 border-emerald-500/30 text-white'
-                                    : 'bg-zinc-800/50 border-zinc-700/50 text-zinc-300 hover:border-zinc-500' }}">
+                                    ? 'bg-emerald-50 border-emerald-300 text-emerald-900 dark:bg-emerald-500/10 dark:border-emerald-500/30 dark:text-white'
+                                    : 'bg-travertine-75 border-travertine-300 text-travertine-700 hover:border-travertine-400 dark:bg-zinc-800/50 dark:border-zinc-700/50 dark:text-zinc-300 dark:hover:border-zinc-500' }}">
                             <div class="flex items-center justify-center gap-1.5">
                                 @if($sCountryA)
                                     <img src="{{ asset('images/country_flags/' . strtolower($sCountryA) . '.svg') }}"
@@ -245,11 +292,13 @@
                                 <p class="font-bold text-sm">{{ $sNameA }}</p>
                             </div>
                         </button>
+
+                        {{-- Player B --}}
                         <button wire:click="$set('winnerSide', 'b')"
                             class="p-3 rounded-lg border text-center transition-colors
                                 {{ $winnerSide === 'b'
-                                    ? 'bg-emerald-500/10 border-emerald-500/30 text-white'
-                                    : 'bg-zinc-800/50 border-zinc-700/50 text-zinc-300 hover:border-zinc-500' }}">
+                                    ? 'bg-emerald-50 border-emerald-300 text-emerald-900 dark:bg-emerald-500/10 dark:border-emerald-500/30 dark:text-white'
+                                    : 'bg-travertine-75 border-travertine-300 text-travertine-700 hover:border-travertine-400 dark:bg-zinc-800/50 dark:border-zinc-700/50 dark:text-zinc-300 dark:hover:border-zinc-500' }}">
                             <div class="flex items-center justify-center gap-1.5">
                                 @if($sCountryB)
                                     <img src="{{ asset('images/country_flags/' . strtolower($sCountryB) . '.svg') }}"
@@ -260,12 +309,20 @@
                         </button>
                     </div>
                 </div>
-                <div class="flex justify-end gap-3 px-5 py-3 border-t border-zinc-700/50">
-                    <button wire:click="$set('settlingMatchId', null)" class="px-4 py-2 text-sm text-zinc-400 hover:text-white transition-colors">
+
+                {{-- Modal footer --}}
+                <div class="flex justify-end gap-3 px-5 py-3 border-t
+                    border-travertine-300/70 dark:border-zinc-700/50">
+                    <button wire:click="$set('settlingMatchId', null)"
+                        class="px-4 py-2 text-sm transition-colors
+                            text-travertine-500 hover:text-travertine-800
+                            dark:text-zinc-400 dark:hover:text-white">
                         Cancel
                     </button>
                     <button wire:click="settleMatch" @if(! $winnerSide) disabled @endif
-                        class="px-4 py-2 text-sm font-medium rounded-lg bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 hover:bg-emerald-500/20 transition-colors disabled:opacity-40 disabled:cursor-not-allowed">
+                        class="px-4 py-2 text-sm font-medium rounded-lg transition-colors disabled:opacity-40 disabled:cursor-not-allowed
+                            bg-emerald-50 text-emerald-700 border border-emerald-200 hover:bg-emerald-100
+                            dark:bg-emerald-500/10 dark:text-emerald-400 dark:border-emerald-500/20 dark:hover:bg-emerald-500/20">
                         Confirm
                     </button>
                 </div>

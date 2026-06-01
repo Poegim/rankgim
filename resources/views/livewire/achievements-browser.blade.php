@@ -92,71 +92,81 @@ $tiers      = ['s', 'a', 'b', 'c', 'd'];
 <div class="flex flex-col gap-6">
 
     {{-- Page header --}}
-    <div class="flex items-start justify-between gap-4">
-        <div>
-            <h1 class="text-2xl font-bold text-white">Achievements</h1>
-            <p class="text-sm text-zinc-500 mt-0.5">
-                {{ count(config('achievements')) }} total
-                @if($this->isAdmin)
-                    <span class="ml-2 text-xs text-amber-400 font-semibold uppercase tracking-wider">· Admin view</span>
-                @endif
-            </p>
-        </div>
+<div class="flex items-start justify-between gap-4">
+    <div>
+        <h1 class="text-2xl font-bold text-travertine-900 dark:text-white">Achievements</h1>
+        <p class="text-sm text-travertine-500 dark:text-zinc-500 mt-0.5">
+            {{ count(config('achievements')) }} total
+            @if($this->isAdmin)
+                <span class="ml-2 text-xs text-amber-700 dark:text-amber-400 font-semibold uppercase tracking-wider">· Admin view</span>
+            @endif
+        </p>
+    </div>
+</div>
+
+{{-- Filters + sort bar --}}
+<div class="flex flex-wrap items-center gap-2">
+
+    {{-- Category filter --}}
+    <div class="flex flex-wrap gap-1">
+        <button
+            wire:click="$set('filterCategory', '')"
+            class="px-2.5 py-1 rounded-md text-xs font-semibold transition-colors
+                {{ $filterCategory === ''
+                    ? 'bg-indigo-600 text-white dark:bg-indigo-500 dark:text-white'
+                    : 'text-travertine-600 hover:text-travertine-900 hover:bg-travertine-200 dark:text-zinc-400 dark:hover:text-zinc-200 dark:hover:bg-zinc-700' }}"
+        >All</button>
+        @foreach($categories as $cat)
+        <button
+            wire:click="$set('filterCategory', '{{ $cat }}')"
+            class="px-2.5 py-1 rounded-md text-xs font-semibold transition-colors
+                {{ $filterCategory === $cat
+                    ? 'bg-indigo-600 text-white dark:bg-indigo-500 dark:text-white'
+                    : 'text-travertine-600 hover:text-travertine-900 hover:bg-travertine-200 dark:text-zinc-400 dark:hover:text-zinc-200 dark:hover:bg-zinc-700' }}"
+        >{{ $categoryLabels[$cat] }}</button>
+        @endforeach
     </div>
 
-    {{-- Filters + sort bar --}}
-    <div class="flex flex-wrap items-center gap-2">
+    {{-- Vertical divider --}}
+    <div class="w-px h-5 bg-travertine-300 dark:bg-zinc-700 hidden sm:block"></div>
 
-        {{-- Category filter --}}
-        <div class="flex flex-wrap gap-1">
-            <button
-                wire:click="$set('filterCategory', '')"
-                class="px-2.5 py-1 rounded-md text-xs font-semibold transition-colors
-                    {{ $filterCategory === '' ? 'bg-indigo-500 text-white' : 'text-zinc-400 hover:text-zinc-200 hover:bg-zinc-700' }}"
-            >All</button>
-            @foreach($categories as $cat)
-            <button
-                wire:click="$set('filterCategory', '{{ $cat }}')"
-                class="px-2.5 py-1 rounded-md text-xs font-semibold transition-colors
-                    {{ $filterCategory === $cat ? 'bg-indigo-500 text-white' : 'text-zinc-400 hover:text-zinc-200 hover:bg-zinc-700' }}"
-            >{{ $categoryLabels[$cat] }}</button>
-            @endforeach
-        </div>
-
-        <div class="w-px h-5 bg-zinc-700 hidden sm:block"></div>
-
-        {{-- Tier filter --}}
-        <div class="flex gap-1">
-            <button
-                wire:click="$set('filterTier', '')"
-                class="px-2.5 py-1 rounded-md text-xs font-bold transition-colors
-                    {{ $filterTier === '' ? 'bg-zinc-600 text-white' : 'text-zinc-500 hover:text-zinc-200 hover:bg-zinc-700' }}"
-            >All tiers</button>
-            @foreach($tiers as $tier)
-            @php $ts = $tierStyles[$tier]; @endphp
-            <button
-                wire:click="$set('filterTier', '{{ $tier }}')"
-                class="w-7 h-7 rounded-md text-xs font-bold transition-opacity
-                    {{ $filterTier === $tier ? 'opacity-100 ring-2 ring-white/30' : 'opacity-60 hover:opacity-100' }}"
-                style="{{ $ts['tier'] }}"
-            >{{ strtoupper($tier) }}</button>
-            @endforeach
-        </div>
-
-        <div class="w-px h-5 bg-zinc-700 hidden sm:block"></div>
-
-        {{-- Sort --}}
-        <div class="flex gap-1">
-            @foreach(['category' => 'By category', 'tier' => 'By tier', 'popularity' => 'By popularity'] as $val => $label)
-            <button
-                wire:click="$set('sortBy', '{{ $val }}')"
-                class="px-2.5 py-1 rounded-md text-xs font-semibold transition-colors
-                    {{ $sortBy === $val ? 'bg-zinc-600 text-white' : 'text-zinc-400 hover:text-zinc-200 hover:bg-zinc-700' }}"
-            >{{ $label }}</button>
-            @endforeach
-        </div>
-
+    {{-- Tier filter --}}
+    <div class="flex gap-1">
+        <button
+            wire:click="$set('filterTier', '')"
+            class="px-2.5 py-1 rounded-md text-xs font-bold transition-colors
+                {{ $filterTier === ''
+                    ? 'bg-travertine-300 text-travertine-900 dark:bg-zinc-600 dark:text-white'
+                    : 'text-travertine-500 hover:text-travertine-900 hover:bg-travertine-200 dark:text-zinc-500 dark:hover:text-zinc-200 dark:hover:bg-zinc-700' }}"
+        >All tiers</button>
+        @foreach($tiers as $tier)
+        @php $ts = $tierStyles[$tier]; @endphp
+        <button
+            wire:click="$set('filterTier', '{{ $tier }}')"
+            class="w-7 h-7 rounded-md text-xs font-bold transition-opacity
+                {{ $filterTier === $tier ? 'opacity-100 ring-2 ring-black/20 dark:ring-white/30' : 'opacity-60 hover:opacity-100' }}"
+            style="{{ $ts['tier'] }}"
+        >{{ strtoupper($tier) }}</button>
+        @endforeach
     </div>
+
+    {{-- Vertical divider --}}
+    <div class="w-px h-5 bg-travertine-300 dark:bg-zinc-700 hidden sm:block"></div>
+
+    {{-- Sort --}}
+    <div class="flex gap-1">
+        @foreach(['category' => 'By category', 'tier' => 'By tier', 'popularity' => 'By popularity'] as $val => $label)
+        <button
+            wire:click="$set('sortBy', '{{ $val }}')"
+            class="px-2.5 py-1 rounded-md text-xs font-semibold transition-colors
+                {{ $sortBy === $val
+                    ? 'bg-travertine-300 text-travertine-900 dark:bg-zinc-600 dark:text-white'
+                    : 'text-travertine-600 hover:text-travertine-900 hover:bg-travertine-200 dark:text-zinc-400 dark:hover:text-zinc-200 dark:hover:bg-zinc-700' }}"
+        >{{ $label }}</button>
+        @endforeach
+    </div>
+
+</div>
 
     {{-- Achievements grid --}}
     <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-2">

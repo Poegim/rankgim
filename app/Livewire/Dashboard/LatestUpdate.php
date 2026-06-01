@@ -13,7 +13,7 @@ class LatestUpdate extends Component
      * Show the most recent N published articles regardless of type.
      * Type is rendered as a badge so users can distinguish auto updates from manual news.
      */
-    public int $limit = 15;
+    public int $limit = 5;
 
     #[Computed]
     public function articles(): Collection

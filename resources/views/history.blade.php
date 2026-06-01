@@ -2,8 +2,8 @@
     <div class="flex flex-col gap-4 w-full">
 
         <div>
-            <h1 class="text-2xl font-bold text-zinc-900 dark:text-white">Stats</h1>
-            <p class="text-sm text-zinc-500 mt-1">Records, history and interesting stats</p>
+            <h1 class="text-2xl font-bold text-travertine-900 dark:text-white">Stats</h1>
+            <p class="text-sm text-travertine-500 dark:text-zinc-500 mt-1">Records, history and interesting stats</p>
         </div>
 
         {{-- Race matchups --}}

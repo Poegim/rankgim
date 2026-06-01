@@ -3,7 +3,11 @@
     {{-- ========== Row 1: Top 10 (full width) ========== --}}
     <div class="grid lg:grid-cols-2 space-x-2">
         <livewire:dashboard.top-players />
-        <livewire:dashboard.latest-update />
+        <div >
+            <livewire:dashboard.latest-update />
+            <livewire:dashboard.forecast-standings />
+
+        </div>
         
     </div>
 

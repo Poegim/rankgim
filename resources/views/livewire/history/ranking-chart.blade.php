@@ -1,21 +1,36 @@
 <div class="flex flex-col gap-4">
-    <h2 class="text-sm font-semibold text-zinc-400 uppercase tracking-widest">Ranking history</h2>
+    <h2 class="font-cinzel text-[10px] font-medium uppercase tracking-[0.15em] text-oxblood dark:text-zinc-500">
+        Ranking history
+    </h2>
 
     {{-- Pass data via script tag to avoid Alpine expression size limits --}}
     <script>
         window._rankingChartSeries = {!! json_encode($this->chartSeries) !!};
+
+        // CSS var values resolved at runtime for ApexCharts (can't read CSS vars directly)
+        window._rankingChartColors = (function () {
+            const style = getComputedStyle(document.documentElement);
+            return {
+                terran:  style.getPropertyValue('--color-race-terran').trim(),
+                zerg:    style.getPropertyValue('--color-race-zerg').trim(),
+                protoss: style.getPropertyValue('--color-race-protoss').trim(),
+                random:  style.getPropertyValue('--color-race-random').trim(),
+            };
+        })();
     </script>
 
-    <div class="rounded-xl border border-zinc-200 dark:border-zinc-700 p-4 bg-zinc-50 dark:bg-zinc-800/50"
+    <div class="rounded-xl border p-4
+        border-travertine-300 bg-travertine-50
+        dark:border-zinc-700 dark:bg-zinc-800/50"
          x-data="{
              init() {
-                 const series = window._rankingChartSeries;
-                 const raceColors = {
-                     Terran:  '#3b82f6',
-                     Zerg:    '#a855f7',
-                     Protoss: '#eab308',
-                     Random:  '#f97316',
-                 };
+                 const isDark  = document.documentElement.classList.contains('dark');
+                 const series  = window._rankingChartSeries;
+                 const raceColors = window._rankingChartColors;
+
+                 // Axis/grid colors per app convention (rule #10)
+                 const textColor = isDark ? '#71717a' : '#78716c';
+                 const gridColor = isDark ? '#3f3f46' : '#d4cab0';
 
                  new ApexCharts(this.$refs.chart, {
                      chart: {
@@ -24,21 +39,20 @@
                          background: 'transparent',
                          toolbar: { show: false },
                          animations: { enabled: false },
-                         zoom: {
-        enabled: false  // disables scroll-to-zoom, restores page scroll
-    },
+                         // Disable scroll-to-zoom so page scroll works normally
+                         zoom: { enabled: false },
                      },
                      theme: {
-                         mode: document.documentElement.classList.contains('dark') ? 'dark' : 'light'
+                         mode: isDark ? 'dark' : 'light',
                      },
                      series: series.map(s => ({
                          name: s.name,
                          data: s.data.map(d => ({ x: new Date(d.x).getTime(), y: d.y, rating: d.rating }))
                      })),
-                     colors: series.map(s => raceColors[s.race] ?? '#6366f1'),
+                     colors: series.map(s => raceColors[s.race?.toLowerCase()] ?? '#6366f1'),
                      xaxis: {
                          type: 'datetime',
-                         labels: { style: { fontSize: '11px' } },
+                         labels: { style: { colors: textColor, fontSize: '11px' } },
                      },
                      yaxis: {
                          reversed: true,
@@ -46,7 +60,7 @@
                          forceNiceScale: false,
                          labels: {
                              formatter: v => '#' + Math.round(v),
-                             style: { fontSize: '11px' },
+                             style: { colors: textColor, fontSize: '11px' },
                          },
                      },
                      stroke: {
@@ -57,6 +71,7 @@
                          size: 0,
                      },
                      tooltip: {
+                         theme: isDark ? 'dark' : 'light',
                          custom({ seriesIndex, dataPointIndex, w }) {
                              const point = w.config.series[seriesIndex].data[dataPointIndex];
                              const name  = w.config.series[seriesIndex].name;
@@ -69,11 +84,13 @@
                          }
                      },
                      grid: {
-                         borderColor: '#3f3f46',
+                         borderColor: gridColor,
+                         strokeDashArray: 4,
                      },
                      legend: {
                          position: 'top',
                          fontSize: '12px',
+                         labels: { colors: textColor },
                      },
                  }).render();
              }
