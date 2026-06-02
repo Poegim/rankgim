@@ -122,7 +122,7 @@
 
         {{-- Season name label --}}
         <span class="ml-auto text-xs text-travertine-500 dark:text-zinc-600 hidden sm:block">
-            {{ $this->season->name }}
+            Season: {{ $this->season->name }}
         </span>
     </div>
 
