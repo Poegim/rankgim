@@ -33,10 +33,26 @@ class ForecastStandings extends Component
             ->with('user')
             ->withCount(['predictions as settled_count' => fn($q) => $q->whereIn('result', ['won', 'lost', 'refunded'])])
             ->withCount(['predictions as won_count' => fn($q) => $q->where('result', 'won')])
-            ->orderByDesc('balance')
-            ->limit($this->limit)
+            // Pull only wallets that have at least one settled prediction
+            ->whereHas('predictions', fn($q) => $q->whereIn('result', ['won', 'lost']))
             ->get()
-            ->each(fn($w) => $w->computed_profit = $w->balance - 50);
+            ->map(function ($wallet) {
+                // Profit = sum of payouts minus sum of stakes on settled predictions only
+                $settled = $wallet->predictions()
+                    ->whereIn('result', ['won', 'lost'])
+                    ->selectRaw('SUM(actual_payout) as total_payout, SUM(stake) as total_stake')
+                    ->first();
+
+                $wallet->computed_profit = round(
+                    (float) ($settled->total_payout ?? 0) - (float) ($settled->total_stake ?? 0),
+                    2
+                );
+
+                return $wallet;
+            })
+            ->sortByDesc('computed_profit')
+            ->take($this->limit)
+            ->values();
     }
 
     public function render(): \Illuminate\View\View
