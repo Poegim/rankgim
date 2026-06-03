@@ -50,7 +50,26 @@
             'race'         => $g['race'] ?? 'Unknown',
             'country_code' => $g['country_code'] ?? 'kr',
         ])
-    );
+    )->concat(
+        collect($event->relationLoaded('forecasts') ? $event->forecasts : [])
+            ->where('match_type', 'foreigner')
+            ->flatMap(fn($match) => array_filter([
+                $match->playerA ? [
+                    'type'         => 'registered',
+                    'id'           => $match->playerA->id,
+                    'name'         => $match->playerA->name,
+                    'race'         => $match->playerA->race,
+                    'country_code' => $match->playerA->country_code,
+                ] : null,
+                $match->playerB ? [
+                    'type'         => 'registered',
+                    'id'           => $match->playerB->id,
+                    'name'         => $match->playerB->name,
+                    'race'         => $match->playerB->race,
+                    'country_code' => $match->playerB->country_code,
+                ] : null,
+            ]))
+    )->unique('id');
 
     // Grid column count: 2 columns for 2+ players, 1 for solo.
     $playerCols = $allPlayers->count() > 1 ? 2 : 1;

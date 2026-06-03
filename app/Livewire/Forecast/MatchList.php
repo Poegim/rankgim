@@ -93,6 +93,15 @@ class MatchList extends Component
     }
 
     #[Computed]
+    public function availableEvents(): \Illuminate\Support\Collection
+    {
+        // Events starting at least 1 hour from now
+        return \App\Models\Event::where('starts_at', '>=', now()->addHour())
+            ->orderBy('starts_at')
+            ->get(['id', 'name', 'starts_at']);
+    }
+
+    #[Computed]
     public function wallet(): ?ForecastWallet
     {
         if (! auth()->check() || ! $this->season) {
@@ -336,6 +345,7 @@ class MatchList extends Component
             'scheduledAt' => 'required|date',
             'lockedAt'    => 'required|date|before_or_equal:scheduledAt',
             'multiplier'  => 'required|numeric|min:0.1',
+            'eventId'    => 'nullable|exists:events,id',
         ]);
 
         // datetime-local sends naive strings (no timezone). Treat them as
@@ -346,7 +356,7 @@ class MatchList extends Component
             'scheduled_at' => $this->scheduledAt,
             'locked_at'    => $this->lockedAt,
             'multiplier'   => $this->multiplier,
-            'event_id'     => $this->eventId,
+            'event_id'     => $this->eventId ?: null,
         ];
 
         if ($this->matchType === 'foreigner') {

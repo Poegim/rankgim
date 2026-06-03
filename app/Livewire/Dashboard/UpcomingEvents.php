@@ -15,7 +15,7 @@ class UpcomingEvents extends Component
     public function events()
     {
         return Event::where('starts_at', '>=', now()->subHours(Event::LIVE_WINDOW_HOURS))
-            ->with('players')
+            ->with(['players', 'forecasts.playerA', 'forecasts.playerB'])
             ->orderBy('starts_at')
             ->limit(self::LIMIT)
             ->get();

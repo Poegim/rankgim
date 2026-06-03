@@ -58,6 +58,7 @@ class Index extends Component
     public function events(): Collection
     {
         $query = Event::with(['user', 'players'])
+            ->with(['user', 'players', 'forecasts.playerA', 'forecasts.playerB'])
             ->orderBy('starts_at', $this->view === 'past' ? 'desc' : 'asc');
 
         if ($this->view === 'upcoming') {

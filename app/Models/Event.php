@@ -8,6 +8,7 @@ use Carbon\CarbonInterface;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Event extends Model
 {
@@ -165,6 +166,11 @@ class Event extends Model
     }
 
         return $dates;
+    }
+
+    public function forecasts(): HasMany
+    {
+        return $this->hasMany(ForecastMatch::class);
     }
 
     public function startsAtLocal(): CarbonInterface

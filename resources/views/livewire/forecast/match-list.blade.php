@@ -527,6 +527,22 @@
                     </div>
                 @endif
 
+                {{-- Event (optional) --}}
+                <div>
+                    <label class="block text-xs text-zinc-500 mb-1 uppercase tracking-wide">
+                        Event <span class="text-zinc-700 normal-case ml-1">optional</span>
+                    </label>
+                    <select wire:model="eventId"
+                        class="w-full rounded-lg bg-zinc-800 border border-zinc-700 px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500/50">
+                        <option value="">— none —</option>
+                        @foreach($this->availableEvents as $event)
+                            <option value="{{ $event->id }}">
+                                {{ $event->name }} ({{ $event->starts_at->format('M j') }})
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
+
                 {{-- Scheduled + locked --}}
                 <div class="grid grid-cols-2 gap-3">
                     <div>
