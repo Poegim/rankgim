@@ -9,7 +9,7 @@
                     bg-travertine-100 text-travertine-600 border-b border-travertine-300
                     dark:bg-zinc-800/60 dark:text-zinc-600 dark:border-zinc-700/40">
             <div class="col-span-2">Date</div>
-            <div class="col-span-1 text-center">W/L</div>
+            <div class="col-span-1 text-center">Result</div>
             <div class="col-span-4">Opponent</div>
             <div class="col-span-3">Tournament</div>
             <div class="col-span-2 text-right">Rating</div>
@@ -18,10 +18,20 @@
         {{-- Rows --}}
         @foreach($this->games as $entry)
         @php
-            $opponent = $entry->result === 'win' ? $entry->game->loser : $entry->game->winner;
-            $isWin    = $entry->result === 'win';
+            $isDraw = $entry->result === 'draw';
+            $isWin  = $entry->result === 'win';
 
-            // Race color via CSS var — auto theme-adjusts (darker on cream).
+            // For wins the opponent is the loser, for losses — the winner.
+            // For draws winner_id/loser_id are nominal; resolve via player_id.
+            if ($isDraw) {
+                $opponent = $entry->player_id === $entry->game->winner_id
+                    ? $entry->game->loser
+                    : $entry->game->winner;
+            } else {
+                $opponent = $isWin ? $entry->game->loser : $entry->game->winner;
+            }
+
+            // Race color via CSS var — auto theme-adjusts.
             $opponentRaceVar = match($opponent?->race) {
                 'Terran'  => 'var(--color-race-terran-soft)',
                 'Zerg'    => 'var(--color-race-zerg-soft)',
@@ -29,11 +39,14 @@
                 'Random'  => 'var(--color-race-random-soft)',
                 default   => 'var(--color-race-unknown-soft)',
             };
+
+            // Left border color: green = win, red = loss, amber = draw.
+            $borderColor = $isDraw ? '#d97706' : ($isWin ? '#16a34a' : '#dc2626');
         @endphp
         <div class="grid grid-cols-12 gap-2 items-center px-5 py-3 transition-colors duration-100
                     border-b border-travertine-300/60 hover:bg-oxblood/5
                     dark:border-zinc-700/30 dark:hover:bg-zinc-800/30"
-             style="border-left: 3px solid {{ $isWin ? '#16a34a' : '#dc2626' }}">
+             style="border-left: 3px solid {{ $borderColor }}">
 
             {{-- Date --}}
             <div class="col-span-2">
@@ -43,14 +56,15 @@
                 </p>
             </div>
 
-            {{-- W/L badge --}}
+            {{-- Result badge --}}
             <div class="col-span-1 flex justify-center">
                 <span @class([
                     'w-7 h-7 flex items-center justify-center rounded-lg text-xs font-black',
                     'bg-emerald-100 text-emerald-800 dark:bg-green-500/15 dark:text-green-400' => $isWin,
-                    'bg-red-100 text-red-800 dark:bg-red-500/15 dark:text-red-400' => ! $isWin,
+                    'bg-amber-100 text-amber-800 dark:bg-amber-500/15 dark:text-amber-400'     => $isDraw,
+                    'bg-red-100 text-red-800 dark:bg-red-500/15 dark:text-red-400'             => ! $isWin && ! $isDraw,
                 ])>
-                    {{ $isWin ? 'W' : 'L' }}
+                    {{ $isWin ? 'W' : ($isDraw ? 'D' : 'L') }}
                 </span>
             </div>
 
@@ -97,8 +111,9 @@
                           text-travertine-900 dark:text-zinc-200">{{ $entry->rating_after }}</p>
                 <p @class([
                     'text-xs font-semibold tabular-nums',
-                    'text-emerald-700 dark:text-green-400' => $entry->rating_change >= 0,
-                    'text-red-700 dark:text-red-400' => $entry->rating_change < 0,
+                    'text-emerald-700 dark:text-green-400' => $entry->rating_change > 0,
+                    'text-amber-700 dark:text-amber-400'   => $entry->rating_change === 0,
+                    'text-red-700 dark:text-red-400'       => $entry->rating_change < 0,
                 ])>
                     {{ $entry->rating_change > 0 ? '+' : '' }}{{ $entry->rating_change }}
                 </p>
@@ -108,8 +123,7 @@
         @endforeach
     </div>
 
-    {{-- Pagination — Flux ogarnia własny theme.                       --}}
-    {{-- scrollTo:false zapobiega skoku na górę przy wire:navigate.    --}}
+    {{-- Pagination --}}
     <div class="mt-3" wire:ignore.self>
         {{ $this->games->links(data: ['scrollTo' => false]) }}
     </div>
