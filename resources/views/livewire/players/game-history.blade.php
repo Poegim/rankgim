@@ -18,11 +18,14 @@
         {{-- Rows --}}
         @foreach($this->games as $entry)
         @php
-            $isDraw = $entry->result === 'draw';
-            $isWin  = $entry->result === 'win';
+            // Draws are detected from the game table (result == 3),
+            // because EloService always writes 'win'/'loss' in rating_histories
+            // even for draws — only the rating calculation uses 0.5 score.
+            $isDraw = (int) $entry->game->result === 3;
+            $isWin  = ! $isDraw && $entry->result === 'win';
 
-            // For wins the opponent is the loser, for losses — the winner.
-            // For draws winner_id/loser_id are nominal; resolve via player_id.
+            // For draws winner_id/loser_id are nominal; resolve opponent via player_id.
+            // For regular games: win → opponent is loser, loss → opponent is winner.
             if ($isDraw) {
                 $opponent = $entry->player_id === $entry->game->winner_id
                     ? $entry->game->loser
@@ -112,7 +115,7 @@
                 <p @class([
                     'text-xs font-semibold tabular-nums',
                     'text-emerald-700 dark:text-green-400' => $entry->rating_change > 0,
-                    'text-amber-700 dark:text-amber-400'   => $entry->rating_change === 0,
+                    'text-amber-700 dark:text-amber-400'   => $entry->rating_change == 0,
                     'text-red-700 dark:text-red-400'       => $entry->rating_change < 0,
                 ])>
                     {{ $entry->rating_change > 0 ? '+' : '' }}{{ $entry->rating_change }}
