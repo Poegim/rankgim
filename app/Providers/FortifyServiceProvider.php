@@ -10,6 +10,8 @@ use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
 use Laravel\Fortify\Fortify;
+use App\Http\Middleware\RejectHoneypot;
+use Illuminate\Support\Facades\Route;
 
 class FortifyServiceProvider extends ServiceProvider
 {
@@ -29,6 +31,7 @@ class FortifyServiceProvider extends ServiceProvider
         $this->configureActions();
         $this->configureViews();
         $this->configureRateLimiting();
+        $this->hardenRegistration();
     }
 
     /**
@@ -68,5 +71,32 @@ class FortifyServiceProvider extends ServiceProvider
 
             return Limit::perMinute(5)->by($throttleKey);
         });
+
+        // Limit registration to 3 attempts per hour per IP address.
+        RateLimiter::for('registration', function (Request $request) {
+            return Limit::perHour(3)->by($request->ip());
+        });
     }
+
+        /**
+     * Attach anti-bot middleware to the Fortify registration route.
+     */
+    private function hardenRegistration(): void
+    {
+        $this->app->booted(function () {
+            foreach (['register', 'register.store'] as $name) {
+                $route = Route::getRoutes()->getByName($name);
+
+                if ($route && in_array('POST', $route->methods())) {
+                    $route->middleware([
+                        'throttle:registration',
+                        RejectHoneypot::class,
+                    ]);
+                    break;
+                }
+            }
+        });
+    }
+
+    
 }
