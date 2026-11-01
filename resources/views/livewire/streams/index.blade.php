@@ -73,7 +73,7 @@
                     : 'text-travertine-500 hover:text-travertine-700 dark:text-zinc-500 dark:hover:text-zinc-300' }}">
             <span class="flex items-center gap-2">
                 <span class="w-1.5 h-1.5 rounded-full {{ $tab === 'channels' ? 'bg-oxblood dark:bg-zinc-300' : 'bg-travertine-300 dark:bg-zinc-700' }}"></span>
-                Channels
+                All Featured Channels
                 <span class="text-[10px] font-normal text-travertine-500 dark:text-zinc-600">
                     @if ($tab === 'channels')
                         ({{ count($this->channels) }})
