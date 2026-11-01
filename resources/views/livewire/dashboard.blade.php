@@ -1,27 +1,19 @@
 <div class="w-full flex flex-col gap-6">
 
-    {{-- ========== Row 1: Top 10 (full width) ========== --}}
-    <div class="grid lg:grid-cols-2 space-x-2">
-        <livewire:dashboard.top-players />
-        <div >
-            <livewire:dashboard.latest-update />
-            <livewire:dashboard.forecast-standings />
-
-        </div>
-        
-    </div>
-
-
-        {{-- ========== Row 4: Reactions + Comments ========== --}}
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <livewire:dashboard.recent-reactions />
-        <livewire:dashboard.recent-comments />
-    </div>
-
-    
+    {{-- ========== Row 1: Streams (top priority, full width) ========== --}}
     <livewire:streams.stream-list />
 
-    {{-- ========== Row 2: Events + Next match to predict ==========
+    {{-- ========== Row 2: Top players + Latest update / Forecast standings ========== --}}
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <livewire:dashboard.top-players />
+
+        <div class="flex flex-col gap-6">
+            <livewire:dashboard.latest-update />
+            <livewire:dashboard.forecast-standings />
+        </div>
+    </div>
+
+    {{-- ========== Row 3: Events + Next match to predict ==========
          Layout adapts:
          - both present     → 50/50 grid
          - only one present → that one takes full width
@@ -48,10 +40,16 @@
         </div>
     @endif
 
-    {{-- ========== Row 3: Recent achievements (full width grid) ========== --}}
+    {{-- ========== Row 4: Reactions + Comments ========== --}}
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <livewire:dashboard.recent-reactions />
+        <livewire:dashboard.recent-comments />
+    </div>
+
+    {{-- ========== Row 5: Recent achievements (full width grid) ========== --}}
     <livewire:recent-achievements />
 
-    {{-- Risers + Fallers + Hot streaks --}}
+    {{-- ========== Row 6: Risers + Fallers + Hot streaks ========== --}}
     <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div class="md:col-span-2">
             <livewire:dashboard.risers-and-fallers />
@@ -59,14 +57,11 @@
         <livewire:dashboard.hot-streaks />
     </div>
 
-    {{-- Most active + Biggest upsets + Most dominant --}}
+    {{-- ========== Row 7: Most active + Biggest upsets + Most dominant ========== --}}
     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
         <livewire:dashboard.most-active />
         <livewire:dashboard.biggest-upsets />
         <livewire:dashboard.most-dominant />
     </div>
-
-
-
 
 </div>

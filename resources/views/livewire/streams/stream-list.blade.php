@@ -1,10 +1,17 @@
 <div wire:poll.{{ $pollSeconds }}s class="space-y-3"
      x-data="{
          selectedRace: 'all',
+         selectedPlatform: 'all',
          showAll: false,
          initialLimit: 12,
-         matches(race) {
+         matchesRace(race) {
              return this.selectedRace === 'all' || this.selectedRace === race;
+         },
+         matchesPlatform(platform) {
+             return this.selectedPlatform === 'all' || this.selectedPlatform === platform;
+         },
+         matches(race, platform) {
+             return this.matchesRace(race) && this.matchesPlatform(platform);
          }
      }">
 
@@ -44,73 +51,126 @@
             </a>
         </div>
     @else
-        {{-- Race filters — reset collapse state when race changes so the user always sees the first batch of the new filter --}}
-        <div class="mb-6 flex flex-wrap gap-2">
-            {{-- "All" button — active uses oxblood (brand CTA), inactive uses travertine --}}
-            <button
-                @click="selectedRace = 'all'; showAll = false"
-                :class="selectedRace === 'all'
-                    ? 'bg-oxblood text-oxblood-content dark:bg-rose-600 dark:text-white'
-                    : 'bg-travertine-200 text-travertine-700 hover:bg-travertine-300 dark:bg-zinc-800 dark:text-zinc-400 dark:hover:bg-zinc-700'"
-                class="rounded-md px-3 py-1.5 text-xs font-bold uppercase transition"
-            >
-                All
-            </button>
+        {{-- Filter rows: platform on top, race below --}}
+        {{-- Reset collapse state when any filter changes so the user always sees the first batch --}}
+        <div class="mb-6 space-y-2">
 
-            {{-- Race buttons — active uses race-specific tint via CSS vars --}}
-            @foreach(['terran', 'protoss', 'zerg'] as $race)
+            {{-- Platform filter row --}}
+            <div class="flex flex-wrap items-center gap-2">
+                <span class="mr-1 text-[10px] font-semibold uppercase tracking-widest
+                             text-travertine-500 dark:text-zinc-600">
+                    Platform
+                </span>
+
+                {{-- "All" platform button --}}
                 <button
-                    @click="selectedRace = '{{ $race }}'; showAll = false"
-                    :class="selectedRace === '{{ $race }}'
-                        ? 'border-oxblood bg-oxblood/10 text-oxblood dark:border-rose-500 dark:bg-rose-500/10 dark:text-white'
+                    @click="selectedPlatform = 'all'; showAll = false"
+                    :class="selectedPlatform === 'all'
+                        ? 'bg-oxblood text-oxblood-content dark:bg-rose-600 dark:text-white'
+                        : 'bg-travertine-200 text-travertine-700 hover:bg-travertine-300 dark:bg-zinc-800 dark:text-zinc-400 dark:hover:bg-zinc-700'"
+                    class="rounded-md px-3 py-1.5 text-xs font-bold uppercase transition"
+                >
+                    All
+                </button>
+
+                {{-- SOOP button — brand red accent when active --}}
+                <button
+                    @click="selectedPlatform = 'soop'; showAll = false"
+                    :class="selectedPlatform === 'soop'
+                        ? 'border-[#ef4444] bg-[#ef4444]/10 text-[#ef4444] dark:border-[#ef4444] dark:bg-[#ef4444]/10 dark:text-[#ff6b6b]'
                         : 'border-travertine-300 text-travertine-600 hover:bg-travertine-200 dark:border-zinc-700 dark:text-zinc-400 dark:hover:bg-zinc-800'"
                     class="rounded-md border px-3 py-1.5 text-xs font-bold uppercase transition"
                 >
-                    {{ ucfirst($race) }}
+                    SOOP
                 </button>
-            @endforeach
 
-            <div>
-                <a href="{{ route('streams.index') }}"
-                   class="text-xs transition-colors px-3 py-1.5 rounded-md inline-block
-                          text-travertine-600 hover:text-oxblood hover:bg-travertine-200/60
-                          dark:text-zinc-400 dark:hover:text-zinc-200 dark:hover:bg-zinc-700/40">
-                    Show all
-                </a>
+                {{-- Twitch button — brand purple accent when active --}}
+                <button
+                    @click="selectedPlatform = 'twitch'; showAll = false"
+                    :class="selectedPlatform === 'twitch'
+                        ? 'border-[#9146ff] bg-[#9146ff]/10 text-[#9146ff] dark:border-[#9146ff] dark:bg-[#9146ff]/10 dark:text-[#b380ff]'
+                        : 'border-travertine-300 text-travertine-600 hover:bg-travertine-200 dark:border-zinc-700 dark:text-zinc-400 dark:hover:bg-zinc-800'"
+                    class="rounded-md border px-3 py-1.5 text-xs font-bold uppercase transition"
+                >
+                    Twitch
+                </button>
+            </div>
+
+            {{-- Race filter row --}}
+            <div class="flex flex-wrap items-center gap-2">
+                <span class="mr-1 text-[10px] font-semibold uppercase tracking-widest
+                             text-travertine-500 dark:text-zinc-600">
+                    Race
+                </span>
+
+                {{-- "All" race button — active uses oxblood (brand CTA), inactive uses travertine --}}
+                <button
+                    @click="selectedRace = 'all'; showAll = false"
+                    :class="selectedRace === 'all'
+                        ? 'bg-oxblood text-oxblood-content dark:bg-rose-600 dark:text-white'
+                        : 'bg-travertine-200 text-travertine-700 hover:bg-travertine-300 dark:bg-zinc-800 dark:text-zinc-400 dark:hover:bg-zinc-700'"
+                    class="rounded-md px-3 py-1.5 text-xs font-bold uppercase transition"
+                >
+                    All
+                </button>
+
+                {{-- Race buttons — active uses race-specific tint via CSS vars --}}
+                @foreach(['terran', 'protoss', 'zerg'] as $race)
+                    <button
+                        @click="selectedRace = '{{ $race }}'; showAll = false"
+                        :class="selectedRace === '{{ $race }}'
+                            ? 'border-oxblood bg-oxblood/10 text-oxblood dark:border-rose-500 dark:bg-rose-500/10 dark:text-white'
+                            : 'border-travertine-300 text-travertine-600 hover:bg-travertine-200 dark:border-zinc-700 dark:text-zinc-400 dark:hover:bg-zinc-800'"
+                        class="rounded-md border px-3 py-1.5 text-xs font-bold uppercase transition"
+                    >
+                        {{ ucfirst($race) }}
+                    </button>
+                @endforeach
+
+                <div>
+                    <a href="{{ route('streams.index') }}"
+                       class="text-xs transition-colors px-3 py-1.5 rounded-md inline-block
+                              text-travertine-600 hover:text-oxblood hover:bg-travertine-200/60
+                              dark:text-zinc-400 dark:hover:text-zinc-200 dark:hover:bg-zinc-700/40">
+                        Show all
+                    </a>
+                </div>
             </div>
         </div>
 
 
         {{--
             Each card carries:
-              - data-race attribute (used for filtering)
+              - data-race attribute (used for race filtering)
+              - data-platform attribute (used for platform filtering)
               - visibleIndex — its rank within the currently filtered subset
               - filteredCount — total cards in current subset
-            Both are computed in Alpine via x-effect so collapsing always respects the active race filter.
+            Both are computed in Alpine via x-effect so collapsing always respects the active filters.
         --}}
         <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
              x-data="{
                  filteredCount: 0,
                  recount() {
                      this.filteredCount = Array.from($el.querySelectorAll('[data-race]'))
-                         .filter(el => this.matches(el.dataset.race))
+                         .filter(el => this.matches(el.dataset.race, el.dataset.platform))
                          .length;
                  }
              }"
              x-init="recount()"
-             x-effect="selectedRace; recount()"
+             x-effect="selectedRace; selectedPlatform; recount()"
         >
             @foreach ($this->streams as $i => $s)
                 <a href="{{ $s['play_url'] }}"
                     data-race="{{ strtolower($s['race'] ?? '') }}"
-                    x-show="matches('{{ strtolower($s['race'] ?? '') }}') && (showAll || visibleIndex() < initialLimit)"
+                    data-platform="{{ strtolower($s['platform'] ?? '') }}"
+                    x-show="matches('{{ strtolower($s['race'] ?? '') }}', '{{ strtolower($s['platform'] ?? '') }}') && (showAll || visibleIndex() < initialLimit)"
                     x-data="{
                         visibleIndex() {
-                            // Count how many same-race-matching siblings come before this one
+                            // Count how many matching siblings come before this one
                             let count = 0;
                             let el = $el.previousElementSibling;
                             while (el) {
-                                if (el.dataset.race && matches(el.dataset.race)) count++;
+                                if (el.dataset.race !== undefined && matches(el.dataset.race, el.dataset.platform)) count++;
                                 el = el.previousElementSibling;
                             }
                             return count;
