@@ -73,6 +73,21 @@ class TwitchLiveStatusService
                 'fetched_at' => CarbonImmutable::now()->toIso8601String(),
                 'streams'    => $normalized,
             ]);
+
+            $liveUserIds = collect($normalized)
+                ->pluck('user_id')
+                ->filter()
+                ->unique()
+                ->values()
+                ->all();
+
+            if ($liveUserIds !== []) {
+                Streamer::where('platform', Streamer::PLATFORM_TWITCH)
+                    ->whereIn('user_id', $liveUserIds)
+                    ->update(['last_seen_live_at' => now()]);
+            }
+
+
         } catch (Throwable $e) {
             Log::warning('Twitch refresh failed; keeping previous snapshot', [
                 'error' => $e->getMessage(),

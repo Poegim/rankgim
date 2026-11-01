@@ -30,6 +30,10 @@ class Streamer extends Model
         'race',
     ];
 
+    protected $casts = [
+        'last_seen_live_at' => 'datetime',
+    ];
+
     // Allowed race values (nullable in DB — casters/teams/official channels have no race).
     public const RACES = ['zerg', 'protoss', 'terran', 'random'];
 

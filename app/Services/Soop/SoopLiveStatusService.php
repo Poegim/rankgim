@@ -2,6 +2,7 @@
 
 namespace App\Services\Soop;
 
+use App\Models\Streamer;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
@@ -48,6 +49,20 @@ class SoopLiveStatusService
             'fetched_at' => now()->toIso8601String(),
             'broadcasts' => $broadcasts,
         ]);
+
+        // Touch last_seen_live_at for whitelisted channels currently live.
+        $liveUserIds = collect($broadcasts)
+            ->pluck('user_id')
+            ->filter()
+            ->unique()
+            ->values()
+            ->all();
+
+        if ($liveUserIds !== []) {
+            Streamer::where('platform', Streamer::PLATFORM_SOOP)
+                ->whereIn('user_id', $liveUserIds)
+                ->update(['last_seen_live_at' => now()]);
+        }
 
         return count($broadcasts);
     }
