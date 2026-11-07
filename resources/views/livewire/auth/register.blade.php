@@ -58,6 +58,13 @@
                 viewable
             />
 
+            <div>
+                <div class="cf-turnstile" data-sitekey="{{ config('services.turnstile.site_key') }}"></div>
+                @error('cf-turnstile-response')
+                    <flux:text class="mt-2 !text-red-600">{{ $message }}</flux:text>
+                @enderror
+            </div>
+
             <div class="flex items-center justify-end">
                 <flux:button type="submit" variant="primary" class="w-full" data-test="register-user-button">
                     {{ __('Create account') }}
@@ -70,4 +77,7 @@
             <flux:link :href="route('login')" wire:navigate>{{ __('Log in') }}</flux:link>
         </div>
     </div>
+    
+    <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+
 </x-layouts::auth>

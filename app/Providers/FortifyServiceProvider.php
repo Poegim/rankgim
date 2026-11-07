@@ -12,7 +12,7 @@ use Illuminate\Support\Str;
 use Laravel\Fortify\Fortify;
 use App\Http\Middleware\RejectHoneypot;
 use Illuminate\Support\Facades\Route;
-
+use App\Http\Middleware\VerifyTurnstile;
 class FortifyServiceProvider extends ServiceProvider
 {
     /**
@@ -91,6 +91,7 @@ class FortifyServiceProvider extends ServiceProvider
                     $route->middleware([
                         'throttle:registration',
                         RejectHoneypot::class,
+                        VerifyTurnstile::class,
                     ]);
                     break;
                 }
